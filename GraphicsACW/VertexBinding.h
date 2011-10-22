@@ -4,13 +4,15 @@
 #include "glex.h"
 
 class VertexBuffer;
+class Renderer;
 
 enum AttributeSlot
 {
 	AE_VERTEX = -1,
 	AE_NORMAL = -2,
 	AE_TEXCOORD0 = -3,
-	AE_INDICIES = -4,
+	AE_COLOR = -4,
+	AE_INDICIES = -5,
 };
 
 enum ElementType
@@ -34,9 +36,9 @@ class VertexBinding : public Uncopyable
 
 public:
 
-	explicit VertexBinding(glex& glex);
+	explicit VertexBinding();
 	~VertexBinding();
-	void Create(ArrayElement* elements, unsigned int numelements);
+	void Create(Renderer& renderer, const ArrayElement* elements, unsigned int numelements);
 	void Dispose();
 
 	void Bind();
@@ -44,7 +46,7 @@ public:
 
 private:
 
-	glex& _glex;
+	glex* _glex;
 	GLuint _vaoHandle;
 
 };
