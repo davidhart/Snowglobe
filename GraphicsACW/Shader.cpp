@@ -4,9 +4,9 @@
 #include <iostream>
 
 Shader::Shader() :
+	_type (0),
 	_glex (nullptr),
-	_shHandle (0),
-	_type (0)
+	_shHandle (0)
 {
 }
 
@@ -15,7 +15,7 @@ Shader::~Shader()
 	assert(_shHandle == 0);
 }
 
-void Shader::Create(Renderer& renderer, const char* shadersource)
+void Shader::Create(const Renderer& renderer, const char* shadersource)
 {
 	if (_shHandle != 0)
 		Dispose();
@@ -56,12 +56,17 @@ void Shader::Dispose()
 	_glex = nullptr;
 }
 
+void Shader::SetType(GLenum type)
+{
+	_type = type;
+}
+
 VertexShader::VertexShader()
 {
-	_type = GL_VERTEX_SHADER;
+	SetType(GL_VERTEX_SHADER);
 }
 
 FragmentShader::FragmentShader()
 {
-	_type = GL_FRAGMENT_SHADER;
+	SetType(GL_FRAGMENT_SHADER);
 }

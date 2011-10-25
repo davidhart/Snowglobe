@@ -16,7 +16,7 @@ VertexBuffer::~VertexBuffer()
 	assert(_vbHandle == 0);
 }
 
-void VertexBuffer::Create(Renderer& renderer, const void* data, unsigned int size)
+void VertexBuffer::Create(const Renderer& renderer, const void* data, unsigned int size)
 {
 	if (_vbHandle != 0)
 		Dispose();
@@ -27,7 +27,7 @@ void VertexBuffer::Create(Renderer& renderer, const void* data, unsigned int siz
 	_glex = renderer.GetEx();
 
 	_glex->glGenBuffers(1, &_vbHandle);
-	_vbHandle = size;
+	_vbSize = size;
 
 	assert(_vbHandle != 0);
 

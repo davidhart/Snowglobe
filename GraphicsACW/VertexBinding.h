@@ -3,28 +3,25 @@
 #include "Uncopyable.h"
 #include "glex.h"
 
+class ShaderProgram;
 class VertexBuffer;
 class Renderer;
 
-enum AttributeSlot
-{
-	AE_VERTEX = -1,
-	AE_NORMAL = -2,
-	AE_TEXCOORD0 = -3,
-	AE_COLOR = -4,
-	AE_INDICIES = -5,
-};
-
 enum ElementType
 {
-	AE_FLOAT,
-	AE_INT,
+	AE_FLOAT = GL_FLOAT,
+	AE_INT = GL_INT,
+
+	AE_UBYTE = GL_UNSIGNED_BYTE,
+	AE_UINT = GL_UNSIGNED_INT,
+	AE_USHORT = GL_UNSIGNED_SHORT,
+
 };
 
 struct ArrayElement
 {
 	const VertexBuffer& buffer;
-	AttributeSlot attribute;
+	unsigned int attribLocation;
 	unsigned int numcomponents;
 	ElementType type;
 	unsigned int stride;
@@ -33,12 +30,14 @@ struct ArrayElement
 
 class VertexBinding : public Uncopyable
 {
+	friend class Renderer;
 
 public:
 
 	explicit VertexBinding();
 	~VertexBinding();
-	void Create(Renderer& renderer, const ArrayElement* elements, unsigned int numelements);
+	void Create(const Renderer& renderer, const ArrayElement* elements, unsigned int numelements);
+	void Create(const Renderer& renderer, const ArrayElement* elements, unsigned int numelements, const VertexBuffer& indices, ElementType indicesType);
 	void Dispose();
 
 	void Bind();
@@ -46,7 +45,14 @@ public:
 
 private:
 
+	void CreateVAO(const Renderer& renderer);
+	void SetupAttribPointers(const ArrayElement* elements, unsigned int numelements);
+	void SetupElementPointers(const VertexBuffer& buffer);
+	void SetupIndices(const VertexBuffer& indices, ElementType indicesType);
+
 	glex* _glex;
 	GLuint _vaoHandle;
+	ElementType _indicesType;
+	bool _hasIndices;
 
 };

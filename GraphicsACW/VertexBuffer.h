@@ -14,11 +14,11 @@ public:
 	explicit VertexBuffer();
 	~VertexBuffer();
 
-	void Create(Renderer& renderer, const void* data, unsigned int size);
+	void Create(const Renderer& renderer, const void* data, unsigned int size);
 	void UpdateRegion(unsigned int offset, const void* newdata, unsigned int size);
 	void Dispose();
 
-	inline unsigned int Size() { return _vbSize; }
+	inline unsigned int Size() const { return _vbSize; }
 
 private:
 

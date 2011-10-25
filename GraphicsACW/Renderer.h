@@ -4,6 +4,7 @@
 #include "Uncopyable.h"
 
 class glex;
+class VertexBinding;
 
 enum Primitive
 {
@@ -24,9 +25,9 @@ public:
 	void Create(glex* glex);
 	void Dispose();
 
-	void Draw(Primitive primitive, unsigned int offset, unsigned int indices);
+	void Draw(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices) const;
 
-	glex* GetEx();
+	glex* GetEx() const;
 
 private:
 

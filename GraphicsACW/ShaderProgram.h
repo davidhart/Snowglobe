@@ -6,15 +6,16 @@
 
 class ShaderProgram : public Uncopyable
 {
-	
+
 public:
 
 	ShaderProgram();
 	~ShaderProgram();
 
-	void Create(Renderer& renderer, VertexShader& vertexShader, FragmentShader& fragmentShader);
+	void Create(const Renderer& renderer, const VertexShader& vertexShader, const FragmentShader& fragmentShader);
 	void Dispose();
 
+	int GetAttributeIndex(const char* attribute);
 	void Use();
 
 private:

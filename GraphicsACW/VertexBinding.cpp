@@ -1,5 +1,6 @@
 #include "VertexBinding.h"
 #include "VertexBuffer.h"
+#include "ShaderProgram.h"
 #include "Renderer.h"
 
 #include <exception>
@@ -8,7 +9,9 @@
 
 VertexBinding::VertexBinding() :
 	_glex(nullptr),
-	_vaoHandle(0)
+	_vaoHandle(0),
+	_indicesType(AE_UBYTE),
+	_hasIndices(false)
 {
 }
 
@@ -17,7 +20,30 @@ VertexBinding::~VertexBinding()
 	assert(_vaoHandle == 0);
 }
 
-void VertexBinding::Create(Renderer& renderer, const ArrayElement* elements, unsigned int numelements)
+void VertexBinding::Create(const Renderer& renderer, const ArrayElement* elements, unsigned int numelements)
+{
+	CreateVAO(renderer);
+
+	Bind();
+
+	SetupAttribPointers(elements, numelements);
+
+	Unbind();
+}
+
+void VertexBinding::Create(const Renderer& renderer, const ArrayElement* elements, unsigned int numelements, const VertexBuffer& indices, ElementType indicesType)
+{
+	CreateVAO(renderer);
+
+	Bind();
+
+	SetupAttribPointers(elements, numelements);
+	SetupIndices(indices, indicesType);
+
+	Unbind();
+}
+
+void VertexBinding::CreateVAO(const Renderer& renderer)
 {
 	if (_vaoHandle != 0)
 		Dispose();
@@ -25,13 +51,13 @@ void VertexBinding::Create(Renderer& renderer, const ArrayElement* elements, uns
 	_glex = renderer.GetEx();
 
 	_glex->glGenVertexArrays(1, &_vaoHandle);
+}
 
-	Bind();
-
+void VertexBinding::SetupAttribPointers(const ArrayElement* elements, unsigned int numelements)
+{
 	for (unsigned int i = 0; i < numelements; ++i)
 	{
 		const ArrayElement& element = elements[i];
-		// TODO: element array
 
 		_glex->glBindBuffer(GL_ARRAY_BUFFER, element.buffer._vbHandle);
 
@@ -42,35 +68,20 @@ void VertexBinding::Create(Renderer& renderer, const ArrayElement* elements, uns
 		else if (AE_INT == element.type)
 			type = GL_INT;
 
-		if (AE_VERTEX == element.attribute)
-		{
-			glEnableClientState(GL_VERTEX_ARRAY);
-
-			glVertexPointer(element.numcomponents, type, element.stride, (void*)element.offset); 
-		}
-		else if (AE_NORMAL == element.attribute)
-		{
-			glEnableClientState(GL_NORMAL_ARRAY);
-
-			assert(3 == element.numcomponents);
-
-			glNormalPointer(type, element.stride, (void*)element.offset);
-		}
-		else if (AE_TEXCOORD0 == element.attribute)
-		{
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-			glTexCoordPointer(element.numcomponents, type, element.stride, (void*)element.offset);
-		}
-		else if (AE_COLOR == element.attribute)
-		{
-			glEnableClientState(GL_COLOR_ARRAY);
-
-			glColorPointer(element.numcomponents, type, element.stride, (void*)element.offset);
-		}
+		_glex->glEnableVertexAttribArray(element.attribLocation);
+		_glex->glVertexAttribPointer(element.attribLocation, element.numcomponents, type, GL_FALSE, element.stride,
+				(void*)element.offset);
 	}
+}
 
-	Unbind();
+void VertexBinding::SetupIndices(const VertexBuffer& indices, ElementType indicesType)
+{
+	_hasIndices = true;
+	_indicesType = indicesType;
+
+	assert(indicesType == AE_UBYTE || indicesType == AE_UINT || indicesType == AE_USHORT);
+
+	_glex->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices._vbHandle);
 }
 
 void VertexBinding::Dispose()
@@ -80,6 +91,7 @@ void VertexBinding::Dispose()
 	_glex->glDeleteVertexArrays(1, &_vaoHandle);
 	_vaoHandle = 0;
 	_glex = nullptr;
+	_hasIndices = false;
 }
 
 void VertexBinding::Bind()

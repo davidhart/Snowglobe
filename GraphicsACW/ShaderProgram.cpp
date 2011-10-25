@@ -14,7 +14,7 @@ ShaderProgram::~ShaderProgram()
 	assert(_spHandle == 0);
 }
 
-void ShaderProgram::Create(Renderer& renderer, VertexShader& vertexShader, FragmentShader& fragmentShader)
+void ShaderProgram::Create(const Renderer& renderer, const VertexShader& vertexShader, const FragmentShader& fragmentShader)
 {
 	if (_spHandle != 0)
 		Dispose();
@@ -57,4 +57,9 @@ void ShaderProgram::Dispose()
 void ShaderProgram::Use()
 {
 	_glex->glUseProgram(_spHandle);
+}
+
+int ShaderProgram::GetAttributeIndex(const char* attribute)
+{
+	return _glex->glGetAttribLocation(_spHandle, attribute);
 }

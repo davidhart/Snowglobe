@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "VertexBinding.h"
 #include <cassert>
 
 Renderer::Renderer() :
@@ -18,7 +19,7 @@ void Renderer::Create(glex* glex)
 	_glex = glex;
 }
 
-glex* Renderer::GetEx()
+glex* Renderer::GetEx() const
 {
 	assert(_glex != nullptr);
 
@@ -32,7 +33,18 @@ void Renderer::Dispose()
 	_glex = nullptr;
 }
 
-void Renderer::Draw(Primitive primitive, unsigned int offset, unsigned int indices)
+void Renderer::Draw(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices) const
 {
-	glDrawArrays(primitive, offset, indices);
+	binding.Bind();
+
+	if (binding._hasIndices)
+	{
+		glDrawElements(primitive, indices, binding._indicesType, (void*)offset);
+	}
+	else
+	{
+		glDrawArrays(primitive, offset, indices);
+	}
+
+	binding.Unbind();
 }

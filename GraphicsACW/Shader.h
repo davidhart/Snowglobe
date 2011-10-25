@@ -14,16 +14,17 @@ public:
 
 	virtual ~Shader();
 
-	void Create(Renderer& renderer, const char* shadersource);
+	void Create(const Renderer& renderer, const char* shadersource);
 	void Dispose();
 
 protected:
 	
+	void SetType(GLenum type);
 	Shader();
-	GLenum _type;
 
 private:
-
+	
+	GLenum _type;
 	glex* _glex;
 	GLuint _shHandle;
 
