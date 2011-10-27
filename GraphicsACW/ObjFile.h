@@ -4,8 +4,26 @@
 
 class IndexRange
 {
-	unsigned int Min;
-	unsigned int Max;
+
+public:
+
+	IndexRange(unsigned int min, unsigned int max);
+
+	inline unsigned int GetMin() const
+	{
+		return _min;
+	}
+
+	inline unsigned int GetMax() const
+	{
+		return _max;
+	}
+
+private:
+
+	unsigned int _min;
+	unsigned int _max;
+
 };
 
 class ObjFile
@@ -21,14 +39,14 @@ public:
 	bool HasTextureCoordinates();
 
 	const float* GetVertexData();
-	unsigned int GetNumVertices();
-	unsigned int GetVertexStride();
+	unsigned int GetNumVertices() const;
+	unsigned int GetVertexStride() const;
 
 	const unsigned int* GetIndexData();
-	unsigned int GetNumIndices();
+	unsigned int GetNumIndices() const;
 
 	const IndexRange* GetMeshRanges();
-	unsigned int GetNumMeshes();
+	unsigned int GetNumMeshes() const;
 
 private:
 

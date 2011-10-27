@@ -171,8 +171,8 @@ ObjFile::ObjFormatIndex::ObjFormatIndex() :
 }
 
 ObjFile::CachedObjIndex::CachedObjIndex() : 
-	packedPos(-1),
-	next(-1)
+	next(-1),
+	packedPos(-1)
 {
 }
 
@@ -297,13 +297,13 @@ const float* ObjFile::GetVertexData()
 	return &_vertexData[0];
 }
 
-unsigned int ObjFile::GetNumVertices()
+unsigned int ObjFile::GetNumVertices() const
 {
 	unsigned int numVertices = _vertexData.size() / (GetVertexStride() / sizeof(float));
 	return numVertices;
 }
 
-unsigned int ObjFile::GetVertexStride()
+unsigned int ObjFile::GetVertexStride() const
 {
 	int stride = 12;
 
@@ -321,10 +321,13 @@ const unsigned int* ObjFile::GetIndexData()
 	return &_indexData[0];
 }
 
-unsigned int ObjFile::GetNumIndices()
+unsigned int ObjFile::GetNumIndices() const
 {
 	return _indexData.size();
 }
 
-
-
+IndexRange::IndexRange(unsigned int min, unsigned int max) :
+	_min(min),
+	_max(max)
+{
+}
