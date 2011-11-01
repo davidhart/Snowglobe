@@ -7,7 +7,7 @@ protected:
 
 	Uncopyable();
 
-private:
+private: 
 
 	Uncopyable(const Uncopyable&);
 	Uncopyable& operator=(const Uncopyable&);

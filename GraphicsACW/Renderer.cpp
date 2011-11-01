@@ -3,34 +3,34 @@
 #include <cassert>
 
 Renderer::Renderer() :
-	_glex (nullptr)
+	_glex (NULL)
 {
 }
 
 Renderer::~Renderer()
 {
-	assert(_glex == nullptr);
+	assert(_glex == NULL);
 }
 
 void Renderer::Create(glex* glex)
 {
-	assert(glex != nullptr);
+	assert(glex != NULL);
 
 	_glex = glex;
 }
 
 glex* Renderer::GetEx() const
 {
-	assert(_glex != nullptr);
+	assert(_glex != NULL);
 
 	return _glex;
 }
 
 void Renderer::Dispose()
 {
-	assert(_glex != nullptr);
+	assert(_glex != NULL);
 
-	_glex = nullptr;
+	_glex = NULL;
 }
 
 void Renderer::Draw(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices) const

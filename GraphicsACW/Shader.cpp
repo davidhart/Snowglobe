@@ -5,7 +5,7 @@
 
 Shader::Shader() :
 	_type (0),
-	_glex (nullptr),
+	_glex (NULL),
 	_shHandle (0)
 {
 }
@@ -26,7 +26,7 @@ void Shader::Create(const Renderer& renderer, const char* shadersource)
 
 	_shHandle = _glex->glCreateShader(_type);
 
-	_glex->glShaderSource(_shHandle, 1, &shadersource, nullptr);
+	_glex->glShaderSource(_shHandle, 1, &shadersource, NULL);
 
 	_glex->glCompileShader(_shHandle);
 
@@ -53,7 +53,7 @@ void Shader::Dispose()
 	_glex->glDeleteShader(_shHandle);
 
 	_shHandle = 0;
-	_glex = nullptr;
+	_glex = NULL;
 }
 
 void Shader::SetType(GLenum type)

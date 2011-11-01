@@ -1,7 +1,7 @@
 #version 130
 
 const float alpha = 0.9;
-const vec4 rim_col = vec4(1, 1, 1, 0.5);
+const vec4 rim_col = vec4(1, 1, 1, 0.9);
 const float rim_pwr = 1.2;
 const float spec_pwr = 50;
 const vec4 spec_col = vec4(1, 1, 1, 0.8);

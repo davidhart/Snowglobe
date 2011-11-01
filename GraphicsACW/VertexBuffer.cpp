@@ -5,7 +5,7 @@
 #include <exception>
 
 VertexBuffer::VertexBuffer() :
-	_glex(nullptr),
+	_glex(NULL),
 	_vbSize(0),
 	_vbHandle(0)
 {
@@ -22,7 +22,7 @@ void VertexBuffer::Create(const Renderer& renderer, const void* data, unsigned i
 		Dispose();
 
 	assert(_vbHandle == 0);
-	assert(data != nullptr);
+	assert(data != NULL);
 
 	_glex = renderer.GetEx();
 
@@ -58,5 +58,5 @@ void VertexBuffer::Dispose()
 
 	_vbHandle = 0;
 	_vbSize = 0;
-	_glex = nullptr;
+	_glex = NULL;
 }

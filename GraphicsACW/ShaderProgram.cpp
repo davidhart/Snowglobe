@@ -4,7 +4,7 @@
 #include <iostream>
 
 ShaderProgram::ShaderProgram() : 
-	_glex (nullptr),
+	_glex (NULL),
 	_spHandle (0)
 {
 }
@@ -51,7 +51,7 @@ void ShaderProgram::Dispose()
 
 	_glex->glDeleteProgram(_spHandle);
 	_spHandle = 0;
-	_glex = nullptr;
+	_glex = NULL;
 }
 
 void ShaderProgram::Use()

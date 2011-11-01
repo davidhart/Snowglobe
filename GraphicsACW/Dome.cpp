@@ -64,10 +64,8 @@ void Dome::Draw(const Renderer& renderer)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDisable(GL_DEPTH_TEST);
-
-	glCullFace(GL_FRONT);
 	_backShader.Use();
+	glCullFace(GL_FRONT);
 	renderer.Draw(_backBinding, PT_TRIANGLES, 0, _domeModel.GetNumIndices());
 
 	glCullFace(GL_BACK);

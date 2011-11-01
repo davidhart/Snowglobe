@@ -17,5 +17,5 @@ void main(void)
    
    float spec = pow(max(dot(reflVec, lightDir), 0), spec_pwr);
    
-   gl_FragColor = vec4 (spec * spec_col.rgb, alpha * spec);  
+   gl_FragColor = vec4 (spec * spec_col.rgb, alpha * spec); 
 }

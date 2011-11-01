@@ -23,9 +23,11 @@ void MyWindow::OnCreate()
 	gluPerspective(90, 1.6, 0.001, 100); 
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	glMatrixMode(GL_MODELVIEW_MATRIX);
-	gluLookAt(7, 2, 0, 0, 0, 0, 0, 1, 0);
+	gluLookAt(7, 1, 0, 0, 0, 0, 0, 1, 0);
+
 }
 
 void MyWindow::OnDisplay()

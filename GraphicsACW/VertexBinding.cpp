@@ -8,7 +8,7 @@
 #include <vector>
 
 VertexBinding::VertexBinding() :
-	_glex(nullptr),
+	_glex(NULL),
 	_vaoHandle(0),
 	_indicesType(AE_UBYTE),
 	_hasIndices(false)
@@ -90,7 +90,7 @@ void VertexBinding::Dispose()
 
 	_glex->glDeleteVertexArrays(1, &_vaoHandle);
 	_vaoHandle = 0;
-	_glex = nullptr;
+	_glex = NULL;
 	_hasIndices = false;
 }
 
