@@ -19,20 +19,7 @@ void MyWindow::OnCreate()
 
 	_model.Read("teapot.obj");
 
-	static float triangle[] = 
-	{
-		-0.9f, -0.9f, 0.0f, 1.0f, 0.0f, 0.0f,
-		 0.9f, -0.9f, 0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f,0.9f, 0.0f, 0.0f, 0.0f, 1.0f,
-	};
-
 	_vertexBuffer.Create(_renderer, _model.GetVertexData(), _model.GetNumVertices() * _model.GetVertexStride());
-
-	static unsigned char indices[] =
-	{
-		0, 1, 2,
-	};
-
 	_indexBuffer.Create(_renderer, _model.GetIndexData(), _model.GetNumIndices() * sizeof(float));
 
 	std::string shaderSource;
@@ -55,7 +42,6 @@ void MyWindow::OnCreate()
 	glMatrixMode(GL_PROJECTION_MATRIX);
 	gluPerspective(90, 1.3, 0.001, 100); 
 
-	glDisable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	glMatrixMode(GL_MODELVIEW_MATRIX);
