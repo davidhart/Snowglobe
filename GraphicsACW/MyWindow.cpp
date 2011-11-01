@@ -17,35 +17,15 @@ void MyWindow::OnCreate()
 
 	_renderer.Create(this);
 
-	_model.Read("teapot.obj");
-
-	_vertexBuffer.Create(_renderer, _model.GetVertexData(), _model.GetNumVertices() * _model.GetVertexStride());
-	_indexBuffer.Create(_renderer, _model.GetIndexData(), _model.GetNumIndices() * sizeof(float));
-
-	std::string shaderSource;
-	Util::ReadTextFileToString("basic.vsh", shaderSource);
-
-	_testVertShader.Create(_renderer, shaderSource.c_str());
-
-	Util::ReadTextFileToString("basic.fsh", shaderSource);
-	_testFragShader.Create(_renderer, shaderSource.c_str());
-
-	_testShader.Create(_renderer, _testVertShader, _testFragShader);
-
-	ArrayElement vertLayout[] = 
-	{
-		{ _vertexBuffer, _testShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, 0, 0 },
-	};
-
-	_testBinding.Create(_renderer, vertLayout, 1, _indexBuffer, AE_UINT);
+	_dome.Create(_renderer);
 
 	glMatrixMode(GL_PROJECTION_MATRIX);
-	gluPerspective(90, 1.3, 0.001, 100); 
+	gluPerspective(90, 1.6, 0.001, 100); 
 
 	glEnable(GL_DEPTH_TEST);
 
 	glMatrixMode(GL_MODELVIEW_MATRIX);
-	gluLookAt(5, 5, 0, 0, 0, 0, 0, 1, 0);
+	gluLookAt(7, 2, 0, 0, 0, 0, 0, 1, 0);
 }
 
 void MyWindow::OnDisplay()
@@ -58,11 +38,10 @@ void MyWindow::OnDisplay()
 	glMatrixMode(GL_MODELVIEW_MATRIX);
 	glPushMatrix();
 
-	glRotated(delta * 180, 0, 1, 0);
+	glRotated(delta * 70, 0, 1, 0);
+	glScaled(5, 5, 5);
 
-	_testShader.Use();
-
-	_renderer.Draw(_testBinding, PT_TRIANGLES, 0, _model.GetNumIndices());
+	_dome.Draw(_renderer);
 
 	glPopMatrix();
 
@@ -76,14 +55,7 @@ void MyWindow::OnIdle()
 
 void MyWindow::OnDestroy()
 {
-	_testBinding.Dispose();
-	_vertexBuffer.Dispose();
-	_indexBuffer.Dispose();
-
-	_testShader.Dispose();
-
-	_testVertShader.Dispose();
-	_testFragShader.Dispose();
+	_dome.Dispose();
 
 	_renderer.Dispose();
 

@@ -69,6 +69,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Dome.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="ObjFile.cpp" />
@@ -81,6 +82,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dome.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="ObjFile.h" />
     <ClInclude Include="Renderer.h" />
@@ -94,6 +96,9 @@
   <ItemGroup>
     <None Include="basic.fsh" />
     <None Include="basic.vsh" />
+    <None Include="dome.vsh" />
+    <None Include="domeBack.fsh" />
+    <None Include="domeFront.fsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

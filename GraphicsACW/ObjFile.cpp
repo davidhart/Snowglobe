@@ -82,6 +82,7 @@ void ObjFile::Read(const char* filename)
 			{
 				// extract remainder of line to stringstream
 				std::stringstream line;
+
 				char c;
 
 				do
@@ -180,7 +181,7 @@ void ObjFile::ObjFormatIndex::Read(std::istream& stream)
 {
 	stream >> v;
 
-	assert(v != -1);
+	assert(v > 0);
 
 	if (stream.get() != '/' || stream.fail())
 	{
