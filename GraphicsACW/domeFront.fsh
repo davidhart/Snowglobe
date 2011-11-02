@@ -3,8 +3,8 @@
 const float alpha = 0.9;
 const vec4 rim_col = vec4(1, 1, 1, 0.9);
 const float rim_pwr = 1.2;
-const float spec_pwr = 50;
-const vec4 spec_col = vec4(1, 1, 1, 0.8);
+const float spec_pwr = 80;
+const vec4 spec_col = vec4(1, 1, 1, 0.1);
 const vec3 light_dir = vec3(0.7, 0.7, 0);
 
 in vec3 v_normal;
