@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Util.h"
+#include <iostream>
 #include <cmath>
 #include <cassert>
 
@@ -9,9 +10,9 @@ class Vector3f
 
 public:
 
-	inline Vector3f();
-	inline explicit Vector3f(float v);
-	inline Vector3f(float x, float y, float z);
+	Vector3f();
+	explicit Vector3f(float v);
+	Vector3f(float x, float y, float z);
 
 	inline Vector3f& operator+=(const Vector3f& rhs);
 	inline Vector3f& operator-=(const Vector3f& rhs);
@@ -21,8 +22,8 @@ public:
 	inline Vector3f& operator/=(float rhs);
 	inline Vector3f operator-() const;
 	
-	inline float Length() const;
-	inline float Dot(const Vector3f& rhs) const;
+	inline float length() const;
+	inline float dot(const Vector3f& rhs) const;
 	inline Vector3f Cross(const Vector3f& rhs) const;
 
 	inline float x() const;
@@ -33,34 +34,15 @@ public:
 	inline void y(float y);
 	inline void z(float z);
 
-	float operator[](unsigned int i) const;
+	inline float element(unsigned int i) const;
+	inline void element(unsigned int i, float value);
+	inline float operator[](unsigned int i) const;
 
 private:
 
 	float _v[3];
 
 };
-
-inline Vector3f::Vector3f()
-{
-	_v[0] = 0;
-	_v[1] = 0;
-	_v[2] = 0;
-}
-
-inline Vector3f::Vector3f(float v)
-{
-	_v[0] = v;
-	_v[1] = v;
-	_v[2] = v;
-}
-
-inline Vector3f::Vector3f(float x, float y, float z)
-{
-	_v[0] = x;
-	_v[1] = y;
-	_v[2] = z;
-}
 
 inline Vector3f& Vector3f::operator+=(const Vector3f& rhs)
 {
@@ -107,12 +89,12 @@ inline Vector3f Vector3f::operator-() const
 	return Vector3f(-x(), -y(), -z());
 }
 
-inline float Vector3f::Length() const
+inline float Vector3f::length() const
 {
 	return sqrt(x() * x() + y() * y() + z() * z());
 }
 
-inline float Vector3f::Dot(const Vector3f& rhs) const
+inline float Vector3f::dot(const Vector3f& rhs) const
 {
 	return x() * rhs.x() + y() * rhs.y() + z() * rhs.z();
 }
@@ -122,10 +104,21 @@ inline Vector3f Vector3f::Cross(const Vector3f& rhs) const
 	return Vector3f(y() * rhs.z() - z() * rhs.y(), z() * rhs.x() - x() * rhs.z(), x() * rhs.y() - y() * rhs.x());
 }
 
-inline float Vector3f::operator[](unsigned int i) const
+inline float Vector3f::element(unsigned int i) const
 {
 	assert(i < 3);
 	return _v[i];
+}
+
+inline void Vector3f::element(unsigned int i, float value)
+{
+	assert(i < 3);
+	_v[i] = value;
+}
+
+inline float Vector3f::operator[](unsigned int i) const
+{
+	return element(i);
 }
 
 inline float Vector3f::x() const
@@ -208,4 +201,20 @@ inline bool operator==(const Vector3f& lhs, const Vector3f& rhs)
 inline bool operator!=(const Vector3f& lhs, const Vector3f& rhs)
 {
 	return !(lhs == rhs);
+}
+
+inline std::ostream& operator<<(std::ostream& lhs, const Vector3f& rhs)
+{
+	lhs << "v3(" << rhs.x() << ", " << rhs.y() << ", " << rhs.z() << ")";
+	return lhs;
+}
+
+inline std::istream& operator>>(std::istream& lhs, Vector3f& rhs)
+{
+	char c;
+	float x,y,z;
+	lhs >> c >> c >> c >> x >> c >> y >> c >> z >> c;
+	rhs = Vector3f(x,y,z);
+
+	return lhs;
 }

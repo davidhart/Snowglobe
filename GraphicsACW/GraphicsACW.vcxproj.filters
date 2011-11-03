@@ -13,6 +13,12 @@
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="VertexBinding.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="Vector3.cpp">
+      <Filter>Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector4.cpp">
+      <Filter>Maths</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VertexBuffer.h" />
@@ -25,13 +31,23 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Uncopyable.h" />
     <ClInclude Include="Util.h" />
-    <ClInclude Include="Vector3.h" />
-    <ClInclude Include="Vector4f.h" />
     <ClInclude Include="VertexBinding.h" />
+    <ClInclude Include="Vector3.h">
+      <Filter>Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix4.h">
+      <Filter>Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector4.h">
+      <Filter>Maths</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
       <UniqueIdentifier>{e2a34f37-dd17-4566-ae45-59266cf3d51c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Maths">
+      <UniqueIdentifier>{30af7ce9-4ea4-4201-bcc2-a70f6bbda67c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

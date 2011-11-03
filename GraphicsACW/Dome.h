@@ -6,8 +6,6 @@
 #include "ShaderProgram.h"
 #include "Shader.h"
 #include "ObjFile.h"
-#include "Vector3.h"
-#include "Vector4f.h"
 
 class Dome : public Uncopyable
 {
