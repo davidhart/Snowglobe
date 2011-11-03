@@ -92,6 +92,8 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Uncopyable.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Vector4f.h" />
     <ClInclude Include="VertexBinding.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>

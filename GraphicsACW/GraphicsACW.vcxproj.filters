@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyWindow.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Uncopyable.cpp" />
+    <ClCompile Include="VertexBinding.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="Util.cpp" />
+    <ClCompile Include="ObjFile.cpp" />
+    <ClCompile Include="Dome.cpp" />
+    <ClCompile Include="LSystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyWindow.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="Uncopyable.h" />
+    <ClInclude Include="VertexBinding.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="Util.h" />
+    <ClInclude Include="ObjFile.h" />
+    <ClInclude Include="Dome.h" />
+    <ClInclude Include="LSystem.h" />
+    <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Vector4f.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{e2a34f37-dd17-4566-ae45-59266cf3d51c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="basic.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="basic.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="domeFront.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="dome.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="domeBack.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

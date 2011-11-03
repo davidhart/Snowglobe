@@ -19,13 +19,14 @@ void MyWindow::OnCreate()
 
 	_dome.Create(_renderer);
 
-	glMatrixMode(GL_PROJECTION_MATRIX);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 	gluPerspective(90, (double)Width() / Height(), 0.001, 100); 
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	glMatrixMode(GL_MODELVIEW_MATRIX);
+	glMatrixMode(GL_MODELVIEW);
 	gluLookAt(10, 1, 0, 0, 0, 0, 0, 1, 0);
 
 }
@@ -37,11 +38,11 @@ void MyWindow::OnDisplay()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glMatrixMode(GL_MODELVIEW_MATRIX);
+	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
 	glRotated(delta * 70, 0, 1, 0);
-	glScaled(5, 5, 5);
+	glScaled(6, 6, 6);
 
 	_dome.Draw(_renderer);
 
@@ -74,4 +75,15 @@ void MyWindow::OnKeyboard(int key, bool down)
 
 	if (VK_ESCAPE == key && down)
 		Close();
+}
+
+void MyWindow::OnResize(int w, int h)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(90, (double)w / h, 0.001, 100);
+
+	glMatrixMode(GL_MODELVIEW);
+
+	GLWindowEx::OnResize(w, h);
 }

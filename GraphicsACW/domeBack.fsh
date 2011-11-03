@@ -3,7 +3,7 @@
 const float alpha = 0.9;
 const float spec_pwr = 80;
 const vec4 spec_col = vec4(1, 1, 1, 0.8);
-const vec3 light_dir = vec3(0.7, 0.3, 0);
+const vec3 light_dir = vec3(0.7, -0.3, 0);
 
 in vec3 v_normal;
 

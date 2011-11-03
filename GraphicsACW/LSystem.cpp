@@ -1,5 +1,6 @@
 #include "LSystem.h"
 #include <cassert>
+#include <exception>
 
 LSystem::LSystem()
 {
@@ -8,7 +9,14 @@ LSystem::LSystem()
 
 LSystem::~LSystem()
 {
-	DeleteSuccessors();
+	try
+	{
+		DeleteSuccessors();
+	}
+	catch (const std::exception&)
+	{
+
+	}
 }
 
 LSystem::LSystem(const LSystem& lsystem)
@@ -18,9 +26,14 @@ LSystem::LSystem(const LSystem& lsystem)
 
 LSystem& LSystem::operator=(const LSystem& lsystem)
 {
+	if (this == &lsystem)
+	{
+		return *this;
+	}
+
 	DeleteSuccessors();
 
-	_rules.clear();
+	_rules = RuleMap();
 
 	CloneRules(lsystem);
 

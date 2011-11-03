@@ -10,3 +10,9 @@ void Util::ReadTextFileToString(const std::string& filename, std::string& text)
 
 	text.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 }
+
+bool Util::FloatEquality(float a, float b, float precision)
+{
+	float difference = a - b;
+	return difference < precision && difference > -precision;
+}

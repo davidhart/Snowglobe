@@ -28,7 +28,7 @@ private:
 
 		Successor(const std::string& successor, float probabilityWeight);
 		void AppendSelf(std::string& string) const;
-		inline float ProbabilityWeight();
+		inline float ProbabilityWeight() const;
 
 	private:
 		
@@ -50,7 +50,7 @@ private:
 
 };
 
-inline float LSystem::Successor::ProbabilityWeight()
+inline float LSystem::Successor::ProbabilityWeight() const
 {
 	return _probabilityWeight;
 }
