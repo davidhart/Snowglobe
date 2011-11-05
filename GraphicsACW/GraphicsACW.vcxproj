@@ -72,6 +72,7 @@
     <ClCompile Include="Dome.cpp" />
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="ObjFile.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -87,6 +88,7 @@
   <ItemGroup>
     <ClInclude Include="Dome.h" />
     <ClInclude Include="LSystem.h" />
+    <ClInclude Include="Maths.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="ObjFile.h" />

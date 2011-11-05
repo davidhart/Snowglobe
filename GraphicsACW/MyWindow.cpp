@@ -1,6 +1,7 @@
 #include "MyWindow.h"
 #include "Util.h"
 #include "ObjFile.h"
+#include "Matrix4.h"
 
 #include <string>
 
@@ -21,13 +22,15 @@ void MyWindow::OnCreate()
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90, (double)Width() / Height(), 0.001, 100); 
+	Matrix4 perspective;
+	Matrix4::PerspectiveFov(perspective, 90, (float)Width() / Height(), 0.1f, 100);
+	glMultMatrixf((float*)&perspective);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
 	glMatrixMode(GL_MODELVIEW);
-	gluLookAt(10, 1, 0, 0, 0, 0, 0, 1, 0);
+	gluLookAt(9, 1, 0, 0, 0, 0, 0, 1, 0);
 
 }
 
@@ -81,7 +84,9 @@ void MyWindow::OnResize(int w, int h)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90, (double)w / h, 0.001, 100);
+	Matrix4 perspective;
+	Matrix4::PerspectiveFov(perspective, 90, (float)Width() / Height(), 0.1f, 100);
+	glMultMatrixf((float*)&perspective);
 
 	glMatrixMode(GL_MODELVIEW);
 
