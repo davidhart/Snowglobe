@@ -3,6 +3,7 @@
 #include "GXBase.h"
 #include "Renderer.h"
 #include "Dome.h"
+#include "Tree.h"
 
 class MyWindow : public gxbase::GLWindowEx
 {
@@ -21,5 +22,6 @@ private:
 
 	Renderer _renderer;
 	Dome _dome;
+	Tree _tree;
 };
 

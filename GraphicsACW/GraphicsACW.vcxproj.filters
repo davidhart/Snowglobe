@@ -5,14 +5,8 @@
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyWindow.cpp" />
-    <ClCompile Include="ObjFile.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Uncopyable.cpp" />
     <ClCompile Include="Util.cpp" />
-    <ClCompile Include="VertexBinding.cpp" />
-    <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="Vector3.cpp">
       <Filter>Maths</Filter>
     </ClCompile>
@@ -22,19 +16,32 @@
     <ClCompile Include="Matrix4.cpp">
       <Filter>Maths</Filter>
     </ClCompile>
+    <ClCompile Include="ObjFile.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBinding.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Dome.h" />
     <ClInclude Include="LSystem.h" />
     <ClInclude Include="MyWindow.h" />
-    <ClInclude Include="ObjFile.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Uncopyable.h" />
     <ClInclude Include="Util.h" />
-    <ClInclude Include="VertexBinding.h" />
     <ClInclude Include="Vector3.h">
       <Filter>Maths</Filter>
     </ClInclude>
@@ -47,6 +54,25 @@
     <ClInclude Include="Maths.h">
       <Filter>Maths</Filter>
     </ClInclude>
+    <ClInclude Include="Tree.h" />
+    <ClInclude Include="ObjFile.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBinding.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -54,6 +80,9 @@
     </Filter>
     <Filter Include="Maths">
       <UniqueIdentifier>{30af7ce9-4ea4-4201-bcc2-a70f6bbda67c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{18453566-f652-4913-a9fa-099063a74994}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +99,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="domeBack.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="tree.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="tree.fsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

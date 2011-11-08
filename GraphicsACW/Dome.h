@@ -6,6 +6,7 @@
 #include "ShaderProgram.h"
 #include "Shader.h"
 #include "ObjFile.h"
+#include "Matrix4.h"
 
 class Dome : public Uncopyable
 {
@@ -33,6 +34,7 @@ public:
 	void Create(const Renderer& renderer);
 	void Dispose();
 
-	void Draw(const Renderer& renderer);
+	void DrawBack(const Renderer& renderer);
+	void DrawFront(const Renderer& renderer);
 
 };

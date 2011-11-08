@@ -1,5 +1,6 @@
 #include "ShaderProgram.h"
 #include "Renderer.h"
+#include "Matrix4.h"
 #include <string>
 #include <iostream>
 
@@ -62,4 +63,13 @@ void ShaderProgram::Use()
 int ShaderProgram::GetAttributeIndex(const char* attribute)
 {
 	return _glex->glGetAttribLocation(_spHandle, attribute);
+}
+
+void ShaderProgram::SetUniform(const char* uniform, const Matrix4& value) const
+{
+	int location = _glex->glGetUniformLocation(_spHandle, uniform);
+	if (location >= 0)
+	{
+		_glex->glUniformMatrix4fv(location, 1, false, (const float*)&value);
+	}
 }

@@ -12,7 +12,7 @@ void Dome::Create(const Renderer& renderer)
 	_domeModel.Read("dome.obj");
 
 	_vertexBuffer.Create(renderer, _domeModel.GetVertexData(), _domeModel.GetNumVertices() * _domeModel.GetVertexStride());
-	_indexBuffer.Create(renderer, _domeModel.GetIndexData(), _domeModel.GetNumIndices() * sizeof(float));
+	_indexBuffer.Create(renderer, _domeModel.GetIndexData(), _domeModel.GetNumIndices() * sizeof(unsigned int));
 
 	std::string shaderSource;
 	Util::ReadTextFileToString("dome.vsh", shaderSource);
@@ -27,6 +27,16 @@ void Dome::Create(const Renderer& renderer)
 
 	_frontShader.Create(renderer, _vertShader, _frontFragShader);
 	_backShader.Create(renderer, _vertShader, _backFragShader);
+
+	Matrix4 model;
+	Matrix4::Scale(model, 6);
+
+	_backShader.Use();
+	_backShader.SetUniform("model", model);
+
+	_frontShader.Use();
+	_frontShader.SetUniform("model", model);
+
 
 	ArrayElement frontVertLayout[] = 
 	{
@@ -59,17 +69,28 @@ void Dome::Dispose()
 	_vertShader.Dispose();
 }
 
-void Dome::Draw(const Renderer& renderer)
+void Dome::DrawBack(const Renderer& renderer)
 {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	_backShader.Use();
+	renderer.UpdateViewProjectionUniforms(_backShader);
 	glCullFace(GL_FRONT);
 	renderer.Draw(_backBinding, PT_TRIANGLES, 0, _domeModel.GetNumIndices());
 
 	glCullFace(GL_BACK);
+
+	glDisable(GL_BLEND);
+}
+
+void Dome::DrawFront(const Renderer& renderer)
+{
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	_frontShader.Use();
+	renderer.UpdateViewProjectionUniforms(_frontShader);
 	renderer.Draw(_frontBinding, PT_TRIANGLES, 0, _domeModel.GetNumIndices());
 
 	glDisable(GL_BLEND);

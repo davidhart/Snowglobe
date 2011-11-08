@@ -35,12 +35,16 @@ public:
 
 	void Read(const char* filename);
 
-	bool HasVertexNormals();
-	bool HasTextureCoordinates();
+	bool HasVertexNormals() const;
+	bool HasTextureCoordinates() const;
 
 	const float* GetVertexData();
 	unsigned int GetNumVertices() const;
 	unsigned int GetVertexStride() const;
+
+	unsigned int GetVertexOffset() const;
+	unsigned int GetNormalOffset() const;
+	unsigned int GetTexCoordOffset() const;
 
 	const unsigned int* GetIndexData();
 	unsigned int GetNumIndices() const;
@@ -88,3 +92,13 @@ private:
 	bool _hasNormals;
 	bool _hasTextureCoordinates;
 };
+
+inline bool ObjFile::HasTextureCoordinates() const
+{
+	return _hasTextureCoordinates;
+}
+
+inline bool ObjFile::HasVertexNormals() const
+{
+	return _hasNormals;
+}

@@ -317,6 +317,25 @@ unsigned int ObjFile::GetVertexStride() const
 	return stride;
 }
 
+unsigned int ObjFile::GetVertexOffset() const
+{
+	return 0;
+}
+
+unsigned int ObjFile::GetNormalOffset() const
+{
+	int offset = 12;
+	if (_hasTextureCoordinates)
+		offset += 8;
+
+	return offset;
+}
+
+unsigned int ObjFile::GetTexCoordOffset() const
+{
+	return 12;
+}
+
 const unsigned int* ObjFile::GetIndexData()
 {
 	return &_indexData[0];

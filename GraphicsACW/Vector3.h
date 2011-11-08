@@ -24,7 +24,9 @@ public:
 	
 	float length() const;
 	float dot(const Vector3& rhs) const;
-	Vector3 Cross(const Vector3& rhs) const;
+	Vector3 cross(const Vector3& rhs) const;
+	Vector3 unit() const;
+	const Vector3& normalize();
 
 	float x() const;
 	float y() const;
@@ -99,9 +101,22 @@ inline float Vector3::dot(const Vector3& rhs) const
 	return x() * rhs.x() + y() * rhs.y() + z() * rhs.z();
 }
 
-inline Vector3 Vector3::Cross(const Vector3& rhs) const
+inline Vector3 Vector3::cross(const Vector3& rhs) const
 {
 	return Vector3(y() * rhs.z() - z() * rhs.y(), z() * rhs.x() - x() * rhs.z(), x() * rhs.y() - y() * rhs.x());
+}
+
+inline Vector3 Vector3::unit() const
+{
+	return Vector3(*this).normalize();
+}
+
+inline const Vector3& Vector3::normalize()
+{
+	float l = length();
+	if (Util::FloatEquality(l, 0))
+		return *this = Vector3(0);
+	return *this /= l;
 }
 
 inline float Vector3::element(unsigned int i) const

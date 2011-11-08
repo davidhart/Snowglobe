@@ -6,16 +6,21 @@ const vec4 spec_col = vec4(1, 1, 1, 0.8);
 const vec3 light_dir = vec3(0.7, -0.3, 0);
 
 in vec3 v_normal;
+out vec4 f_color;
 
-void main(void)
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main()
 {
    vec3 normal = normalize(-v_normal);
    
    vec3 reflVec =  reflect(vec3(0, 0, 1), normal);
    
-   vec3 lightDir = normalize(gl_NormalMatrix * light_dir);
+   vec3 lightDir = normalize(view * model * vec4(light_dir,0)).xyz;
    
    float spec = pow(max(dot(reflVec, lightDir), 0), spec_pwr);
    
-   gl_FragColor = vec4 (spec * spec_col.rgb, alpha * spec); 
+   f_color = vec4 (spec * spec_col.rgb, alpha * spec); 
 }

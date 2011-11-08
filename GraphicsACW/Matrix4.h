@@ -25,6 +25,10 @@ public:
 	static void Identity(Matrix4& out);
 	static void Translation(Matrix4& out, const Vector3& translation);
 	static void PerspectiveFov(Matrix4& out, float fov, float aspect, float nearclip, float farclip);
+	static void LookAt(Matrix4& out, const Vector3& eye, const Vector3& at, const Vector3& up);
+	static void Scale(Matrix4& out, float scale);
+	static void Scale(Matrix4& out, const Vector3& scale);
+	static void RotationAxis(Matrix4& out, const Vector3& axis, float angle);
 
 private:
 
@@ -100,6 +104,63 @@ inline void Matrix4::PerspectiveFov(Matrix4& out, float fov, float aspect, float
 				  Vector4(0, 0, (farclip + nearclip) / (nearclip - farclip), -1),
 				  Vector4(0, 0, (2 * farclip * nearclip) / (nearclip - farclip), 0));
 }
+
+inline void Matrix4::LookAt(Matrix4& out, const Vector3& eye, const Vector3& at, const Vector3& up)
+{
+	Vector3 upnorm = up.unit();
+	Vector3 forward = (at - eye).normalize();
+	Vector3 side = forward.cross(upnorm);
+	upnorm = side.cross(forward);
+
+	Matrix4 translate;
+	Translation(translate, -eye);
+
+	out = Matrix4(Vector4(side.x(), upnorm.x(), -forward.x(), 0),
+					Vector4(side.y(), upnorm.y(), -forward.y(), 0),
+					Vector4(side.z(), upnorm.z(), -forward.z(), 0),
+					Vector4(0, 0, 0, 1)) * translate;
+}
+
+inline void Matrix4::Scale(Matrix4& out, float scale)
+{
+	out = Matrix4(Vector4(scale, 0, 0, 0),
+				Vector4(0, scale, 0, 0),
+				Vector4(0, 0, scale, 0),
+				Vector4(0, 0, 0, 1));
+}
+
+inline void Matrix4::Scale(Matrix4& out, const Vector3& scale)
+{
+	out = Matrix4(Vector4(scale.x(), 0, 0, 0),
+				Vector4(0, scale.y(), 0, 0),
+				Vector4(0, 0, scale.z(), 0),
+				Vector4(0, 0, 0, 1));
+}
+
+inline void Matrix4::RotationAxis(Matrix4& out, const Vector3& axis, float angle)
+{
+	float sinTheta = sin(angle);
+	float cosTheta = cos(angle);
+	float oneMinusCosTheta = 1 - cosTheta;
+	float axisXSquared = axis.x() * axis.x();
+	float axisYSquared = axis.y() * axis.y();
+	float axisZSquared = axis.z() * axis.z();
+
+	out = Matrix4(Vector4(axisXSquared + (1-axisXSquared) * cosTheta,
+		axis.x() * axis.y() * oneMinusCosTheta - axis.z() * sinTheta,
+		axis.x() * axis.z() * oneMinusCosTheta + axis.y() * sinTheta,
+		0),
+		Vector4(axis.x() * axis.y() * oneMinusCosTheta + axis.z() * sinTheta,
+		axisYSquared + (1 - axisYSquared) * cosTheta,
+		axis.y() * axis.z() * oneMinusCosTheta - axis.x() * sinTheta,
+		0),
+		Vector4(axis.x() * axis.y() * oneMinusCosTheta - axis.y() * sinTheta,
+		axis.y() * axis.z() * oneMinusCosTheta + axis.x() * sinTheta,
+		axisZSquared + (1 - axisZSquared) * cosTheta,
+		0),
+		Vector4(0, 0, 0, 1));
+}
+
 
 inline Matrix4 operator* (const Matrix4& lhs, const Matrix4& rhs)
 {

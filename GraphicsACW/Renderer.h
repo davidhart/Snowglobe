@@ -2,9 +2,11 @@
 
 #include "GXBase.h"
 #include "Uncopyable.h"
+#include "Matrix4.h"
 
 class glex;
 class VertexBinding;
+class ShaderProgram;
 
 enum Primitive
 {
@@ -27,10 +29,15 @@ public:
 
 	void Draw(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices) const;
 
+	void ProjectionMatrix(const Matrix4& projection);
+	void ViewMatrix(const Matrix4& view);
+	void UpdateViewProjectionUniforms(const ShaderProgram& shader) const;
+
 	glex* GetEx() const;
 
 private:
 
 	glex* _glex;
-
+	Matrix4 _projection;
+	Matrix4 _view;
 };

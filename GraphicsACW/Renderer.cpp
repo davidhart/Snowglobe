@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "VertexBinding.h"
+#include "ShaderProgram.h"
 #include <cassert>
 
 Renderer::Renderer() :
@@ -47,4 +48,20 @@ void Renderer::Draw(VertexBinding& binding, Primitive primitive, unsigned int of
 	}
 
 	binding.Unbind();
+}
+
+void Renderer::ProjectionMatrix(const Matrix4& projection)
+{
+	_projection = projection;
+}
+
+void Renderer::ViewMatrix(const Matrix4& view)
+{
+	_view = view;
+}
+
+void Renderer::UpdateViewProjectionUniforms(const ShaderProgram& shaderprogram) const
+{
+	shaderprogram.SetUniform("view", _view);
+	shaderprogram.SetUniform("projection", _projection);
 }
