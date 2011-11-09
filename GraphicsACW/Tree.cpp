@@ -139,13 +139,13 @@ Tree::Branch::Branch() :
 }
 
 Tree::Branch::Branch(int parent, unsigned int depth, const Matrix4& matrix) :
+	_matrix(matrix),
 	_parent(parent),
-	_depth(depth),
-	_matrix(matrix)
+	_depth(depth)
 {
 }
 
-const Matrix4& Tree::Branch::GetMatrix() const
+Matrix4 Tree::Branch::GetMatrix() const
 {
 	return _matrix;
 }

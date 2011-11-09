@@ -21,7 +21,7 @@ void MyWindow::OnCreate()
 	LSystem test;
 	test.AddRule("L", "B[L>>L>>L>>L]");
 	std::string result;
-	test.EvaluateRules("[L>>L>>L>>L]", result, 5);
+	test.EvaluateRules("[L>>>L>>>L]", result, 6);
 
 	_dome.Create(_renderer);
 	_tree.Create(_renderer, result);
@@ -45,7 +45,7 @@ void MyWindow::OnDisplay()
 	Matrix4::LookAt(view, Vector3(0, 10, 0), Vector3(0, 0, 0), Vector3(1, 0, 0));
 	Matrix4::LookAt(view, Vector3(9, 1, 0), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	Matrix4 rotation;
-	Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), delta);
+	Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), (float)delta);
 	_renderer.ViewMatrix(view * rotation);
 
 	_dome.DrawBack(_renderer);

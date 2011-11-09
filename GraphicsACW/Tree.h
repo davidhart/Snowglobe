@@ -42,14 +42,14 @@ private:
 
 		Branch();
 		Branch(int parent, unsigned int depth, const Matrix4& matrix);
-		const Matrix4& GetMatrix() const;
+		Matrix4 GetMatrix() const;
 		int ParentBranch() const;
 
 	private:
 
+		Matrix4 _matrix;
 		int _parent;
 		unsigned int _depth;
-		Matrix4 _matrix;
 
 	};
 

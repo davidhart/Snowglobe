@@ -37,7 +37,8 @@ public:
 
 private:
 
-	glex* _glex;
-	Matrix4 _projection;
 	Matrix4 _view;
+	Matrix4 _projection;
+	glex* _glex;
+
 };

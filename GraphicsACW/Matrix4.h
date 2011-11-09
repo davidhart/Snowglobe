@@ -36,11 +36,32 @@ private:
 
 };
 
-Matrix4 operator* (const Matrix4& lhs, const Matrix4&rhs);
+Matrix4 operator*(const Matrix4& lhs, const Matrix4& rhs);
 
 inline Matrix4& Matrix4::operator*=(const Matrix4& rhs)
 {
-	return *this = *this * rhs;
+	*this = Matrix4( Vector4(row(0).dot(rhs.column(0)),
+							row(1).dot(rhs.column(0)),
+							row(2).dot(rhs.column(0)),
+							row(3).dot(rhs.column(0))),
+
+					Vector4(row(0).dot(rhs.column(1)),
+							row(1).dot(rhs.column(1)),
+							row(2).dot(rhs.column(1)),
+							row(3).dot(rhs.column(1))),
+
+					Vector4(row(0).dot(rhs.column(2)),
+							row(1).dot(rhs.column(2)),
+							row(2).dot(rhs.column(2)),
+							row(3).dot(rhs.column(2))),
+
+					Vector4(row(0).dot(rhs.column(3)),
+							row(1).dot(rhs.column(3)),
+							row(2).dot(rhs.column(3)),
+							row(3).dot(rhs.column(3)))
+				   );
+
+	return *this;
 }
 
 inline void Matrix4::cell(unsigned int column, unsigned int row, float value)
@@ -161,29 +182,9 @@ inline void Matrix4::RotationAxis(Matrix4& out, const Vector3& axis, float angle
 		Vector4(0, 0, 0, 1));
 }
 
-
 inline Matrix4 operator* (const Matrix4& lhs, const Matrix4& rhs)
 {
-	return Matrix4( Vector4(lhs.row(0).dot(rhs.column(0)),
-							lhs.row(1).dot(rhs.column(0)),
-							lhs.row(2).dot(rhs.column(0)),
-							lhs.row(3).dot(rhs.column(0))),
-
-					Vector4(lhs.row(0).dot(rhs.column(1)),
-							lhs.row(1).dot(rhs.column(1)),
-							lhs.row(2).dot(rhs.column(1)),
-							lhs.row(3).dot(rhs.column(1))),
-
-					Vector4(lhs.row(0).dot(rhs.column(2)),
-							lhs.row(1).dot(rhs.column(2)),
-							lhs.row(2).dot(rhs.column(2)),
-							lhs.row(3).dot(rhs.column(2))),
-
-					Vector4(lhs.row(0).dot(rhs.column(3)),
-							lhs.row(1).dot(rhs.column(3)),
-							lhs.row(2).dot(rhs.column(3)),
-							lhs.row(3).dot(rhs.column(3)))
-				   );
+	return Matrix4(lhs) *= rhs;
 }
 
 inline Vector4 operator* (const Matrix4& lhs, const Vector4& rhs)
