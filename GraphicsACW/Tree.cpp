@@ -80,7 +80,7 @@ void Tree::ParseTree(const std::string& treestring)
 	Matrix4 translate;
 	Matrix4::Translation(translate, Vector3(1, -3, 3));
 	Matrix4 scale;
-	Matrix4::Scale(scale, Vector3(0.5, 1.5, 0.5));
+	Matrix4::Scale(scale, Vector3(1, 2.0f, 1));
 
 	_branches[0] = Branch(-1, 0, translate * scale);
 
@@ -102,13 +102,13 @@ void Tree::ParseTree(const std::string& treestring)
 			Matrix4::Translation(translation, Vector3(0, 1, 0));
 
 			Matrix4 scale;
-			Matrix4::Scale(scale, 0.8f);
+			Matrix4::Scale(scale, Vector3(0.6f, 0.8f, 0.6f));
 
 			Matrix4 pitch;
 			Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), pitchangle.top());
 
 			_branches[currentBranch]
-				= Branch(parentBranch, depth, _branches[parentBranch].GetMatrix() * translation * scale * pitch * yaw);
+				= Branch(parentBranch, depth, _branches[parentBranch].GetMatrix() * translation * pitch * yaw * scale);
 			
 			++currentBranch;
 		}
