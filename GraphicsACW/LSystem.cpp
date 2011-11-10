@@ -1,6 +1,7 @@
 #include "LSystem.h"
 #include <cassert>
 #include <exception>
+#include <cmath>
 
 LSystem::LSystem()
 {
@@ -122,13 +123,26 @@ void LSystem::AppendSuccessor(const SuccessorList& successors, std::string& resu
 		(*successors.begin())->AppendSelf(result);
 		return;
 	}
-
-	// if we have more than one successor select a random one 
-
-	assert(false); // not implemented yet
+	
+	float totalWeighting = 0;
 	for (SuccessorList::const_iterator i = successors.begin(); i != successors.end(); ++i)
 	{
+		totalWeighting += (*i)->ProbabilityWeight();
+	}
 
+	float randomNumber = totalWeighting * (float)rand() / RAND_MAX;
+	
+	float currentProbability = 0;
+
+	for (SuccessorList::const_iterator i = successors.begin(); i != successors.end(); ++i)
+	{
+		currentProbability += (*i)->ProbabilityWeight();
+
+		if (randomNumber <= currentProbability)
+		{
+			(*i)->AppendSelf(result);
+			return;
+		}
 	}
 }
 

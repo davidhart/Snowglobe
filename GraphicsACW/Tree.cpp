@@ -1,6 +1,7 @@
 #include "Tree.h"
 #include "Util.h"
 #include "Renderer.h"
+#include "Maths.h"
 #include <stack>
 
 Tree::Tree()
@@ -88,11 +89,13 @@ void Tree::ParseTree(const std::string& treestring)
 	int currentBranch = 1;
 	int depth = 1;
 
-	Matrix4 yaw;
-	Matrix4::RotationAxis(yaw, Vector3(1, 0, 0), 0.8f);
+	std::stack<float> yawstack;
+	std::stack<float> pitchstack;
 
-	std::stack<float> pitchangle;
-	pitchangle.push(0);
+	float yawAngle = 0;
+	float pitchAngle = 0;
+
+	const float rotationIncrement = PI / 6;
 
 	for (unsigned int i = 0; i < treestring.size(); ++i)
 	{
@@ -102,10 +105,13 @@ void Tree::ParseTree(const std::string& treestring)
 			Matrix4::Translation(translation, Vector3(0, 1, 0));
 
 			Matrix4 scale;
-			Matrix4::Scale(scale, Vector3(0.6f, 0.8f, 0.6f));
+			Matrix4::Scale(scale, 0.8f);
 
 			Matrix4 pitch;
-			Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), pitchangle.top());
+			Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), pitchAngle);
+
+			Matrix4 yaw;
+			Matrix4::RotationAxis(yaw, Vector3(1, 0, 0), yawAngle);
 
 			_branches[currentBranch]
 				= Branch(parentBranch, depth, _branches[parentBranch].GetMatrix() * translation * pitch * yaw * scale);
@@ -114,7 +120,10 @@ void Tree::ParseTree(const std::string& treestring)
 		}
 		else if (treestring[i] == '[')
 		{
-			pitchangle.push(0);
+			pitchstack.push(pitchAngle);
+			yawstack.push(yawAngle);
+			yawAngle = 0;
+			pitchAngle = 0;
 			parentBranch = currentBranch - 1;
 			++depth;
 		}
@@ -122,11 +131,28 @@ void Tree::ParseTree(const std::string& treestring)
 		{
 			--depth;
 			parentBranch = _branches[parentBranch].ParentBranch();
-			pitchangle.pop();
+			
+			pitchAngle = pitchstack.top();
+			pitchstack.pop();
+
+			yawAngle = yawstack.top();
+			yawstack.pop();
 		}
 		else if (treestring[i] == '>')
 		{
-			pitchangle.top() += 0.8f;
+			pitchAngle += rotationIncrement;
+		}
+		else if (treestring[i] == '<')
+		{
+			pitchAngle -= rotationIncrement;
+		}
+		else if (treestring[i] == '^')
+		{
+			yawAngle += rotationIncrement;
+		}
+		else if (treestring[i] == 'v')
+		{
+			yawAngle -= rotationIncrement;
 		}
 	}
 }
