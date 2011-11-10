@@ -283,6 +283,8 @@ void ObjFile::PackModelData(const std::vector<float>& vertices, const std::vecto
 
 			if (!found)
 			{
+				packedIndicesCache.push_back(CachedObjIndex());
+
 				PackVertex(vertices, normals, texCoords, indices[i], packedIndicesCache);
 
 				packedIndicesCache[index].next = packedIndicesCache.size() - 1;

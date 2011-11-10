@@ -40,14 +40,14 @@ void Dome::Create(const Renderer& renderer)
 
 	ArrayElement frontVertLayout[] = 
 	{
-		{ _vertexBuffer, _frontShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, 0, 0 },
+		{ _vertexBuffer, _frontShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset() },
 	};
 
 	_frontBinding.Create(renderer, frontVertLayout, 1, _indexBuffer, AE_UINT);
 
 	ArrayElement backVertLayout[] =
 	{
-		{ _vertexBuffer, _backShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, 0, 0 },
+		{ _vertexBuffer, _backShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset() },
 	};
 
 	_backBinding.Create(renderer, backVertLayout, 1, _indexBuffer, AE_UINT);
