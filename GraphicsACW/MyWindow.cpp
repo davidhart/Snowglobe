@@ -20,9 +20,9 @@ void MyWindow::OnCreate()
 
 	LSystem test;
 	// regular tree
-	test.AddRule("L", "B[^L>>>L>>>L>>>L]");
+	test.AddRule("[]", "[^B[]>>>B[]>>>B[]>>>B[]]");
 	std::string result;
-	test.EvaluateRules("[^L>>>>L>>>>L]", result, 5);
+	test.EvaluateRules("[]", result, 5);
 
 	// tree with mutations
 	/*
