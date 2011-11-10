@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Dome.h"
 #include "Tree.h"
+#include "House.h"
 
 class MyWindow : public gxbase::GLWindowEx
 {
@@ -23,5 +24,7 @@ private:
 	Renderer _renderer;
 	Dome _dome;
 	Tree _tree;
+	House _house;
+
 };
 

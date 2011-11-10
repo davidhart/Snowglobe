@@ -25,6 +25,7 @@ void MyWindow::OnCreate()
 
 	_dome.Create(_renderer);
 	_tree.Create(_renderer, result);
+	_house.Create(_renderer);
 
 	Matrix4 perspective;
 	Matrix4::PerspectiveFov(perspective, 90, (float)Width() / Height(), 0.1f, 100);
@@ -42,14 +43,16 @@ void MyWindow::OnDisplay()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Matrix4 view;
-	Matrix4::LookAt(view, Vector3(0, 10, 0), Vector3(0, 0, 0), Vector3(1, 0, 0));
-	Matrix4::LookAt(view, Vector3(9, 1, 0), Vector3(0, 0, 0), Vector3(0, 1, 0));
+	//Matrix4::LookAt(view, Vector3(0, 10, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
+	Matrix4::LookAt(view, Vector3(9, 4, 0), Vector3(0, 2, 0), Vector3(0, 1, 0));
 	Matrix4 rotation;
+	//Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), 0);
 	Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), (float)delta);
 	_renderer.ViewMatrix(view * rotation);
 
 	_dome.DrawBack(_renderer);
 	_tree.Draw(_renderer);
+	_house.Draw(_renderer);
 	_dome.DrawFront(_renderer);
 
 	SwapBuffers();
@@ -64,6 +67,7 @@ void MyWindow::OnDestroy()
 {
 	_dome.Dispose();
 	_tree.Dispose();
+	_house.Dispose();
 
 	_renderer.Dispose();
 

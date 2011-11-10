@@ -70,6 +70,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Dome.cpp" />
+    <ClCompile Include="House.cpp" />
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix4.cpp" />
@@ -88,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dome.h" />
+    <ClInclude Include="House.h" />
     <ClInclude Include="LSystem.h" />
     <ClInclude Include="Maths.h" />
     <ClInclude Include="Matrix4.h" />
@@ -110,6 +112,8 @@
     <None Include="dome.vsh" />
     <None Include="domeBack.fsh" />
     <None Include="domeFront.fsh" />
+    <None Include="house.fsh" />
+    <None Include="house.vsh" />
     <None Include="tree.fsh" />
     <None Include="tree.vsh" />
   </ItemGroup>

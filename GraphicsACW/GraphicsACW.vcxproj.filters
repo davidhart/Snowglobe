@@ -35,6 +35,7 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Tree.cpp" />
+    <ClCompile Include="House.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dome.h" />
@@ -73,6 +74,7 @@
     <ClInclude Include="VertexBinding.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="House.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -105,6 +107,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="tree.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="house.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="house.vsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

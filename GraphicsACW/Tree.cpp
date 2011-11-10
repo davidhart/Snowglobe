@@ -78,9 +78,9 @@ void Tree::ParseTree(const std::string& treestring)
 	_branches.resize(branchCount);
 
 	Matrix4 translate;
-	Matrix4::Translation(translate, Vector3(1, -3, 3));
+	Matrix4::Translation(translate, Vector3(1, 0, 2.0f));
 	Matrix4 scale;
-	Matrix4::Scale(scale, Vector3(1, 2.0f, 1));
+	Matrix4::Scale(scale, Vector3(0.8f, 1.6f, 0.8f));
 
 	_branches[0] = Branch(-1, 0, translate * scale);
 
