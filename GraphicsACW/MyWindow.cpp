@@ -40,8 +40,8 @@ void MyWindow::OnCreate()
 	//test.AddRule("[]", "[--B[]^^>>>--B[]>>>B[]>>>B[]>>>B[]]");
 
 	// crimbo tree
-	test.AddRule("L", "[--B[]^^>>>--BL>>>>BL>>>>BL]");
-	test.AddRule("L", "[--B[]^^>>>>--BL>>>>BL>>>>BL]");
+	test.AddRule("L", "[---B[]^^>>>--BL>>>>BL>>>>BL]");
+	test.AddRule("L", "[---B[]^^>>>>--BL>>>>BL>>>>BL]");
 
 	test.AddRule("[]", "[--B[]^^>>>>>--BL>>>BL>>>BL>>>BL]");
 	test.AddRule("[]", "[--B[]^^>>>--BL>>>BL>>>BL>>>BL]");
