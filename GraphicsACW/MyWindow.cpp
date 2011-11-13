@@ -20,19 +20,35 @@ void MyWindow::OnCreate()
 
 	LSystem test;
 	// regular tree
-	test.AddRule("[]", "[^B[]>>>B[]>>>B[]>>>B[]]");
+	/*
+	test.AddRule("[]", "[--^B[]>>>B[]>>>B[]>>>B[]]");
 	std::string result;
 	test.EvaluateRules("[]", result, 5);
+	*/
 
 	// tree with mutations
 	/*
-	test.AddRule("[]", "[^B[]>>>B[]>>>vB[]>>>^B[]]");
-	test.AddRule("[]", "[^B[]>>>>>>>B[]]");
-	test.AddRule("[]", "[^B[]>>>>B[]>>>>B[]]");
+	test.AddRule("[]", "[--^B[]>>>B[]>>>vB[]>>>^B[]]");
+	test.AddRule("[]", "[--^B[]>>>>>>>B[]]");
+	test.AddRule("[]", "[--^B[]>>>>B[]>>>>B[]]");
 
 	std::string result;
 	test.EvaluateRules("[]", result, 5);
 	*/
+
+	//test.AddRule("[]", "[--B[]^^>>--B[]>>>B[]>>>B[]>>>B[]]");
+	//test.AddRule("[]", "[--B[]^^>>>--B[]>>>B[]>>>B[]>>>B[]]");
+
+	// crimbo tree
+	test.AddRule("L", "[--B[]^^>>>--BL>>>>BL>>>>BL]");
+	test.AddRule("L", "[--B[]^^>>>>--BL>>>>BL>>>>BL]");
+
+	test.AddRule("[]", "[--B[]^^>>>>>--BL>>>BL>>>BL>>>BL]");
+	test.AddRule("[]", "[--B[]^^>>>--BL>>>BL>>>BL>>>BL]");
+
+	std::string result;
+	test.EvaluateRules("[]", result, 5);
+	
 
 	_dome.Create(_renderer);
 	_tree.Create(_renderer, result);

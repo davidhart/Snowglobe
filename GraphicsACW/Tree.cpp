@@ -91,9 +91,11 @@ void Tree::ParseTree(const std::string& treestring)
 
 	std::stack<float> yawstack;
 	std::stack<float> pitchstack;
+	std::stack<float> scalestack;
 
 	float yawAngle = 0;
 	float pitchAngle = 0;
+	float uniformScale = 1.0f;
 
 	const float rotationIncrement = PI / 6;
 
@@ -105,7 +107,7 @@ void Tree::ParseTree(const std::string& treestring)
 			Matrix4::Translation(translation, Vector3(0, 1, 0));
 
 			Matrix4 scale;
-			Matrix4::Scale(scale, 0.8f);
+			Matrix4::Scale(scale, uniformScale);
 
 			Matrix4 pitch;
 			Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), pitchAngle);
@@ -122,8 +124,12 @@ void Tree::ParseTree(const std::string& treestring)
 		{
 			pitchstack.push(pitchAngle);
 			yawstack.push(yawAngle);
+			scalestack.push(uniformScale);
+
 			yawAngle = 0;
 			pitchAngle = 0;
+			uniformScale = 1.0f;
+
 			parentBranch = currentBranch - 1;
 			++depth;
 		}
@@ -137,6 +143,9 @@ void Tree::ParseTree(const std::string& treestring)
 
 			yawAngle = yawstack.top();
 			yawstack.pop();
+
+			uniformScale = scalestack.top();
+			scalestack.pop();
 		}
 		else if (treestring[i] == '>')
 		{
@@ -153,6 +162,14 @@ void Tree::ParseTree(const std::string& treestring)
 		else if (treestring[i] == 'v')
 		{
 			yawAngle -= rotationIncrement;
+		}
+		else if (treestring[i] == '+')
+		{
+			uniformScale += 0.1f;
+		}
+		else if (treestring[i] == '-')
+		{
+			uniformScale -= 0.1f;
 		}
 	}
 }
