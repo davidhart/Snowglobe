@@ -36,6 +36,9 @@
     </ClCompile>
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="House.cpp" />
+    <ClCompile Include="Base.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Pond.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dome.h" />
@@ -75,6 +78,9 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="House.h" />
+    <ClInclude Include="Base.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Pond.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

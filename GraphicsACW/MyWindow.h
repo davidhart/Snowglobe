@@ -5,6 +5,9 @@
 #include "Dome.h"
 #include "Tree.h"
 #include "House.h"
+#include "Base.h"
+#include "Terrain.h"
+#include "Pond.h"
 
 class MyWindow : public gxbase::GLWindowEx
 {
@@ -25,6 +28,9 @@ private:
 	Dome _dome;
 	Tree _tree;
 	House _house;
+	Base _base;
+	Terrain _terrain;
+	Pond _pond;
 
 };
 

@@ -34,12 +34,6 @@ void House::Create(const Renderer& renderer)
 
 	_shaderProgram.Use();
 
-	Matrix4 houseRotation;
-	Matrix4::RotationAxis(houseRotation, Vector3(0, 1, 0), 0.5f);
-	Matrix4 houseTranslation;
-	Matrix4::Translation(houseTranslation, Vector3(-1.5f, 0, -2.5f));
-	_shaderProgram.SetUniform("model", houseRotation * houseTranslation);
-
 	_vertBinding.Create(renderer, vertexLayout, 3, _houseIndices, AE_UINT);
 }
 
@@ -54,9 +48,26 @@ void House::Dispose()
 	_fragShader.Dispose();
 }
 
-void House::Draw(const Renderer& renderer)
+void House::Draw(const Renderer& renderer, bool flip)
 {
 	_shaderProgram.Use();
+
+	Matrix4 houseRotation;
+	Matrix4::RotationAxis(houseRotation, Vector3(0, 1, 0), -0.4f);
+	Matrix4 houseTranslation;
+	Matrix4::Translation(houseTranslation, Vector3(-1.3f, 0, -3.4f));
+
+	Matrix4 flipmat;
+	if (flip)
+	{
+		Matrix4::Scale(flipmat, Vector3(1,-1,1));
+	}
+	else
+	{
+		Matrix4::Scale(flipmat, Vector3(1,1,1));
+	}
+	
+	_shaderProgram.SetUniform("model", flipmat * houseTranslation * houseRotation);
 	renderer.UpdateViewProjectionUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _houseModel.GetNumIndices());
 }

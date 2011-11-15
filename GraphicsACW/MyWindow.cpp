@@ -3,6 +3,7 @@
 #include "ObjFile.h"
 #include "Matrix4.h"
 #include "LSystem.h"
+#include "Terrain.h"
 #include <string>
 
 using namespace gxbase;
@@ -27,19 +28,15 @@ void MyWindow::OnCreate()
 	*/
 
 	// tree with mutations
-	/*
 	test.AddRule("[]", "[--^B[]>>>B[]>>>vB[]>>>^B[]]");
 	test.AddRule("[]", "[--^B[]>>>>>>>B[]]");
 	test.AddRule("[]", "[--^B[]>>>>B[]>>>>B[]]");
 
 	std::string result;
 	test.EvaluateRules("[]", result, 5);
-	*/
-
-	//test.AddRule("[]", "[--B[]^^>>--B[]>>>B[]>>>B[]>>>B[]]");
-	//test.AddRule("[]", "[--B[]^^>>>--B[]>>>B[]>>>B[]>>>B[]]");
 
 	// crimbo tree
+	/*
 	test.AddRule("L", "[---B[]^^>>>--BL>>>>BL>>>>BL]");
 	test.AddRule("L", "[---B[]^^>>>>--BL>>>>BL>>>>BL]");
 
@@ -48,11 +45,14 @@ void MyWindow::OnCreate()
 
 	std::string result;
 	test.EvaluateRules("[]", result, 5);
-	
+	*/
 
 	_dome.Create(_renderer);
 	_tree.Create(_renderer, result);
 	_house.Create(_renderer);
+	_base.Create(_renderer);
+	_terrain.Create(_renderer);
+	_pond.Create(_renderer);
 
 	Matrix4 perspective;
 	Matrix4::PerspectiveFov(perspective, 90, (float)Width() / Height(), 0.1f, 100);
@@ -67,21 +67,53 @@ void MyWindow::OnDisplay()
 	static double time = App::GetTime();
 	double delta = App::GetTime() - time;
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	Matrix4 view;
 	//Matrix4::LookAt(view, Vector3(0, 10, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
-	Matrix4::LookAt(view, Vector3(9, 4, 0), Vector3(0, 2, 0), Vector3(0, 1, 0));
+	Matrix4::LookAt(view, Vector3(9, 3, 0), Vector3(0, 2, 0), Vector3(0, 1, 0));
 	Matrix4 rotation;
 	//Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), 0);
 	Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), (float)delta);
+
 	_renderer.ViewMatrix(view * rotation);
 
-	_dome.DrawBack(_renderer);
 	_tree.Draw(_renderer);
 	_house.Draw(_renderer);
-	_dome.DrawFront(_renderer);
+	_terrain.Draw(_renderer);
+	_base.Draw(_renderer);
+	_dome.DrawBack(_renderer);
 
+	glStencilFunc(GL_ALWAYS, 1, 1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_STENCIL_TEST);
+
+	_pond.Draw(_renderer);
+
+	glDepthMask(GL_TRUE);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilFunc(GL_EQUAL, 1, 1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	glCullFace(GL_FRONT);
+	
+	double plane[] = {0, -1, 0, 0};
+	glClipPlane(GL_CLIP_PLANE0, plane);
+	glEnable(GL_CLIP_PLANE0);
+
+	_tree.Draw(_renderer, true);
+	_house.Draw(_renderer, true);
+	_terrain.Draw(_renderer, true);
+
+	glCullFace(GL_BACK);
+	glDisable(GL_STENCIL_TEST);
+	glDisable(GL_CLIP_PLANE0);
+	glEnable(GL_DEPTH_TEST);
+
+	_dome.DrawFront(_renderer);
+	
 	SwapBuffers();
 }
 
@@ -92,9 +124,12 @@ void MyWindow::OnIdle()
 
 void MyWindow::OnDestroy()
 {
+	_base.Dispose();
 	_dome.Dispose();
 	_tree.Dispose();
 	_house.Dispose();
+	_terrain.Dispose();
+	_pond.Dispose();
 
 	_renderer.Dispose();
 

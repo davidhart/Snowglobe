@@ -69,6 +69,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Base.cpp" />
     <ClCompile Include="Dome.cpp" />
     <ClCompile Include="House.cpp" />
     <ClCompile Include="LSystem.cpp" />
@@ -76,9 +77,11 @@
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="ObjFile.cpp" />
+    <ClCompile Include="Pond.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Uncopyable.cpp" />
     <ClCompile Include="Util.cpp" />
@@ -88,6 +91,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Base.h" />
     <ClInclude Include="Dome.h" />
     <ClInclude Include="House.h" />
     <ClInclude Include="LSystem.h" />
@@ -95,9 +99,11 @@
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="ObjFile.h" />
+    <ClInclude Include="Pond.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Uncopyable.h" />
     <ClInclude Include="Util.h" />

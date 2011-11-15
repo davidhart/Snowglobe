@@ -21,7 +21,7 @@ public:
 	void Create(const Renderer& renderer, const std::string& treestring);
 	void Dispose();
 
-	void Draw(const Renderer& renderer);
+	void Draw(const Renderer& renderer, bool flip = false);
 
 private:
 

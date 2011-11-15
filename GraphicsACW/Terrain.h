@@ -7,12 +7,12 @@
 
 class Renderer;
 
-class House
+class Terrain
 {
 
 public:
 
-	House();
+	Terrain();
 
 	void Create(const Renderer& renderer);
 	void Dispose();
@@ -24,9 +24,9 @@ private:
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
 	ShaderProgram _shaderProgram;
-	VertexBuffer _houseBuffer;
-	VertexBuffer _houseIndices;
+	VertexBuffer _terrainBuffer;
+	VertexBuffer _terrainIndices;
 	VertexBinding _vertBinding;
-	ObjFile _houseModel;
+	ObjFile _terrainModel;
 
 };

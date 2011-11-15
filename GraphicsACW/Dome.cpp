@@ -28,29 +28,31 @@ void Dome::Create(const Renderer& renderer)
 	_frontShader.Create(renderer, _vertShader, _frontFragShader);
 	_backShader.Create(renderer, _vertShader, _backFragShader);
 
-	Matrix4 model;
-	Matrix4::Scale(model, 6);
+	Matrix4 identity;
+	Matrix4::Identity(identity);
 
 	_backShader.Use();
-	_backShader.SetUniform("model", model);
+	_frontShader.SetUniform("model", identity);
 
 	_frontShader.Use();
-	_frontShader.SetUniform("model", model);
+	_frontShader.SetUniform("model", identity);
 
 
 	ArrayElement frontVertLayout[] = 
 	{
 		{ _vertexBuffer, _frontShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset() },
+		{ _vertexBuffer, _frontShader.GetAttributeIndex("in_normal"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetNormalOffset() },
 	};
 
-	_frontBinding.Create(renderer, frontVertLayout, 1, _indexBuffer, AE_UINT);
+	_frontBinding.Create(renderer, frontVertLayout, 2, _indexBuffer, AE_UINT);
 
 	ArrayElement backVertLayout[] =
 	{
 		{ _vertexBuffer, _backShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset() },
+		{ _vertexBuffer, _backShader.GetAttributeIndex("in_normal"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetNormalOffset() },
 	};
 
-	_backBinding.Create(renderer, backVertLayout, 1, _indexBuffer, AE_UINT);
+	_backBinding.Create(renderer, backVertLayout, 2, _indexBuffer, AE_UINT);
 }
 
 void Dome::Dispose()

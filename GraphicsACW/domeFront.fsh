@@ -1,10 +1,9 @@
 #version 130
 
-const float alpha = 1.0;
-const vec4 rim_col = vec4(1, 1, 1, 0.8);
-const float rim_pwr = 1;
+const vec4 rim_col = vec4(1, 1, 1, 1);
+const float rim_pwr = 4.5;
 const float spec_pwr = 200;
-const vec4 spec_col = vec4(1, 1, 1, 0.05);
+const vec4 spec_col = vec4(1, 1, 1, 1);
 const vec3 light_dir = vec3(0.7, -0.3, 0);
 
 in vec3 v_normal;
@@ -23,7 +22,9 @@ void main()
    
    float spec = pow(max(dot(reflVec, lightDir), 0), spec_pwr);
    
-   float rim = pow(1 - max(dot(vec3(0, 0, 1), normal), 0), rim_pwr);
+   float rim = pow(1 - max(dot(vec3(0, 0, 1), normal)-0.4, 0), rim_pwr);
    
-   f_color = vec4 (rim_col.rgb * rim + spec * spec_col.rgb, alpha * (rim_col.a * rim + spec));  
+   float alpha = spec * spec_col.a + rim * rim_col.a;
+
+   f_color = vec4((rim_col.rgb * rim_col.a * rim + spec_col.rgb * spec_col.a * spec) / alpha, alpha);
 }

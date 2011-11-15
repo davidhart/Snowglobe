@@ -7,26 +7,26 @@
 
 class Renderer;
 
-class House
+class Base
 {
 
 public:
 
-	House();
+	Base();
 
 	void Create(const Renderer& renderer);
 	void Dispose();
 
-	void Draw(const Renderer& renderer, bool flip = false);
+	void Draw(const Renderer& renderer);
 
 private:
 
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
 	ShaderProgram _shaderProgram;
-	VertexBuffer _houseBuffer;
-	VertexBuffer _houseIndices;
+	VertexBuffer _baseBuffer;
+	VertexBuffer _baseIndices;
 	VertexBinding _vertBinding;
-	ObjFile _houseModel;
+	ObjFile _baseModel;
 
 };

@@ -53,14 +53,23 @@ void Tree::Dispose()
 	_fragShader.Dispose();
 }
 
-void Tree::Draw(const Renderer& renderer)
+void Tree::Draw(const Renderer& renderer, bool flip)
 {
+	Matrix4 flipMat;
+	Matrix4::Scale(flipMat, Vector3(1, -1, 1));
 	_shaderProgram.Use();
 	renderer.UpdateViewProjectionUniforms(_shaderProgram);
 
 	for (unsigned int i = 0; i < _branches.size(); ++i)
 	{
-		_shaderProgram.SetUniform("model", _branches[i].GetMatrix());
+		if (flip)
+		{
+			_shaderProgram.SetUniform("model", flipMat * _branches[i].GetMatrix());
+		}
+		else
+		{
+			_shaderProgram.SetUniform("model", _branches[i].GetMatrix());
+		}
 		renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _cylinderFile.GetNumIndices());
 	}
 }
@@ -79,7 +88,7 @@ void Tree::ParseTree(const std::string& treestring)
 	_branches.resize(branchCount);
 
 	Matrix4 translate;
-	Matrix4::Translation(translate, Vector3(1, 0, 2.0f));
+	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
 	Matrix4 scale;
 	Matrix4::Scale(scale, Vector3(0.8f, 1.6f, 0.8f));
 
