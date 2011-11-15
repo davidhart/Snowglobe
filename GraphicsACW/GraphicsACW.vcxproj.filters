@@ -39,6 +39,9 @@
     <ClCompile Include="Base.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Pond.cpp" />
+    <ClCompile Include="Texture.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dome.h" />
@@ -81,6 +84,9 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Pond.h" />
+    <ClInclude Include="Texture.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -115,10 +121,10 @@
     <None Include="tree.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="house.fsh">
+    <None Include="textured_unlit.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="house.vsh">
+    <None Include="textured_unlit.vsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

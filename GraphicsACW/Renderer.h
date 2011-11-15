@@ -7,6 +7,7 @@
 class glex;
 class VertexBinding;
 class ShaderProgram;
+class Texture;
 
 enum Primitive
 {

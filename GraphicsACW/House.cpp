@@ -10,11 +10,11 @@ House::House()
 void House::Create(const Renderer& renderer)
 {
 	std::string shadersource;
-	Util::ReadTextFileToString("house.vsh", shadersource);
+	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
 
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("house.fsh", shadersource);
+	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
@@ -32,7 +32,10 @@ void House::Create(const Renderer& renderer)
 		{ _houseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _houseModel.GetVertexOffset() },
 	};
 
+	_houseTexture.Create(renderer, "house_diffuse.jpg");
+
 	_shaderProgram.Use();
+	_shaderProgram.SetUniform("texture", 0);
 
 	_vertBinding.Create(renderer, vertexLayout, 3, _houseIndices, AE_UINT);
 }
@@ -46,6 +49,8 @@ void House::Dispose()
 	_shaderProgram.Dispose();
 	_vertShader.Dispose();
 	_fragShader.Dispose();
+
+	_houseTexture.Dispose();
 }
 
 void House::Draw(const Renderer& renderer, bool flip)
@@ -67,6 +72,8 @@ void House::Draw(const Renderer& renderer, bool flip)
 		Matrix4::Scale(flipmat, Vector3(1,1,1));
 	}
 	
+	_houseTexture.Bind();
+
 	_shaderProgram.SetUniform("model", flipmat * houseTranslation * houseRotation);
 	renderer.UpdateViewProjectionUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _houseModel.GetNumIndices());

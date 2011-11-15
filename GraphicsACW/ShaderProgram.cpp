@@ -73,3 +73,12 @@ void ShaderProgram::SetUniform(const char* uniform, const Matrix4& value) const
 		_glex->glUniformMatrix4fv(location, 1, false, (const float*)&value);
 	}
 }
+
+void ShaderProgram::SetUniform(const char* uniform, int value) const
+{
+	int location = _glex->glGetUniformLocation(_spHandle, uniform);
+	if (location >= 0)
+	{
+		_glex->glUniform1i(location, value);
+	}
+}

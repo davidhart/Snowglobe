@@ -59,6 +59,11 @@ void VertexBinding::SetupAttribPointers(const ArrayElement* elements, unsigned i
 	{
 		const ArrayElement& element = elements[i];
 
+		// If the attrib location is less than zero GetAttribLocation must have returned -1
+		// indicating the attribute doesn't exist so we ignore it
+		if (element.attribLocation < 0)
+			continue;
+
 		_glex->glBindBuffer(GL_ARRAY_BUFFER, element.buffer._vbHandle);
 
 		GLenum type = GL_FLOAT;

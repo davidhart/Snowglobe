@@ -33,7 +33,7 @@ void MyWindow::OnCreate()
 	test.AddRule("[]", "[--^B[]>>>>B[]>>>>B[]]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 5);
+	test.EvaluateRules("[]", result, 4);
 
 	// crimbo tree
 	/*
@@ -55,7 +55,7 @@ void MyWindow::OnCreate()
 	_pond.Create(_renderer);
 
 	Matrix4 perspective;
-	Matrix4::PerspectiveFov(perspective, 90, (float)Width() / Height(), 0.1f, 100);
+	Matrix4::PerspectiveFov(perspective, 75, (float)Width() / Height(), 0.1f, 1000);
 	_renderer.ProjectionMatrix(perspective);
 
 	glEnable(GL_DEPTH_TEST);
@@ -151,7 +151,7 @@ void MyWindow::OnKeyboard(int key, bool down)
 void MyWindow::OnResize(int w, int h)
 {
 	Matrix4 perspective;
-	Matrix4::PerspectiveFov(perspective, 90, (float)Width() / Height(), 0.1f, 100);
+	Matrix4::PerspectiveFov(perspective, 75, (float)Width() / Height(), 0.1f, 100);
 	_renderer.ProjectionMatrix(perspective);
 
 	GLWindowEx::OnResize(w, h);

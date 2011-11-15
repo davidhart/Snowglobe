@@ -10,11 +10,11 @@ Base::Base()
 void Base::Create(const Renderer& renderer)
 {
 	std::string shadersource;
-	Util::ReadTextFileToString("house.vsh", shadersource);
+	Util::ReadTextFileToString("basic.vsh", shadersource);
 
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("house.fsh", shadersource);
+	Util::ReadTextFileToString("basic.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);

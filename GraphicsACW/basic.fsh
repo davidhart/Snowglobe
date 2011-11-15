@@ -1,8 +1,8 @@
 #version 130
 
-in vec3 msVert;
+out vec4 f_color;
 
 void main()
 {
-	gl_FragColor = vec4(pow(abs(normalize(msVert)), vec3(2,2,2)), 1);
+	f_color = vec4(1,1,1,1);
 }

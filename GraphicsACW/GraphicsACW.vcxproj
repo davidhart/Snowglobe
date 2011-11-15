@@ -82,6 +82,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Uncopyable.cpp" />
     <ClCompile Include="Util.cpp" />
@@ -104,6 +105,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Uncopyable.h" />
     <ClInclude Include="Util.h" />
@@ -118,8 +120,8 @@
     <None Include="dome.vsh" />
     <None Include="domeBack.fsh" />
     <None Include="domeFront.fsh" />
-    <None Include="house.fsh" />
-    <None Include="house.vsh" />
+    <None Include="textured_unlit.fsh" />
+    <None Include="textured_unlit.vsh" />
     <None Include="tree.fsh" />
     <None Include="tree.vsh" />
   </ItemGroup>

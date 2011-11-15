@@ -10,11 +10,11 @@ Terrain::Terrain()
 void Terrain::Create(const Renderer& renderer)
 {
 	std::string shadersource;
-	Util::ReadTextFileToString("house.vsh", shadersource);
+	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
 
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("house.fsh", shadersource);
+	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
@@ -32,7 +32,10 @@ void Terrain::Create(const Renderer& renderer)
 		{ _terrainBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset() },
 	};
 
+	_texture.Create(renderer, "grass.jpg");
+
 	_shaderProgram.Use();
+	_shaderProgram.SetUniform("texture", 0);
 
 	_vertBinding.Create(renderer, vertexLayout, 3, _terrainIndices, AE_UINT);
 }
@@ -46,6 +49,8 @@ void Terrain::Dispose()
 	_shaderProgram.Dispose();
 	_vertShader.Dispose();
 	_fragShader.Dispose();
+
+	_texture.Dispose();
 }
 
 void Terrain::Draw(const Renderer& renderer, bool flip)
@@ -63,6 +68,8 @@ void Terrain::Draw(const Renderer& renderer, bool flip)
 	}
 	
 	_shaderProgram.SetUniform("model", modelmat);
+
+	_texture.Bind();
 
 	renderer.UpdateViewProjectionUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _terrainModel.GetNumIndices());

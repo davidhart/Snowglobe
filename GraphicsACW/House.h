@@ -4,6 +4,7 @@
 #include "ObjFile.h"
 #include "VertexBuffer.h"
 #include "VertexBinding.h"
+#include "Texture.h"
 
 class Renderer;
 
@@ -28,5 +29,6 @@ private:
 	VertexBuffer _houseIndices;
 	VertexBinding _vertBinding;
 	ObjFile _houseModel;
+	Texture _houseTexture;
 
 };
