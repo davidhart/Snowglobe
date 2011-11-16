@@ -27,8 +27,8 @@ void Base::Create(const Renderer& renderer)
 	
 	ArrayElement vertexLayout[] =
 	{
-		{ _baseBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _baseModel.GetNormalOffset() },
-		{ _baseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _baseModel.GetVertexOffset() },
+		ArrayElement(_baseBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _baseModel.GetNormalOffset()),
+		ArrayElement(_baseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _baseModel.GetVertexOffset()),
 	};
 
 	_shaderProgram.Use();
@@ -54,6 +54,6 @@ void Base::Dispose()
 void Base::Draw(const Renderer& renderer)
 {
 	_shaderProgram.Use();
-	renderer.UpdateViewProjectionUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _baseModel.GetNumIndices());
 }

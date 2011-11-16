@@ -7,6 +7,23 @@
 #include <cassert>
 #include <vector>
 
+ArrayElement::ArrayElement(const VertexBuffer& buffer, 
+				unsigned int attribLocation, 
+				unsigned int numComponents, 
+				ElementType type,
+				unsigned int stride, 
+				unsigned int offset,
+				unsigned int instanceStep) :
+	buffer(buffer),
+	attribLocation(attribLocation),
+	numComponents(numComponents),
+	type(type),
+	stride(stride),
+	offset(offset),
+	instanceStep(instanceStep)
+{
+}
+
 VertexBinding::VertexBinding() :
 	_glex(NULL),
 	_vaoHandle(0),
@@ -74,8 +91,10 @@ void VertexBinding::SetupAttribPointers(const ArrayElement* elements, unsigned i
 			type = GL_INT;
 
 		_glex->glEnableVertexAttribArray(element.attribLocation);
-		_glex->glVertexAttribPointer(element.attribLocation, element.numcomponents, type, GL_FALSE, element.stride,
+		_glex->glVertexAttribPointer(element.attribLocation, element.numComponents, type, GL_FALSE, element.stride,
 				(void*)element.offset);
+
+		_glex->glVertexAttribDivisorARB(element.attribLocation, element.instanceStep);
 	}
 }
 

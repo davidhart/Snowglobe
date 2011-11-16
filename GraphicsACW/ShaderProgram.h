@@ -3,7 +3,9 @@
 #include "Uncopyable.h"
 #include "GXBase.h"
 #include "Shader.h"
+
 class Matrix4;
+class Vector4;
 
 class ShaderProgram : public Uncopyable
 {
@@ -19,6 +21,7 @@ public:
 	int GetAttributeIndex(const char* attribute);
 	void Use();
 	void SetUniform(const char* uniform, const Matrix4& value) const;
+	void SetUniform(const char* uniform, const Vector4& value) const;
 	void SetUniform(const char* uniform, int value) const;
 
 private:

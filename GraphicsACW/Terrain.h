@@ -18,7 +18,8 @@ public:
 	void Create(const Renderer& renderer);
 	void Dispose();
 
-	void Draw(const Renderer& renderer, bool flip = false);
+	void Draw(const Renderer& renderer);
+	void DrawReflection(const Renderer& renderer);
 
 private:
 

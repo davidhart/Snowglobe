@@ -27,9 +27,9 @@ void House::Create(const Renderer& renderer)
 	
 	ArrayElement vertexLayout[] =
 	{
-		{ _houseBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _houseModel.GetTexCoordOffset() },
-		{ _houseBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _houseModel.GetNormalOffset() },
-		{ _houseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _houseModel.GetVertexOffset() },
+		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _houseModel.GetTexCoordOffset()),
+		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _houseModel.GetNormalOffset()),
+		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _houseModel.GetVertexOffset()),
 	};
 
 	_houseTexture.Create(renderer, "house_diffuse.jpg");
@@ -53,7 +53,23 @@ void House::Dispose()
 	_houseTexture.Dispose();
 }
 
-void House::Draw(const Renderer& renderer, bool flip)
+void House::Draw(const Renderer& renderer)
+{
+	_shaderProgram.Use();
+
+	Matrix4 houseRotation;
+	Matrix4::RotationAxis(houseRotation, Vector3(0, 1, 0), -0.4f);
+	Matrix4 houseTranslation;
+	Matrix4::Translation(houseTranslation, Vector3(-1.3f, 0, -3.4f));
+	
+	_houseTexture.Bind();
+
+	_shaderProgram.SetUniform("model", houseTranslation * houseRotation);
+	renderer.UpdateStandardUniforms(_shaderProgram);
+	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _houseModel.GetNumIndices());
+}
+
+void House::DrawReflection(const Renderer& renderer)
 {
 	_shaderProgram.Use();
 
@@ -62,19 +78,11 @@ void House::Draw(const Renderer& renderer, bool flip)
 	Matrix4 houseTranslation;
 	Matrix4::Translation(houseTranslation, Vector3(-1.3f, 0, -3.4f));
 
-	Matrix4 flipmat;
-	if (flip)
-	{
-		Matrix4::Scale(flipmat, Vector3(1,-1,1));
-	}
-	else
-	{
-		Matrix4::Scale(flipmat, Vector3(1,1,1));
-	}
-	
-	_houseTexture.Bind();
+	Matrix4 mirror;
+	Matrix4::Scale(mirror, Vector3(1,-1,1));
 
-	_shaderProgram.SetUniform("model", flipmat * houseTranslation * houseRotation);
-	renderer.UpdateViewProjectionUniforms(_shaderProgram);
+	_houseTexture.Bind();
+	_shaderProgram.SetUniform("model", mirror * houseTranslation * houseRotation);
+	renderer.UpdateStandardUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _houseModel.GetNumIndices());
 }

@@ -50,6 +50,15 @@ void Renderer::Draw(VertexBinding& binding, Primitive primitive, unsigned int of
 	binding.Unbind();
 }
 
+void Renderer::DrawInstances(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices, unsigned int instances) const
+{
+	binding.Bind();
+
+	_glex->glDrawElementsInstanced(primitive, indices, binding._indicesType, (void*)offset, instances);
+
+	binding.Unbind();
+}
+
 void Renderer::ProjectionMatrix(const Matrix4& projection)
 {
 	_projection = projection;
@@ -60,8 +69,16 @@ void Renderer::ViewMatrix(const Matrix4& view)
 	_view = view;
 }
 
-void Renderer::UpdateViewProjectionUniforms(const ShaderProgram& shaderprogram) const
+void Renderer::ClipPlane(const Vector4& clipPlane)
+{
+	_clipPlane = clipPlane;
+}
+
+void Renderer::UpdateStandardUniforms(const ShaderProgram& shaderprogram) const
 {
 	shaderprogram.SetUniform("view", _view);
+	
+	// TODO: evaluate these on change only as they are unlikely to change frequently
 	shaderprogram.SetUniform("projection", _projection);
+	shaderprogram.SetUniform("clipPlane", _clipPlane);
 }

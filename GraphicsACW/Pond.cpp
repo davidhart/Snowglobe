@@ -27,9 +27,9 @@ void Pond::Create(const Renderer& renderer)
 	
 	ArrayElement vertexLayout[] =
 	{
-		{ _pondBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _pondModel.GetTexCoordOffset() },
-		{ _pondBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _pondModel.GetNormalOffset() },
-		{ _pondBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _pondModel.GetVertexOffset() },
+		ArrayElement(_pondBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _pondModel.GetTexCoordOffset()),
+		ArrayElement(_pondBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _pondModel.GetNormalOffset()),
+		ArrayElement(_pondBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _pondModel.GetVertexOffset()),
 	};
 
 	_shaderProgram.Use();
@@ -55,6 +55,6 @@ void Pond::Dispose()
 void Pond::Draw(const Renderer& renderer)
 {
 	_shaderProgram.Use();
-	renderer.UpdateViewProjectionUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _pondModel.GetNumIndices());
 }

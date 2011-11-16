@@ -22,10 +22,19 @@ struct ArrayElement
 {
 	const VertexBuffer& buffer;
 	unsigned int attribLocation;
-	unsigned int numcomponents;
+	unsigned int numComponents;
 	ElementType type;
 	unsigned int stride;
 	unsigned int offset;
+	unsigned int instanceStep;
+
+	ArrayElement(const VertexBuffer& buffer, 
+				unsigned int attribLocation, 
+				unsigned int numComponents, 
+				ElementType type,
+				unsigned int stride, 
+				unsigned int offset,
+				unsigned int instanceStep = 0);
 };
 
 class VertexBinding : public Uncopyable

@@ -29,10 +29,13 @@ public:
 	void Dispose();
 
 	void Draw(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices) const;
+	void DrawInstances(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices, unsigned int instances) const;
 
 	void ProjectionMatrix(const Matrix4& projection);
 	void ViewMatrix(const Matrix4& view);
-	void UpdateViewProjectionUniforms(const ShaderProgram& shader) const;
+	void ClipPlane(const Vector4& plane);
+
+	void UpdateStandardUniforms(const ShaderProgram& shader) const;
 
 	glex* GetEx() const;
 
@@ -40,6 +43,7 @@ private:
 
 	Matrix4 _view;
 	Matrix4 _projection;
+	Vector4 _clipPlane;
 	glex* _glex;
 
 };

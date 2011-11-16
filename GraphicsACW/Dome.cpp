@@ -40,16 +40,16 @@ void Dome::Create(const Renderer& renderer)
 
 	ArrayElement frontVertLayout[] = 
 	{
-		{ _vertexBuffer, _frontShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset() },
-		{ _vertexBuffer, _frontShader.GetAttributeIndex("in_normal"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetNormalOffset() },
+		ArrayElement(_vertexBuffer, _frontShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset()),
+		ArrayElement(_vertexBuffer, _frontShader.GetAttributeIndex("in_normal"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetNormalOffset()),
 	};
 
 	_frontBinding.Create(renderer, frontVertLayout, 2, _indexBuffer, AE_UINT);
 
 	ArrayElement backVertLayout[] =
 	{
-		{ _vertexBuffer, _backShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset() },
-		{ _vertexBuffer, _backShader.GetAttributeIndex("in_normal"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetNormalOffset() },
+		ArrayElement(_vertexBuffer, _backShader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset()),
+		ArrayElement(_vertexBuffer, _backShader.GetAttributeIndex("in_normal"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetNormalOffset()),
 	};
 
 	_backBinding.Create(renderer, backVertLayout, 2, _indexBuffer, AE_UINT);
@@ -77,7 +77,7 @@ void Dome::DrawBack(const Renderer& renderer)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	_backShader.Use();
-	renderer.UpdateViewProjectionUniforms(_backShader);
+	renderer.UpdateStandardUniforms(_backShader);
 	glCullFace(GL_FRONT);
 	renderer.Draw(_backBinding, PT_TRIANGLES, 0, _domeModel.GetNumIndices());
 
@@ -92,7 +92,7 @@ void Dome::DrawFront(const Renderer& renderer)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	_frontShader.Use();
-	renderer.UpdateViewProjectionUniforms(_frontShader);
+	renderer.UpdateStandardUniforms(_frontShader);
 	renderer.Draw(_frontBinding, PT_TRIANGLES, 0, _domeModel.GetNumIndices());
 
 	glDisable(GL_BLEND);

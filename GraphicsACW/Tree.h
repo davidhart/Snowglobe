@@ -21,17 +21,22 @@ public:
 	void Create(const Renderer& renderer, const std::string& treestring);
 	void Dispose();
 
-	void Draw(const Renderer& renderer, bool flip = false);
+	void Draw(const Renderer& renderer);
+	void DrawReflection(const Renderer& renderer);
 
 private:
 
 	void ParseTree(const std::string& treestring);
+	void CreateBranchInstanceBuffer(const Renderer& renderer);
 
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
 	ShaderProgram _shaderProgram;
 	VertexBuffer _cylinderBuffer;
 	VertexBuffer _cylinderIndices;
+
+	VertexBuffer _branchInstanceBuffer;
+
 	VertexBinding _vertBinding;
 	ObjFile _cylinderFile;
 

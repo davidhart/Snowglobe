@@ -27,9 +27,9 @@ void Terrain::Create(const Renderer& renderer)
 	
 	ArrayElement vertexLayout[] =
 	{
-		{ _terrainBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _terrainModel.GetTexCoordOffset() },
-		{ _terrainBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _terrainModel.GetNormalOffset() },
-		{ _terrainBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset() },
+		ArrayElement(_terrainBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _terrainModel.GetTexCoordOffset()),
+		ArrayElement(_terrainBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _terrainModel.GetNormalOffset()),
+		ArrayElement(_terrainBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset()),
 	};
 
 	_texture.Create(renderer, "grass.jpg");
@@ -53,24 +53,32 @@ void Terrain::Dispose()
 	_texture.Dispose();
 }
 
-void Terrain::Draw(const Renderer& renderer, bool flip)
+void Terrain::Draw(const Renderer& renderer)
 {
 	_shaderProgram.Use();
 
-	Matrix4 modelmat;
-	if (flip)
-	{
-		Matrix4::Scale(modelmat, Vector3(1,-1,1));
-	}
-	else
-	{
-		Matrix4::Scale(modelmat, Vector3(1,1,1));
-	}
+	Matrix4 identity;
+	Matrix4::Identity(identity);
 	
-	_shaderProgram.SetUniform("model", modelmat);
+	_shaderProgram.SetUniform("model", identity);
 
 	_texture.Bind();
 
-	renderer.UpdateViewProjectionUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram);
+	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _terrainModel.GetNumIndices());
+}
+
+void Terrain::DrawReflection(const Renderer& renderer)
+{
+	_shaderProgram.Use();
+
+	Matrix4 mirror;
+	Matrix4::Scale(mirror, Vector3(1,-1,1));
+	
+	_shaderProgram.SetUniform("model", mirror);
+
+	_texture.Bind();
+
+	renderer.UpdateStandardUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _terrainModel.GetNumIndices());
 }

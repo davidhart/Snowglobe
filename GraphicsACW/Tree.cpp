@@ -29,16 +29,22 @@ void Tree::Create(const Renderer& renderer, const std::string& treestring)
 
 	unsigned int stride = _cylinderFile.GetVertexStride();
 
+	ParseTree(treestring);
+
+	CreateBranchInstanceBuffer(renderer);
+
 	ArrayElement vertexLayout[] =
 	{
-		{ _cylinderBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _cylinderFile.GetTexCoordOffset() },
-		{ _cylinderBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _cylinderFile.GetNormalOffset() },
-		{ _cylinderBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _cylinderFile.GetVertexOffset() },
+		ArrayElement(_cylinderBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _cylinderFile.GetTexCoordOffset(), 0),
+		ArrayElement(_cylinderBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _cylinderFile.GetNormalOffset(), 0),
+		ArrayElement(_cylinderBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _cylinderFile.GetVertexOffset(), 0),
+	
+		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow0"), 4, AE_FLOAT, 12 * sizeof(float), 0, 1),
+		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow1"), 4, AE_FLOAT, 12 * sizeof(float), 4 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow2"), 4, AE_FLOAT, 12 * sizeof(float), 8 * sizeof(float), 1),
 	};
 
-	_vertBinding.Create(renderer, vertexLayout, 3, _cylinderIndices, AE_UINT);
-
-	ParseTree(treestring);
+	_vertBinding.Create(renderer, vertexLayout, 6, _cylinderIndices, AE_UINT);
 
 }
 
@@ -47,31 +53,44 @@ void Tree::Dispose()
 	_vertBinding.Dispose();
 	_cylinderBuffer.Dispose();
 	_cylinderIndices.Dispose();
+	_branchInstanceBuffer.Dispose();
 
 	_shaderProgram.Dispose();
 	_vertShader.Dispose();
 	_fragShader.Dispose();
 }
 
-void Tree::Draw(const Renderer& renderer, bool flip)
+void Tree::Draw(const Renderer& renderer)
 {
-	Matrix4 flipMat;
-	Matrix4::Scale(flipMat, Vector3(1, -1, 1));
 	_shaderProgram.Use();
-	renderer.UpdateViewProjectionUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram);
 
-	for (unsigned int i = 0; i < _branches.size(); ++i)
-	{
-		if (flip)
-		{
-			_shaderProgram.SetUniform("model", flipMat * _branches[i].GetMatrix());
-		}
-		else
-		{
-			_shaderProgram.SetUniform("model", _branches[i].GetMatrix());
-		}
-		renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _cylinderFile.GetNumIndices());
-	}
+	Matrix4 translate;
+	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
+	Matrix4 scale;
+	Matrix4::Scale(scale, Vector3(0.8f, 1.6f, 0.8f));
+
+	_shaderProgram.SetUniform("model", translate * scale);
+
+	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _cylinderFile.GetNumIndices(), _branches.size());
+}
+
+void Tree::DrawReflection(const Renderer& renderer)
+{
+	Matrix4 mirror;
+	Matrix4::Scale(mirror, Vector3(1, -1, 1));
+
+	_shaderProgram.Use();
+	renderer.UpdateStandardUniforms(_shaderProgram);
+
+	Matrix4 translate;
+	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
+	Matrix4 scale;
+	Matrix4::Scale(scale, Vector3(0.8f, -1.6f, 0.8f));
+
+	_shaderProgram.SetUniform("model", translate * scale);
+
+	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _cylinderFile.GetNumIndices(), _branches.size());
 }
 
 void Tree::ParseTree(const std::string& treestring)
@@ -87,12 +106,10 @@ void Tree::ParseTree(const std::string& treestring)
 
 	_branches.resize(branchCount);
 
-	Matrix4 translate;
-	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
-	Matrix4 scale;
-	Matrix4::Scale(scale, Vector3(0.8f, 1.6f, 0.8f));
+	Matrix4 identity;
+	Matrix4::Identity(identity);
 
-	_branches[0] = Branch(-1, 0, translate * scale);
+	_branches[0] = Branch(-1, 0, identity);
 
 	int parentBranch = 0;
 	int currentBranch = 1;
@@ -181,6 +198,26 @@ void Tree::ParseTree(const std::string& treestring)
 			uniformScale -= 0.1f;
 		}
 	}
+}
+
+void Tree::CreateBranchInstanceBuffer(const Renderer& renderer)
+{
+	std::vector<float> packed3x4Matrices(_branches.size() * 12);
+
+	for (unsigned int i = 0; i < _branches.size(); ++i)
+	{
+		const Matrix4& t = _branches[i].GetMatrix();
+
+		for (unsigned int row = 0; row < 3; row++)
+		{
+			for (unsigned int col = 0; col < 4; col++)
+			{
+				packed3x4Matrices[i*12 + row * 4 + col] = t.cell(col, row);
+			}
+		}
+	}
+
+	_branchInstanceBuffer.Create(renderer, &packed3x4Matrices[0], sizeof(float) * packed3x4Matrices.size());
 }
 
 Tree::Branch::Branch() :

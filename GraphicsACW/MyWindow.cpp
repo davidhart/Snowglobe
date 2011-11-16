@@ -17,6 +17,8 @@ void MyWindow::OnCreate()
 {
 	GLWindowEx::OnCreate();
 
+	glEnable(GL_MULTISAMPLE_ARB);
+
 	_renderer.Create(this);
 
 	LSystem test;
@@ -33,7 +35,7 @@ void MyWindow::OnCreate()
 	test.AddRule("[]", "[--^B[]>>>>B[]>>>>B[]]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 4);
+	test.EvaluateRules("[]", result, 6);
 
 	// crimbo tree
 	/*
@@ -78,11 +80,9 @@ void MyWindow::OnDisplay()
 
 	_renderer.ViewMatrix(view * rotation);
 
-	//_tree.Draw(_renderer);
-	//_house.Draw(_renderer);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	_tree.Draw(_renderer);
+	_house.Draw(_renderer);
 	_terrain.Draw(_renderer);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
 	_base.Draw(_renderer);
 	_dome.DrawBack(_renderer);
 
@@ -90,29 +90,25 @@ void MyWindow::OnDisplay()
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	glDepthMask(GL_FALSE);
 	glEnable(GL_STENCIL_TEST);
+
 	_pond.Draw(_renderer);
 
 	glDepthMask(GL_TRUE);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	//
 	glStencilFunc(GL_EQUAL, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 	glCullFace(GL_FRONT);
-	
-	double plane[] = {0, -1, 0, 0};
-	glClipPlane(GL_CLIP_PLANE0, plane);
-	glEnable(GL_CLIP_DISTANCE1);
-	glEnable(GL_CLIP_PLANE0);
 
-	_terrain.Draw(_renderer, true);
-	_tree.Draw(_renderer, true);
-	_house.Draw(_renderer, true);
+	_renderer.ClipPlane(Vector4(0, -1, 0, 0));
 
+	_terrain.DrawReflection(_renderer);
+	_tree.DrawReflection(_renderer);
+	_house.DrawReflection(_renderer);
+
+	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
 
 	glCullFace(GL_BACK);
 	glDisable(GL_STENCIL_TEST);
-	glDisable(GL_CLIP_DISTANCE1);
-	glDisable(GL_CLIP_PLANE0);
 	glEnable(GL_DEPTH_TEST);
 
 	_dome.DrawFront(_renderer);
