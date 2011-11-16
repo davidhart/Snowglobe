@@ -10,11 +10,11 @@ Pond::Pond()
 void Pond::Create(const Renderer& renderer)
 {
 	std::string shadersource;
-	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
+	Util::ReadTextFileToString("basic.vsh", shadersource);
 
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
+	Util::ReadTextFileToString("basic.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);

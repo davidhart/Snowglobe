@@ -71,44 +71,47 @@ void MyWindow::OnDisplay()
 
 	Matrix4 view;
 	//Matrix4::LookAt(view, Vector3(0, 10, 0), Vector3(0, 0, 0), Vector3(0, 0, 1));
-	Matrix4::LookAt(view, Vector3(9, 3, 0), Vector3(0, 2, 0), Vector3(0, 1, 0));
+	Matrix4::LookAt(view, Vector3(9, 2, 0), Vector3(0, 2, 0), Vector3(0, 1, 0));
 	Matrix4 rotation;
 	//Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), 0);
 	Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), (float)delta);
 
 	_renderer.ViewMatrix(view * rotation);
 
-	_tree.Draw(_renderer);
-	_house.Draw(_renderer);
+	//_tree.Draw(_renderer);
+	//_house.Draw(_renderer);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	_terrain.Draw(_renderer);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); 
 	_base.Draw(_renderer);
 	_dome.DrawBack(_renderer);
 
 	glStencilFunc(GL_ALWAYS, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_FALSE);
 	glEnable(GL_STENCIL_TEST);
-
 	_pond.Draw(_renderer);
 
 	glDepthMask(GL_TRUE);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	//
 	glStencilFunc(GL_EQUAL, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 	glCullFace(GL_FRONT);
 	
 	double plane[] = {0, -1, 0, 0};
 	glClipPlane(GL_CLIP_PLANE0, plane);
+	glEnable(GL_CLIP_DISTANCE1);
 	glEnable(GL_CLIP_PLANE0);
 
+	_terrain.Draw(_renderer, true);
 	_tree.Draw(_renderer, true);
 	_house.Draw(_renderer, true);
-	_terrain.Draw(_renderer, true);
+
 
 	glCullFace(GL_BACK);
 	glDisable(GL_STENCIL_TEST);
+	glDisable(GL_CLIP_DISTANCE1);
 	glDisable(GL_CLIP_PLANE0);
 	glEnable(GL_DEPTH_TEST);
 

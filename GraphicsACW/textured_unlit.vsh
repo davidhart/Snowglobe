@@ -13,6 +13,11 @@ out vec2 v_tex;
 
 void main()
 {
+	// If we were emulating the FFP this should be the view space vertex
+	// however we are defining the clip plane in world space
+	//gl_ClipVertex = model * vec4(in_vertex, 1.0);
+	gl_ClipDistance[1] = (view * model * vec4(in_vertex, 1)).x;
+
 	mat4 modelview = view * model;
 	gl_Position = (projection * view * model) * vec4(in_vertex,1.0);
 
