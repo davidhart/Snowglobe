@@ -35,7 +35,7 @@ void MyWindow::OnCreate()
 	test.AddRule("[]", "[--^B[]>>>>B[]>>>>B[]]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 6);
+	test.EvaluateRules("[]", result, 7);
 
 	// crimbo tree
 	/*
