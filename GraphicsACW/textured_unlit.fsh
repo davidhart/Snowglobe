@@ -1,6 +1,6 @@
 #version 130
 
-uniform sampler2D texture; 
+uniform sampler2D diffuseMap; 
 
 in vec3 v_normal;
 in vec2 v_tex;
@@ -13,5 +13,5 @@ void main()
 	if (v_clipDistance < 0) // We are emulating gl_ClipDistance[] behaviour as it seems to be
 		discard;			// poorly supported
 
-	f_color = vec4(texture(texture, vec2(1, -1) * v_tex));
+	f_color = vec4(texture(diffuseMap, vec2(1, -1) * v_tex));
 }

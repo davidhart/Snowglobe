@@ -35,7 +35,7 @@ void House::Create(const Renderer& renderer)
 	_houseTexture.Create(renderer, "house_diffuse.jpg");
 
 	_shaderProgram.Use();
-	_shaderProgram.SetUniform("texture", 0);
+	_shaderProgram.SetUniform("diffuseMap", 0);
 
 	_vertBinding.Create(renderer, vertexLayout, 3, _houseIndices, AE_UINT);
 }
