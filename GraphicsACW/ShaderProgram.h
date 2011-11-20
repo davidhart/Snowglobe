@@ -6,6 +6,7 @@
 
 class Matrix4;
 class Vector4;
+class Vector3;
 
 class ShaderProgram : public Uncopyable
 {
@@ -22,6 +23,8 @@ public:
 	void Use();
 	void SetUniform(const char* uniform, const Matrix4& value) const;
 	void SetUniform(const char* uniform, const Vector4& value) const;
+	void SetUniform(const char* uniform, const Vector3& value) const;
+	void SetUniform(const char* uniform, float value) const;
 	void SetUniform(const char* uniform, int value) const;
 
 private:

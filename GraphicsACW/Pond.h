@@ -4,6 +4,7 @@
 #include "ObjFile.h"
 #include "VertexBuffer.h"
 #include "VertexBinding.h"
+#include "Texture.h"
 
 class Renderer;
 
@@ -24,6 +25,7 @@ private:
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
 	ShaderProgram _shaderProgram;
+	Texture _texture;
 	VertexBuffer _pondBuffer;
 	VertexBuffer _pondIndices;
 	VertexBinding _vertBinding;

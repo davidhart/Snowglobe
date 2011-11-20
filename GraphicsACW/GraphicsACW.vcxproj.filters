@@ -42,6 +42,7 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="SmokeParticles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dome.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="Texture.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="SmokeParticles.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -125,6 +127,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="textured_unlit.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="particle_smoke.vsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

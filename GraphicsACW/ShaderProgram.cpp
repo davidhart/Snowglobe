@@ -1,6 +1,5 @@
 #include "ShaderProgram.h"
 #include "Renderer.h"
-#include "Matrix4.h"
 #include <string>
 #include <iostream>
 
@@ -83,6 +82,24 @@ void ShaderProgram::SetUniform(const char* uniform, const Vector4& value) const
 	}
 }
 
+void ShaderProgram::SetUniform(const char* uniform, const Vector3& value) const
+{
+	int location = _glex->glGetUniformLocation(_spHandle, uniform);
+	if (location >= 0)
+	{
+		_glex->glUniform3fv(location, 1, (const float*)&value);
+	}
+}
+
+void ShaderProgram::SetUniform(const char* uniform, float value) const
+{
+	int location = _glex->glGetUniformLocation(_spHandle, uniform);
+	if (location >= 0)
+	{
+		_glex->glUniform1f(location, value);
+	}
+}
+
 void ShaderProgram::SetUniform(const char* uniform, int value) const
 {
 	int location = _glex->glGetUniformLocation(_spHandle, uniform);
@@ -91,3 +108,4 @@ void ShaderProgram::SetUniform(const char* uniform, int value) const
 		_glex->glUniform1i(location, value);
 	}
 }
+

@@ -9,12 +9,14 @@ Pond::Pond()
 
 void Pond::Create(const Renderer& renderer)
 {
+	_texture.Create(renderer, "pond_diffuse.tga");
+
 	std::string shadersource;
-	Util::ReadTextFileToString("basic.vsh", shadersource);
+	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
 
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("basic.fsh", shadersource);
+	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
@@ -37,7 +39,7 @@ void Pond::Create(const Renderer& renderer)
 	Matrix4 identity;
 	Matrix4::Identity(identity);
 	_shaderProgram.SetUniform("model", identity);
-
+	_shaderProgram.SetUniform("diffuseMap", 0);
 	_vertBinding.Create(renderer, vertexLayout, 3, _pondIndices, AE_UINT);
 }
 
@@ -50,11 +52,19 @@ void Pond::Dispose()
 	_shaderProgram.Dispose();
 	_vertShader.Dispose();
 	_fragShader.Dispose();
+
+	_texture.Dispose();
 }
 
 void Pond::Draw(const Renderer& renderer)
 {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	_texture.Bind();
 	_shaderProgram.Use();
 	renderer.UpdateStandardUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _pondModel.GetNumIndices());
+
+	glDisable(GL_BLEND);
 }

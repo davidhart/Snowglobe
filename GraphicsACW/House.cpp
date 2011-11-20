@@ -9,6 +9,8 @@ House::House()
 
 void House::Create(const Renderer& renderer)
 {
+	_houseTexture.Create(renderer, "house_diffuse.jpg");
+
 	std::string shadersource;
 	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
 
@@ -31,8 +33,6 @@ void House::Create(const Renderer& renderer)
 		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _houseModel.GetNormalOffset()),
 		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _houseModel.GetVertexOffset()),
 	};
-
-	_houseTexture.Create(renderer, "house_diffuse.jpg");
 
 	_shaderProgram.Use();
 	_shaderProgram.SetUniform("diffuseMap", 0);

@@ -55,6 +55,7 @@ void MyWindow::OnCreate()
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
 	_pond.Create(_renderer);
+	_smoke.Create(_renderer, 200);
 
 	Matrix4 perspective;
 	Matrix4::PerspectiveFov(perspective, 75, (float)Width() / Height(), 0.1f, 1000);
@@ -66,8 +67,13 @@ void MyWindow::OnCreate()
 
 void MyWindow::OnDisplay()
 {
-	static double time = App::GetTime();
-	double delta = App::GetTime() - time;
+	static float startTime = (float)App::GetTime();
+	static float prevTime = (float)App::GetTime();
+	float time = (float)App::GetTime();
+	float elapsed = time - startTime;
+	float delta = time - prevTime;
+
+	_smoke.Update(delta);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -76,7 +82,7 @@ void MyWindow::OnDisplay()
 	Matrix4::LookAt(view, Vector3(9, 2, 0), Vector3(0, 2, 0), Vector3(0, 1, 0));
 	Matrix4 rotation;
 	//Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), 0);
-	Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), (float)delta);
+	Matrix4::RotationAxis(rotation, Vector3(0, 1, 0), elapsed);
 
 	_renderer.ViewMatrix(view * rotation);
 
@@ -86,12 +92,16 @@ void MyWindow::OnDisplay()
 	_base.Draw(_renderer);
 	_dome.DrawBack(_renderer);
 
+	_smoke.Draw(_renderer);
+
 	glStencilFunc(GL_ALWAYS, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	glDepthMask(GL_FALSE);
 	glEnable(GL_STENCIL_TEST);
 
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
 	_pond.Draw(_renderer);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
 	glDepthMask(GL_TRUE);
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -104,16 +114,19 @@ void MyWindow::OnDisplay()
 	_terrain.DrawReflection(_renderer);
 	_tree.DrawReflection(_renderer);
 	_house.DrawReflection(_renderer);
-
-	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
+	_smoke.DrawReflected(_renderer);
 
 	glCullFace(GL_BACK);
+	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
+
+	_pond.Draw(_renderer);
 	glDisable(GL_STENCIL_TEST);
-	glEnable(GL_DEPTH_TEST);
 
 	_dome.DrawFront(_renderer);
 	
 	SwapBuffers();
+
+	prevTime = time;
 }
 
 void MyWindow::OnIdle()
@@ -129,6 +142,7 @@ void MyWindow::OnDestroy()
 	_house.Dispose();
 	_terrain.Dispose();
 	_pond.Dispose();
+	_smoke.Dispose();
 
 	_renderer.Dispose();
 
