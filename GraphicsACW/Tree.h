@@ -33,6 +33,7 @@ private:
 
 	void ParseTree(const std::string& treestring);
 	void CreateBranchInstanceBuffer(const Renderer& renderer);
+	void ConstructModelMatrix(Matrix4& out);
 
 	VertexShader _vertShader;
 	FragmentShader _fragShader;

@@ -5,7 +5,8 @@
 #include <stack>
 
 Tree::Tree() : 
-	_maxDepth(0)
+	_maxDepth(0),
+	_drawDepth(0)
 {
 
 }
@@ -79,12 +80,10 @@ void Tree::Draw(const Renderer& renderer)
 	_shaderProgram.Use();
 	renderer.UpdateStandardUniforms(_shaderProgram);
 
-	Matrix4 translate;
-	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
-	Matrix4 scale;
-	Matrix4::Scale(scale, Vector3(0.8f, 1.6f, 0.8f));
+	Matrix4 model;
+	ConstructModelMatrix(model);
 
-	_shaderProgram.SetUniform("model", translate * scale);
+	_shaderProgram.SetUniform("model", model);
 	_shaderProgram.SetUniform("drawDepth", _drawDepth);
 
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _cylinderFile.GetNumIndices(), _branches.size());
@@ -92,18 +91,16 @@ void Tree::Draw(const Renderer& renderer)
 
 void Tree::DrawReflection(const Renderer& renderer)
 {
-	Matrix4 mirror;
-	Matrix4::Scale(mirror, Vector3(1, -1, 1));
-
 	_shaderProgram.Use();
 	renderer.UpdateStandardUniforms(_shaderProgram);
 
-	Matrix4 translate;
-	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
-	Matrix4 scale;
-	Matrix4::Scale(scale, Vector3(0.8f, -1.6f, 0.8f));
+	Matrix4 mirror;
+	Matrix4::Scale(mirror, Vector3(1, -1, 1));
 
-	_shaderProgram.SetUniform("model", translate * scale);
+	Matrix4 model;
+	ConstructModelMatrix(model);
+
+	_shaderProgram.SetUniform("model", model * mirror);
 	_shaderProgram.SetUniform("drawDepth", _drawDepth);
 
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _cylinderFile.GetNumIndices(), _branches.size());
@@ -112,6 +109,18 @@ void Tree::DrawReflection(const Renderer& renderer)
 unsigned int Tree::MaxBranchDepth() const
 {
 	return _maxDepth;
+}
+
+void Tree::ConstructModelMatrix(Matrix4& out)
+{
+	float growfraction = 0.8f * _drawDepth / (float)_maxDepth + 0.2f;
+
+	Matrix4 translate;
+	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
+	Matrix4 scale;
+	Matrix4::Scale(scale, Vector3(0.8f, 1.6f, 0.8f) * growfraction);
+
+	out = translate * scale;
 }
 
 void Tree::ParseTree(const std::string& treestring)

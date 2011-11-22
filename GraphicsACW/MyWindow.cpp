@@ -32,17 +32,15 @@ void MyWindow::OnCreate()
 	*/
 
 	// tree with mutations
-	/*
 	test.AddRule("[]", "[--^B[]>>>B[]>>>vB[]>>>^B[]]");
 	test.AddRule("[]", "[--^B[]>>>>>>>B[]]");
 	test.AddRule("[]", "[--^B[]>>>>B[]>>>>B[]]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 11);
-	*/
+	test.EvaluateRules("[]", result, 6);
 
 	// crimbo tree
-	
+	/*
 	test.AddRule("L", "[---B[]^^>>>--BL>>>>BL>>>>BL]");
 	test.AddRule("L", "[---B[]^^>>>>--BL>>>>BL>>>>BL]");
 
@@ -51,7 +49,7 @@ void MyWindow::OnCreate()
 
 	std::string result;
 	test.EvaluateRules("[]", result, 5);
-	
+	*/
 
 	_dome.Create(_renderer);
 	_tree.Create(_renderer, result);

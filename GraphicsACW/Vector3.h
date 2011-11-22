@@ -70,6 +70,14 @@ inline Vector3& Vector3::operator*=(const Vector3& rhs)
 	return *this;
 }
 
+inline Vector3& Vector3::operator*=(float rhs)
+{
+	x(x() * rhs);
+	y(y() * rhs);
+	z(z() * rhs);
+	return *this;
+}
+
 inline Vector3& Vector3::operator/=(const Vector3& rhs)
 {
 	x(x() / rhs.x());

@@ -73,6 +73,16 @@ inline Vector4& Vector4::operator*=(const Vector4& rhs)
 	return *this;
 }
 
+inline Vector4& Vector4::operator*=(float rhs)
+{
+	x(x() * rhs);
+	y(y() * rhs);
+	z(z() * rhs);
+	w(w() * rhs);
+	return *this;
+}
+
+
 inline Vector4& Vector4::operator/=(const Vector4& rhs)
 {
 	x(x() / rhs.x());
