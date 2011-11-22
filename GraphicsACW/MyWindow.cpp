@@ -5,10 +5,12 @@
 #include "LSystem.h"
 #include "Terrain.h"
 #include <string>
+#include <iostream>
 
 using namespace gxbase;
 
-MyWindow::MyWindow()
+MyWindow::MyWindow() :
+	_growTree (true)
 {
 	SetSize(1280, 768);
 }
@@ -26,19 +28,21 @@ void MyWindow::OnCreate()
 	/*
 	test.AddRule("[]", "[--^B[]>>>B[]>>>B[]>>>B[]]");
 	std::string result;
-	test.EvaluateRules("[]", result, 5);
+	test.EvaluateRules("[]", result, 3);
 	*/
 
 	// tree with mutations
+	/*
 	test.AddRule("[]", "[--^B[]>>>B[]>>>vB[]>>>^B[]]");
 	test.AddRule("[]", "[--^B[]>>>>>>>B[]]");
 	test.AddRule("[]", "[--^B[]>>>>B[]>>>>B[]]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 7);
+	test.EvaluateRules("[]", result, 11);
+	*/
 
 	// crimbo tree
-	/*
+	
 	test.AddRule("L", "[---B[]^^>>>--BL>>>>BL>>>>BL]");
 	test.AddRule("L", "[---B[]^^>>>>--BL>>>>BL>>>>BL]");
 
@@ -47,7 +51,7 @@ void MyWindow::OnCreate()
 
 	std::string result;
 	test.EvaluateRules("[]", result, 5);
-	*/
+	
 
 	_dome.Create(_renderer);
 	_tree.Create(_renderer, result);
@@ -63,6 +67,8 @@ void MyWindow::OnCreate()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+	std::cout << _tree.MaxBranchDepth() << std::endl;
 }
 
 void MyWindow::OnDisplay()
@@ -74,6 +80,11 @@ void MyWindow::OnDisplay()
 	float delta = time - prevTime;
 
 	_smoke.Update(delta);
+
+	if (_growTree)
+		_tree.Grow(delta);
+	else
+		_tree.Shrink(delta);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -159,6 +170,15 @@ void MyWindow::OnKeyboard(int key, bool down)
 
 	if (VK_ESCAPE == key && down)
 		Close();
+
+	if (VK_ADD == key)
+	{
+		_growTree = true;
+	}
+	else if (VK_SUBTRACT == key)
+	{
+		_growTree = false;
+	}
 }
 
 void MyWindow::OnResize(int w, int h)

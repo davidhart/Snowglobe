@@ -3,6 +3,7 @@
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform float drawDepth;
 
 in vec3 in_vertex;
 in vec3 in_normal;
@@ -11,6 +12,7 @@ in vec2 in_tex;
 in vec4 in_modelRow0;
 in vec4 in_modelRow1;
 in vec4 in_modelRow2;
+in float in_branchDepth;
 
 out vec3 v_normal;
 out vec2 v_tex;
@@ -23,7 +25,12 @@ void main()
 								in_modelRow0.w, in_modelRow1.w, in_modelRow2.w, 1);
 	
 	mat4 modelview = view * model * modelinstance;
-	gl_Position = (projection * modelview) * vec4(in_vertex,1.0);
+
+	float scale = 1 - clamp(in_branchDepth - (drawDepth - 1), 0, 1);
+
+	vec3 pos = in_vertex * scale;
+
+	gl_Position = (projection * modelview) * vec4(pos,1.0);
 
 	v_normal = (modelview * vec4(in_normal, 0)).xyz;
 	v_tex = in_tex;

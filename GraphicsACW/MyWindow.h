@@ -33,6 +33,6 @@ private:
 	Terrain _terrain;
 	Pond _pond;
 	SmokeParticles _smoke;
-
+	bool _growTree;
 };
 

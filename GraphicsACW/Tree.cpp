@@ -4,7 +4,8 @@
 #include "Maths.h"
 #include <stack>
 
-Tree::Tree()
+Tree::Tree() : 
+	_maxDepth(0)
 {
 
 }
@@ -39,12 +40,13 @@ void Tree::Create(const Renderer& renderer, const std::string& treestring)
 		ArrayElement(_cylinderBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _cylinderFile.GetNormalOffset(), 0),
 		ArrayElement(_cylinderBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _cylinderFile.GetVertexOffset(), 0),
 	
-		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow0"), 4, AE_FLOAT, 12 * sizeof(float), 0, 1),
-		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow1"), 4, AE_FLOAT, 12 * sizeof(float), 4 * sizeof(float), 1),
-		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow2"), 4, AE_FLOAT, 12 * sizeof(float), 8 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow0"), 4, AE_FLOAT, 13 * sizeof(float), 0, 1),
+		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow1"), 4, AE_FLOAT, 13 * sizeof(float), 4 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_modelRow2"), 4, AE_FLOAT, 13 * sizeof(float), 8 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, _shaderProgram.GetAttributeIndex("in_branchDepth"), 4, AE_FLOAT, 13 * sizeof(float), 12 * sizeof(float), 1),
 	};
 
-	_vertBinding.Create(renderer, vertexLayout, 6, _cylinderIndices, AE_UINT);
+	_vertBinding.Create(renderer, vertexLayout, 7, _cylinderIndices, AE_UINT);
 
 }
 
@@ -60,6 +62,18 @@ void Tree::Dispose()
 	_fragShader.Dispose();
 }
 
+void Tree::Grow(float elapsed)
+{
+	_drawDepth += elapsed;
+	_drawDepth = Util::Min(_drawDepth, (float)_maxDepth);
+}
+
+void Tree::Shrink(float elapsed)
+{
+	_drawDepth -= elapsed;
+	_drawDepth = Util::Max(_drawDepth, 0.0f);
+}
+
 void Tree::Draw(const Renderer& renderer)
 {
 	_shaderProgram.Use();
@@ -71,6 +85,7 @@ void Tree::Draw(const Renderer& renderer)
 	Matrix4::Scale(scale, Vector3(0.8f, 1.6f, 0.8f));
 
 	_shaderProgram.SetUniform("model", translate * scale);
+	_shaderProgram.SetUniform("drawDepth", _drawDepth);
 
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _cylinderFile.GetNumIndices(), _branches.size());
 }
@@ -89,12 +104,20 @@ void Tree::DrawReflection(const Renderer& renderer)
 	Matrix4::Scale(scale, Vector3(0.8f, -1.6f, 0.8f));
 
 	_shaderProgram.SetUniform("model", translate * scale);
+	_shaderProgram.SetUniform("drawDepth", _drawDepth);
 
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _cylinderFile.GetNumIndices(), _branches.size());
 }
 
+unsigned int Tree::MaxBranchDepth() const
+{
+	return _maxDepth;
+}
+
 void Tree::ParseTree(const std::string& treestring)
 {
+	_maxDepth = 1;
+
 	unsigned int branchCount = 1;
 	for (unsigned int i = 0; i < treestring.size(); ++i)
 	{
@@ -142,6 +165,10 @@ void Tree::ParseTree(const std::string& treestring)
 
 			_branches[currentBranch]
 				= Branch(parentBranch, _branches[parentBranch], translation * pitch * yaw * scale);
+
+			unsigned int depth = _branches[currentBranch].Depth() + 1;
+			if (depth > _maxDepth)
+				_maxDepth = depth;
 			
 			++currentBranch;
 		}
@@ -159,7 +186,7 @@ void Tree::ParseTree(const std::string& treestring)
 		}
 		else if (treestring[i] == ']')
 		{
-			parentBranch = _branches[parentBranch].ParentBranch();
+			parentBranch = _branches[parentBranch].Parent();
 			
 			pitchAngle = pitchstack.top();
 			pitchstack.pop();
@@ -195,15 +222,17 @@ void Tree::ParseTree(const std::string& treestring)
 			uniformScale -= 0.1f;
 		}
 	}
+
+	_drawDepth = (float)_maxDepth;
 }
 
 void Tree::CreateBranchInstanceBuffer(const Renderer& renderer)
 {
-	std::vector<float> packed3x4Matrices(_branches.size() * 12);
+	std::vector<float> packed3x4Matrices(_branches.size() * 13);
 
 	for (unsigned int i = 0; i < _branches.size(); ++i)
 	{
-		_branches[i].Pack4x3Matrix(&packed3x4Matrices[i*12]);
+		_branches[i].PackBranch(&packed3x4Matrices[i*13]);
 	}
 
 	_branchInstanceBuffer.Create(renderer, &packed3x4Matrices[0], sizeof(float) * packed3x4Matrices.size());
@@ -230,7 +259,7 @@ Tree::Branch::Branch(int parentID, const Branch& parent, const Matrix4& matrix) 
 {
 }
 
-void Tree::Branch::Pack4x3Matrix(float* out) const
+void Tree::Branch::PackBranch(float* out) const
 {
 	for (unsigned int row = 0; row < 3; row++)
 	{
@@ -239,9 +268,15 @@ void Tree::Branch::Pack4x3Matrix(float* out) const
 			out[row * 4 + col] = _matrix.cell(col, row);
 		}
 	}
+	out[12] = (float)_depth;
 }
 
-int Tree::Branch::ParentBranch() const
+int Tree::Branch::Parent() const
 {
 	return _parent;
+}
+
+unsigned int Tree::Branch::Depth() const
+{
+	return _depth;
 }

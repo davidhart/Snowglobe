@@ -21,8 +21,13 @@ public:
 	void Create(const Renderer& renderer, const std::string& treestring);
 	void Dispose();
 
+	void Grow(float elapsed);
+	void Shrink(float elapsed);
+
 	void Draw(const Renderer& renderer);
 	void DrawReflection(const Renderer& renderer);
+
+	unsigned int MaxBranchDepth() const;
 
 private:
 
@@ -48,8 +53,9 @@ private:
 		Branch();
 		explicit Branch(const Matrix4& trunkMatrix);
 		Branch(int parentID, const Branch& parent, const Matrix4& matrix);
-		void Pack4x3Matrix(float* out) const;
-		int ParentBranch() const;
+		void PackBranch(float* out) const;
+		int Parent() const;
+		unsigned int Depth() const;
 
 	private:
 
@@ -60,5 +66,7 @@ private:
 	};
 
 	std::vector<Branch> _branches;
+	unsigned int _maxDepth;
+	float _drawDepth;
 	
 };
