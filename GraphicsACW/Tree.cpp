@@ -109,11 +109,10 @@ void Tree::ParseTree(const std::string& treestring)
 	Matrix4 identity;
 	Matrix4::Identity(identity);
 
-	_branches[0] = Branch(-1, 0, identity);
+	_branches[0] = Branch(identity);
 
 	int parentBranch = 0;
 	int currentBranch = 1;
-	int depth = 1;
 
 	std::stack<float> yawstack;
 	std::stack<float> pitchstack;
@@ -142,7 +141,7 @@ void Tree::ParseTree(const std::string& treestring)
 			Matrix4::RotationAxis(yaw, Vector3(1, 0, 0), yawAngle);
 
 			_branches[currentBranch]
-				= Branch(parentBranch, depth, _branches[parentBranch].GetMatrix() * translation * pitch * yaw * scale);
+				= Branch(parentBranch, _branches[parentBranch], translation * pitch * yaw * scale);
 			
 			++currentBranch;
 		}
@@ -157,11 +156,9 @@ void Tree::ParseTree(const std::string& treestring)
 			uniformScale = 1.0f;
 
 			parentBranch = currentBranch - 1;
-			++depth;
 		}
 		else if (treestring[i] == ']')
 		{
-			--depth;
 			parentBranch = _branches[parentBranch].ParentBranch();
 			
 			pitchAngle = pitchstack.top();
@@ -206,15 +203,7 @@ void Tree::CreateBranchInstanceBuffer(const Renderer& renderer)
 
 	for (unsigned int i = 0; i < _branches.size(); ++i)
 	{
-		const Matrix4& t = _branches[i].GetMatrix();
-
-		for (unsigned int row = 0; row < 3; row++)
-		{
-			for (unsigned int col = 0; col < 4; col++)
-			{
-				packed3x4Matrices[i*12 + row * 4 + col] = t.cell(col, row);
-			}
-		}
+		_branches[i].Pack4x3Matrix(&packed3x4Matrices[i*12]);
 	}
 
 	_branchInstanceBuffer.Create(renderer, &packed3x4Matrices[0], sizeof(float) * packed3x4Matrices.size());
@@ -224,19 +213,32 @@ Tree::Branch::Branch() :
 	_parent(-1),
 	_depth(0)
 {
+}
+
+Tree::Branch::Branch(const Matrix4& trunkMatrix) :
+	_matrix(trunkMatrix),	
+	_parent(-1),
+	_depth(0)
+{
 
 }
 
-Tree::Branch::Branch(int parent, unsigned int depth, const Matrix4& matrix) :
-	_matrix(matrix),
-	_parent(parent),
-	_depth(depth)
+Tree::Branch::Branch(int parentID, const Branch& parent, const Matrix4& matrix) :
+	_matrix(parent._matrix* matrix),
+	_parent(parentID),
+	_depth(parent._depth + 1)
 {
 }
 
-Matrix4 Tree::Branch::GetMatrix() const
+void Tree::Branch::Pack4x3Matrix(float* out) const
 {
-	return _matrix;
+	for (unsigned int row = 0; row < 3; row++)
+	{
+		for (unsigned int col = 0; col < 4; col++)
+		{
+			out[row * 4 + col] = _matrix.cell(col, row);
+		}
+	}
 }
 
 int Tree::Branch::ParentBranch() const

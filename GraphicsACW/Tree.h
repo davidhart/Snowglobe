@@ -46,8 +46,9 @@ private:
 	public:
 
 		Branch();
-		Branch(int parent, unsigned int depth, const Matrix4& matrix);
-		Matrix4 GetMatrix() const;
+		explicit Branch(const Matrix4& trunkMatrix);
+		Branch(int parentID, const Branch& parent, const Matrix4& matrix);
+		void Pack4x3Matrix(float* out) const;
 		int ParentBranch() const;
 
 	private:

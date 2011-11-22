@@ -64,29 +64,14 @@ void Renderer::ProjectionMatrix(const Matrix4& projection)
 	_projection = projection;
 }
 
-Matrix4 Renderer::ProjectionMatrix() const
-{
-	return _projection;
-}
-
 void Renderer::ViewMatrix(const Matrix4& view)
 {
 	_view = view;
 }
 
-Matrix4 Renderer::ViewMatrix() const
-{
-	return _view;
-}
-
 void Renderer::ClipPlane(const Vector4& clipPlane)
 {
 	_clipPlane = clipPlane;
-}
-
-Vector4 Renderer::ClipPlane() const
-{
-	return _clipPlane;
 }
 
 void Renderer::UpdateStandardUniforms(const ShaderProgram& shaderprogram) const

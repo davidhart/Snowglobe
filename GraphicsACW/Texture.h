@@ -19,8 +19,8 @@ public:
 
 private:
 
+	gxbase::Image _image;
 	glex* _glex;
 	GLuint _textureHandle;
-	gxbase::Image _image;
 
 };
