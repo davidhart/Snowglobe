@@ -57,8 +57,6 @@ void ObjFile::Read(const char* filename)
 					break;
 				}
 
-				t = 1 - t;
-
 				vertTextureCoords.push_back(s);
 				vertTextureCoords.push_back(t);
 			}

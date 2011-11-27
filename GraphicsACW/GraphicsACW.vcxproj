@@ -72,6 +72,7 @@
     <ClCompile Include="Base.cpp" />
     <ClCompile Include="Dome.cpp" />
     <ClCompile Include="House.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix4.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="Dome.h" />
     <ClInclude Include="House.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="LSystem.h" />
     <ClInclude Include="Maths.h" />
     <ClInclude Include="Matrix4.h" />
@@ -123,6 +125,8 @@
     <None Include="domeBack.fsh" />
     <None Include="domeFront.fsh" />
     <None Include="particle_smoke.vsh" />
+    <None Include="textured_lit.fsh" />
+    <None Include="textured_lit.vsh" />
     <None Include="textured_unlit.fsh" />
     <None Include="textured_unlit.vsh" />
     <None Include="tree.fsh" />

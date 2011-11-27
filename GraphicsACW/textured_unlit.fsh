@@ -13,5 +13,5 @@ void main()
 	if (v_clipDistance < 0) // We are emulating gl_ClipDistance[] behaviour as it seems to be
 		discard;			// poorly supported
 
-	f_color = texture(diffuseMap, vec2(1, -1) * v_tex) * v_alpha;
+	f_color = texture(diffuseMap, v_tex) * v_alpha;
 }

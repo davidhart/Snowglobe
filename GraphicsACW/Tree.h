@@ -5,6 +5,7 @@
 #include "VertexBuffer.h"
 #include "VertexBinding.h"
 #include "Matrix4.h"
+#include "Texture.h"
 
 #include <vector>
 #include <string>
@@ -40,8 +41,8 @@ private:
 	ShaderProgram _shaderProgram;
 	VertexBuffer _cylinderBuffer;
 	VertexBuffer _cylinderIndices;
-
 	VertexBuffer _branchInstanceBuffer;
+	Texture _barkTexture;
 
 	VertexBinding _vertBinding;
 	ObjFile _cylinderFile;

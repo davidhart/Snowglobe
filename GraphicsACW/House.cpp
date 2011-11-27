@@ -9,14 +9,12 @@ House::House()
 
 void House::Create(const Renderer& renderer)
 {
-	_houseTexture.Create(renderer, "house_diffuse.jpg");
-
 	std::string shadersource;
-	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
+	Util::ReadTextFileToString("textured_lit.vsh", shadersource);
 
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
+	Util::ReadTextFileToString("textured_lit.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
@@ -34,9 +32,10 @@ void House::Create(const Renderer& renderer)
 		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _houseModel.GetVertexOffset()),
 	};
 
+	_houseTexture.Create(renderer, "house_diffuse.jpg");
+
 	_shaderProgram.Use();
 	_shaderProgram.SetUniform("diffuseMap", 0);
-
 	_vertBinding.Create(renderer, vertexLayout, 3, _houseIndices, AE_UINT);
 }
 
@@ -61,10 +60,10 @@ void House::Draw(const Renderer& renderer)
 	Matrix4::RotationAxis(houseRotation, Vector3(0, 1, 0), -0.4f);
 	Matrix4 houseTranslation;
 	Matrix4::Translation(houseTranslation, Vector3(-1.3f, 0, -3.4f));
-	
+	_shaderProgram.SetUniform("model", houseTranslation * houseRotation);
+
 	_houseTexture.Bind();
 
-	_shaderProgram.SetUniform("model", houseTranslation * houseRotation);
 	renderer.UpdateStandardUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _houseModel.GetNumIndices());
 }
@@ -80,9 +79,9 @@ void House::DrawReflection(const Renderer& renderer)
 
 	Matrix4 mirror;
 	Matrix4::Scale(mirror, Vector3(1,-1,1));
-
-	_houseTexture.Bind();
 	_shaderProgram.SetUniform("model", mirror * houseTranslation * houseRotation);
+	_houseTexture.Bind();
+	
 	renderer.UpdateStandardUniforms(_shaderProgram);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _houseModel.GetNumIndices());
 }

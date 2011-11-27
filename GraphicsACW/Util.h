@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Maths.h"
 
 namespace Util
 {
@@ -18,5 +19,15 @@ namespace Util
 	template <typename T> T Min(T a, T b)
 	{
 		return a < b ? a : b;
+	}
+
+	inline float DegreesToRadians(float degrees)
+	{
+		return degrees * PI / 180.0f;
+	}
+
+	inline float RadiansToDegrees(float radians)
+	{
+		return radians * 180.0f / PI;
 	}
 };

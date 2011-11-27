@@ -21,10 +21,12 @@ void Tree::Create(const Renderer& renderer, const std::string& treestring)
 	Util::ReadTextFileToString("tree.vsh", shadersource);
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("tree.fsh", shadersource);
+	Util::ReadTextFileToString("textured_lit.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
+	_shaderProgram.Use();
+	_shaderProgram.SetUniform("diffuseMap", 0);
 
 	assert(_cylinderFile.HasTextureCoordinates());
 	assert(_cylinderFile.HasVertexNormals());
@@ -48,7 +50,7 @@ void Tree::Create(const Renderer& renderer, const std::string& treestring)
 	};
 
 	_vertBinding.Create(renderer, vertexLayout, 7, _cylinderIndices, AE_UINT);
-
+	_barkTexture.Create(renderer, "tree_bark.jpg");
 }
 
 void Tree::Dispose()
@@ -61,6 +63,7 @@ void Tree::Dispose()
 	_shaderProgram.Dispose();
 	_vertShader.Dispose();
 	_fragShader.Dispose();
+	_barkTexture.Dispose();
 }
 
 void Tree::Grow(float elapsed)
@@ -77,6 +80,7 @@ void Tree::Shrink(float elapsed)
 
 void Tree::Draw(const Renderer& renderer)
 {
+	_barkTexture.Bind();
 	_shaderProgram.Use();
 	renderer.UpdateStandardUniforms(_shaderProgram);
 
@@ -91,6 +95,7 @@ void Tree::Draw(const Renderer& renderer)
 
 void Tree::DrawReflection(const Renderer& renderer)
 {
+	_barkTexture.Bind();
 	_shaderProgram.Use();
 	renderer.UpdateStandardUniforms(_shaderProgram);
 
@@ -118,7 +123,7 @@ void Tree::ConstructModelMatrix(Matrix4& out)
 	Matrix4 translate;
 	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
 	Matrix4 scale;
-	Matrix4::Scale(scale, Vector3(0.8f, 1.6f, 0.8f) * growfraction);
+	Matrix4::Scale(scale, Vector3(0.9f, 1.6f, 0.9f) * growfraction);
 
 	out = translate * scale;
 }
@@ -139,8 +144,8 @@ void Tree::ParseTree(const std::string& treestring)
 	_branches.resize(branchCount);
 
 	Matrix4 identity;
-	Matrix4::Identity(identity);
-
+	//Matrix4::Identity(identity);
+	Matrix4::Scale(identity, Vector3(1.3f, 1, 1.3f));
 	_branches[0] = Branch(identity);
 
 	int parentBranch = 0;

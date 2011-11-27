@@ -1,6 +1,7 @@
 #include "Terrain.h"
 #include "Util.h"
 #include "Renderer.h"
+#include "Maths.h"
 
 Terrain::Terrain()
 {
@@ -10,11 +11,11 @@ Terrain::Terrain()
 void Terrain::Create(const Renderer& renderer)
 {
 	std::string shadersource;
-	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
+	Util::ReadTextFileToString("textured_lit.vsh", shadersource);
 
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
+	Util::ReadTextFileToString("textured_lit.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
@@ -36,7 +37,6 @@ void Terrain::Create(const Renderer& renderer)
 
 	_shaderProgram.Use();
 	_shaderProgram.SetUniform("diffuseMap", 0);
-
 	_vertBinding.Create(renderer, vertexLayout, 3, _terrainIndices, AE_UINT);
 }
 

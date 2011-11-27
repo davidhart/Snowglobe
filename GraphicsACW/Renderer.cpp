@@ -74,6 +74,20 @@ void Renderer::ClipPlane(const Vector4& clipPlane)
 	_clipPlane = clipPlane;
 }
 
+void Renderer::SetLight(unsigned int id, const Light& light)
+{
+	assert(id < MAX_LIGHTS);
+
+	_lights[id] = light;
+}
+
+void Renderer::GetLight(unsigned int id, Light& light) const
+{
+	assert(id < MAX_LIGHTS);
+	
+	light = _lights[id];
+}
+
 void Renderer::UpdateStandardUniforms(const ShaderProgram& shaderprogram) const
 {
 	shaderprogram.SetUniform("view", _view);
@@ -81,4 +95,9 @@ void Renderer::UpdateStandardUniforms(const ShaderProgram& shaderprogram) const
 	// TODO: evaluate these on change only as they are unlikely to change frequently
 	shaderprogram.SetUniform("projection", _projection);
 	shaderprogram.SetUniform("clipPlane", _clipPlane);
+
+	for (unsigned int i = 0; i < MAX_LIGHTS; ++i)
+	{
+		_lights[i].UpdateShaderUniforms(shaderprogram, i);
+	}
 }

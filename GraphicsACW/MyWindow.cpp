@@ -63,6 +63,15 @@ void MyWindow::OnCreate()
 	Matrix4::PerspectiveFov(perspective, 75, (float)Width() / Height(), 0.1f, 1000);
 	_renderer.ProjectionMatrix(perspective);
 
+	Light light;
+	Light::Spot(light, Vector3(6, 6, 0), Vector3(-1, -1, 0), 30, 32, 1);
+	//Light::Point(light, Vector3(6, 6, 0));
+	//Light::Directional(light, Vector3(-1, -1, 0));
+	light.SetDiffuseColor(Vector3(1));
+	light.SetSpecularColor(Vector3(1));
+	light.SetSpecularPower(200);
+	_renderer.SetLight(0, light);
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 

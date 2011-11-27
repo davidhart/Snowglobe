@@ -3,6 +3,7 @@
 #include "GXBase.h"
 #include "Uncopyable.h"
 #include "Matrix4.h"
+#include "Light.h"
 
 class glex;
 class VertexBinding;
@@ -34,6 +35,9 @@ public:
 	void ProjectionMatrix(const Matrix4& projection);
 	void ViewMatrix(const Matrix4& view);
 	void ClipPlane(const Vector4& plane);
+	
+	void SetLight(unsigned int id, const Light& light);
+	void GetLight(unsigned int id, Light& light) const;
 
 	void UpdateStandardUniforms(const ShaderProgram& shader) const;
 
@@ -45,5 +49,8 @@ private:
 	Matrix4 _projection;
 	Vector4 _clipPlane;
 	glex* _glex;
+
+	static const unsigned int MAX_LIGHTS = 4;
+	Light _lights[MAX_LIGHTS];
 
 };
