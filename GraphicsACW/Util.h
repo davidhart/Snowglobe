@@ -3,13 +3,23 @@
 #include <string>
 #include "Maths.h"
 
+class ObjFile;
+class VertexBuffer;
+class Renderer;
+
 namespace Util
 {
 	const float EPSILON = 0.00001f;
 
-	void ReadTextFileToString(const std::string& filename, std::string& shaderSource);
+	void ReadTextFileToString(const std::string& filename, std::string& text);
 
 	bool FloatEquality(float a, float b, float precision = EPSILON);
+
+	void CreateObjFileWithBuffers(const char* filename, 
+								  const Renderer& renderer,
+								  ObjFile& objFile, 
+								  VertexBuffer& vertexBuffer, 
+								  VertexBuffer& indexBuffer);
 
 	template <typename T> T Max(T a, T b)
 	{

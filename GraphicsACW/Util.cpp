@@ -1,4 +1,6 @@
 #include "Util.h"
+#include "ObjFile.h"
+#include "VertexBuffer.h"
 
 #include <fstream>
 #include <cassert>
@@ -15,4 +17,15 @@ bool Util::FloatEquality(float a, float b, float precision)
 {
 	float difference = a - b;
 	return difference < precision && difference > -precision;
+}
+
+void Util::CreateObjFileWithBuffers(const char* filename,
+									const Renderer& renderer,
+									ObjFile& objFile,
+									VertexBuffer& vertexBuffer,
+									VertexBuffer& indexBuffer)
+{
+	objFile.Read(filename);
+	vertexBuffer.Create(renderer, objFile.GetVertexData(), objFile.GetNumVertices() * objFile.GetVertexStride());
+	indexBuffer.Create(renderer, objFile.GetIndexData(), objFile.GetNumIndices() * sizeof(unsigned int));
 }

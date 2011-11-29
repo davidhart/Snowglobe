@@ -15,22 +15,13 @@ void SmokeParticles::Create(const Renderer& renderer, unsigned int numParticles)
 
 	_texture.Create(renderer, "smoke_alpha.jpg");
 
-	std::string shadersource;
-	Util::ReadTextFileToString("particle_smoke.vsh", shadersource);
-
-	_vertShader.Create(renderer, shadersource.c_str());
-
-	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
-	_fragShader.Create(renderer, shadersource.c_str());
-
+	_vertShader.CreateFromFile(renderer, "particle_smoke.vsh");
+	_fragShader.CreateFromFile(renderer, "textured_unlit.fsh");
 	_shader.Create(renderer, _vertShader, _fragShader);
 
-	_instancedQuadModel.Read("quad.obj");
+	Util::CreateObjFileWithBuffers("quad.obj", renderer, _instancedQuadModel, _instancedQuadBuffer, _instancedQuadIndices);
 
 	unsigned int stride = _instancedQuadModel.GetVertexStride();
-	_instancedQuadBuffer.Create(renderer, _instancedQuadModel.GetVertexData(), _instancedQuadModel.GetNumVertices() * stride);
-	_instancedQuadIndices.Create(renderer, _instancedQuadModel.GetIndexData(), _instancedQuadModel.GetNumIndices() * sizeof(unsigned int));
-	
 	ArrayElement vertexLayout[] =
 	{
 		ArrayElement(_instancedQuadBuffer, _shader.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _instancedQuadModel.GetTexCoordOffset()),

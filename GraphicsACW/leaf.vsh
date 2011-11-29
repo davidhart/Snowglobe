@@ -3,7 +3,6 @@
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform float drawDepth;
 
 in vec3 in_vertex;
 in vec3 in_normal;
@@ -45,9 +44,7 @@ void main()
 	
 	mat4 modelmatrix = model * modelinstance;
 
-	float scale = 1 - clamp(in_branchDepth - (drawDepth - 1), 0, 1);
-
-	vec3 pos = in_vertex * scale;
+	vec3 pos = in_vertex;
 
 	vec4 wsPos = modelmatrix * vec4(pos,1.0);
 	ClipPlane(wsPos);
@@ -57,7 +54,7 @@ void main()
 
 	v_viewDir.xyz = (transpose(view) * vec4(0, 0, -1, 0)).xyz;
 
-	v_normal = (modelmatrix * vec4(in_normal, 0)).xyz;
+	v_normal =  (modelmatrix * vec4(in_normal, 0)).xyz;
 
 	v_tex = in_tex;
 }

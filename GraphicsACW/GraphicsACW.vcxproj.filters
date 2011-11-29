@@ -126,9 +126,6 @@
     <None Include="tree.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="tree.fsh">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="textured_unlit.fsh">
       <Filter>Shaders</Filter>
     </None>
@@ -142,6 +139,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="textured_lit.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="leaf.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="leaf.fsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

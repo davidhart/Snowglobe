@@ -52,7 +52,7 @@ void MyWindow::OnCreate()
 	*/
 
 	_dome.Create(_renderer);
-	_tree.Create(_renderer, result);
+	_tree.Create(_renderer, result, 4, 350);
 	_house.Create(_renderer);
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);

@@ -11,22 +11,13 @@ void Pond::Create(const Renderer& renderer)
 {
 	_texture.Create(renderer, "pond_diffuse.tga");
 
-	std::string shadersource;
-	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
-
-	_vertShader.Create(renderer, shadersource.c_str());
-
-	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
-	_fragShader.Create(renderer, shadersource.c_str());
-
+	_vertShader.CreateFromFile(renderer, "textured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "textured_lit.fsh");
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 
-	_pondModel.Read("pond.obj");
+	Util::CreateObjFileWithBuffers("pond.obj", renderer, _pondModel, _pondBuffer, _pondIndices);
 
 	unsigned int stride = _pondModel.GetVertexStride();
-	_pondBuffer.Create(renderer, _pondModel.GetVertexData(), _pondModel.GetNumVertices() * stride);
-	_pondIndices.Create(renderer, _pondModel.GetIndexData(), _pondModel.GetNumIndices() * sizeof(unsigned int));
-	
 	ArrayElement vertexLayout[] =
 	{
 		ArrayElement(_pondBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _pondModel.GetTexCoordOffset()),

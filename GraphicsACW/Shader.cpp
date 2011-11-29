@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include "Renderer.h"
+#include "Util.h"
 #include <string>
 #include <iostream>
 
@@ -13,6 +14,15 @@ Shader::Shader() :
 Shader::~Shader()
 {
 	assert(_shHandle == 0);
+}
+
+void Shader::CreateFromFile(const Renderer& renderer, const char* filename)
+{
+	std::string shaderSource;
+	Util::ReadTextFileToString(filename, shaderSource);
+
+	std::cout << filename << std::endl; 
+	Create(renderer, shaderSource.c_str());
 }
 
 void Shader::Create(const Renderer& renderer, const char* shadersource)

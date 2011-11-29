@@ -14,6 +14,7 @@ public:
 
 	virtual ~Shader();
 
+	void CreateFromFile(const Renderer& renderer, const char* filename);
 	void Create(const Renderer& renderer, const char* shadersource);
 	void Dispose();
 

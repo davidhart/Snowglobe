@@ -43,7 +43,15 @@ in vec3 v_normal;
 
 vec3 GetNormal()
 {
-	return normalize(v_normal);
+	vec3 N = normalize(v_normal);
+	if(gl_FrontFacing)
+	{
+		return -N;
+	}
+	else
+	{
+		return N;
+	}
 }
 
 void GetLightDistanceDirection(int id, out vec3 lightDistance, out vec3 lightDir)
@@ -103,6 +111,9 @@ void main(void)
 	ClipPlane();
 
 	vec4 base = texture(diffuseMap, v_tex);
+
+	if (base.a < 0.5)
+		discard;
 
 	vec3 diffuse, specular;
 	GetDiffuseSpecular(diffuse, specular);

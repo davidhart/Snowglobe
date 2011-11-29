@@ -10,22 +10,13 @@ Terrain::Terrain()
 
 void Terrain::Create(const Renderer& renderer)
 {
-	std::string shadersource;
-	Util::ReadTextFileToString("textured_lit.vsh", shadersource);
-
-	_vertShader.Create(renderer, shadersource.c_str());
-
-	Util::ReadTextFileToString("textured_lit.fsh", shadersource);
-	_fragShader.Create(renderer, shadersource.c_str());
-
+	_vertShader.CreateFromFile(renderer, "textured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "textured_lit.fsh");
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 
-	_terrainModel.Read("terrain.obj");
-
-	unsigned int stride = _terrainModel.GetVertexStride();
-	_terrainBuffer.Create(renderer, _terrainModel.GetVertexData(), _terrainModel.GetNumVertices() * stride);
-	_terrainIndices.Create(renderer, _terrainModel.GetIndexData(), _terrainModel.GetNumIndices() * sizeof(unsigned int));
+	Util::CreateObjFileWithBuffers("terrain.obj", renderer, _terrainModel, _terrainBuffer, _terrainIndices);
 	
+	unsigned int stride = _terrainModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
 	{
 		ArrayElement(_terrainBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _terrainModel.GetTexCoordOffset()),

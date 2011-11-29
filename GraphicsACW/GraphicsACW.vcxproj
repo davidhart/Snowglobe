@@ -124,12 +124,13 @@
     <None Include="dome.vsh" />
     <None Include="domeBack.fsh" />
     <None Include="domeFront.fsh" />
+    <None Include="leaf.fsh" />
+    <None Include="leaf.vsh" />
     <None Include="particle_smoke.vsh" />
     <None Include="textured_lit.fsh" />
     <None Include="textured_lit.vsh" />
     <None Include="textured_unlit.fsh" />
     <None Include="textured_unlit.vsh" />
-    <None Include="tree.fsh" />
     <None Include="tree.vsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
