@@ -7,6 +7,29 @@
 class Matrix4;
 class Vector4;
 class Vector3;
+class ShaderProgram;
+
+template <typename T> class Uniform
+{
+
+public:
+
+	Uniform(const char* name);
+	void SetValue(const T& value);
+
+private:
+
+	static void SetUniformValue(float value, GLint location);
+	static void SetUniformValue(const Vector4& value, GLint location);
+	static void SetUniformValue(const Vector3& value, GLint location);
+	static void SetUniformValue(const Matrix4& value, GLint location);
+
+	void SetValue();
+
+	ShaderProgram& shaderProgram;
+	GLint _uniformLocation;
+
+};
 
 class ShaderProgram : public Uncopyable
 {

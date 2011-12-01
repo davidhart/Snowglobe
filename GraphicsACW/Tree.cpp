@@ -84,7 +84,7 @@ void Tree::CreateLeaves(const Renderer& renderer)
 	};
 
 	_leafBinding.Create(renderer, vertexLayout, 6, _leafIndices, AE_UINT);
-	_leafTexture.Create(renderer, "leaf.tga");
+	_leafTexture.Create(renderer, "leaf.tga", T_CLAMP_EDGE);
 	_leafGradient.Create(renderer, "leaf_gradient.tga");
 }
 
@@ -356,7 +356,7 @@ Tree::Branch::Branch(const Matrix4& trunkMatrix) :
 }
 
 Tree::Branch::Branch(int parentID, const Branch& parent, const Matrix4& matrix) :
-	_matrix(parent._matrix* matrix),
+	_matrix(parent._matrix * matrix),
 	_parent(parentID),
 	_depth(parent._depth + 1)
 {
@@ -409,17 +409,19 @@ Tree::Leaf::Leaf(const Branch& parent)
 	Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), orientation * PI * 2);
 
 	Vector4 pos (0.07f, yPos, 0.0f, 1);
-	pos = pitch * pos;
+
+	pitch.Transform(pos);
 
 	parent.MultiplyMatrix(pos);
 
 	Matrix4 yaw;
 	Matrix4::RotationAxis(yaw, Vector3(0, 0, 1), 1.0f + yawNoise);
 
-	Matrix4 translation;
-	Matrix4::Translation(translation, Vector3(pos.x(), pos.y(), pos.z()));
+	Matrix4::Translation(_matrix, Vector3(pos.x(), pos.y(), pos.z()));
 
-	_matrix = translation * pitch * yaw * scale;
+	_matrix *= pitch;
+	_matrix *= yaw;
+	_matrix *= scale;
 }
 
 void Tree::Leaf::PackLeaf(float* out) const

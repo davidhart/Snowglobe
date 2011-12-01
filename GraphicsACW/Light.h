@@ -21,9 +21,9 @@ public:
 	void SetQuadraticAttenuation(float quadratic);
 	
 	static void Off(Light& light);
-	static void Directional(Light& light, Vector3& direction);
-	static void Point(Light& light, Vector3& position);
-	static void Spot(Light& light, Vector3& position, Vector3& direction, float innerangle, float outerangle, float falloffPower);
+	static void Directional(Light& light, const Vector3& direction);
+	static void Point(Light& light, const Vector3& position);
+	static void Spot(Light& light, const Vector3& position, const Vector3& direction, float innerangle, float outerangle, float falloffPower);
 
 	void UpdateShaderUniforms(const ShaderProgram& shaderProgram, unsigned int lightID) const;
 

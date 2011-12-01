@@ -11,6 +11,7 @@ public:
 	Matrix4();
 	Matrix4(const Vector4& c0, const Vector4& c1, const Vector4& c2, const Vector4& c3);
 
+	Matrix4 operator*(const Matrix4& rhs) const;
 	Matrix4& operator*= (const Matrix4& rhs);
 
 	void cell(unsigned int column, unsigned int row, float value);
@@ -22,6 +23,8 @@ public:
 	void row(unsigned int row, const Vector4& value);
 	Vector4 row(unsigned int row) const;
 
+	void Transform(Vector4& inout) const;
+
 	static void Identity(Matrix4& out);
 	static void Translation(Matrix4& out, const Vector3& translation);
 	static void PerspectiveFov(Matrix4& out, float fov, float aspect, float nearclip, float farclip);
@@ -29,14 +32,12 @@ public:
 	static void Scale(Matrix4& out, float scale);
 	static void Scale(Matrix4& out, const Vector3& scale);
 	static void RotationAxis(Matrix4& out, const Vector3& axis, float angle);
-
+	
 private:
 
 	Vector4 _m[4];
 
 };
-
-Matrix4 operator*(const Matrix4& lhs, const Matrix4& rhs);
 
 inline Matrix4& Matrix4::operator*=(const Matrix4& rhs)
 {
@@ -103,6 +104,14 @@ inline Vector4 Matrix4::row(unsigned int row) const
 	assert(row < 4);
 
 	return Vector4(_m[0].element(row), _m[1].element(row), _m[2].element(row), _m[3].element(row));
+}
+
+inline void Matrix4::Transform(Vector4& inout) const
+{
+	inout = Vector4(row(0).dot(inout),
+				   row(1).dot(inout),
+				   row(2).dot(inout),
+				   row(3).dot(inout));
 }
 
 inline void Matrix4::Identity(Matrix4& out)
@@ -182,17 +191,16 @@ inline void Matrix4::RotationAxis(Matrix4& out, const Vector3& axis, float angle
 		Vector4(0, 0, 0, 1));
 }
 
-inline Matrix4 operator* (const Matrix4& lhs, const Matrix4& rhs)
+inline Matrix4 Matrix4::operator* (const Matrix4& rhs) const
 {
-	return Matrix4(lhs) *= rhs;
+	return Matrix4(*this) *= rhs;
 }
 
 inline Vector4 operator* (const Matrix4& lhs, const Vector4& rhs)
 {
-	return Vector4(lhs.row(0).dot(rhs),
-				   lhs.row(1).dot(rhs),
-				   lhs.row(2).dot(rhs),
-				   lhs.row(3).dot(rhs));
+	Vector4 v = rhs;
+	lhs.Transform(v);
+	return v;
 }
 
 inline std::ostream& operator<<(std::ostream& lhs, const Matrix4& rhs)

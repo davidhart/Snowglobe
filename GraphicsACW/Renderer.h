@@ -45,12 +45,11 @@ public:
 
 private:
 
+	static const unsigned int MAX_LIGHTS = 4;
+	Light _lights[MAX_LIGHTS];
 	Matrix4 _view;
 	Matrix4 _projection;
 	Vector4 _clipPlane;
 	glex* _glex;
-
-	static const unsigned int MAX_LIGHTS = 4;
-	Light _lights[MAX_LIGHTS];
 
 };

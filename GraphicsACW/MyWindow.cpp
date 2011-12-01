@@ -63,9 +63,9 @@ void MyWindow::OnCreate()
 	_renderer.ProjectionMatrix(perspective);
 
 	Light light;
-	//Light::Spot(light, Vector3(6, 6, 0), Vector3(-1, -1, 0), 30, 32, 1);
+	Light::Spot(light, Vector3(6, 6, 0), Vector3(-1, -1, 0), 30, 32, 1);
 	//Light::Point(light, Vector3(6, 6, 0));
-	Light::Directional(light, Vector3(-1, -1, 0));
+	//Light::Directional(light, Vector3(-1, -1, 0));
 	light.SetDiffuseColor(Vector3(1));
 	light.SetSpecularColor(Vector3(1));
 	light.SetSpecularPower(200);

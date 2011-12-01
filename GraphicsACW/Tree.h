@@ -90,7 +90,7 @@ private:
 	public:
 
 		Leaf();
-		Leaf(const Branch& parent);
+		explicit Leaf(const Branch& parent);
 		void PackLeaf(float* out) const;
 
 	private:

@@ -27,17 +27,17 @@ void Light::Off(Light& light)
 	light._position = Vector4(0);
 }
 
-void Light::Directional(Light& light, Vector3& direction)
+void Light::Directional(Light& light, const Vector3& direction)
 {
 	light._position = Vector4(direction, 0);
 }
 
-void Light::Point(Light& light, Vector3& position)
+void Light::Point(Light& light, const Vector3& position)
 {
 	light._position = Vector4(position, 1);
 }
 
-void Light::Spot(Light& light, Vector3& position, Vector3& direction, float innerangle, float outerangle, float falloffPower)
+void Light::Spot(Light& light, const Vector3& position, const Vector3& direction, float innerangle, float outerangle, float falloffPower)
 {
 	light._position = Vector4(position, 1);
 	light._spotDirection = direction;
