@@ -1,6 +1,9 @@
 #version 130
 
 uniform sampler2D diffuseMap;
+uniform sampler2D gradientMap;
+uniform float colorLookup;
+
 in vec2 v_tex;
 out vec4 f_color;
 
@@ -43,15 +46,7 @@ in vec3 v_normal;
 
 vec3 GetNormal()
 {
-	vec3 N = normalize(v_normal);
-	if(gl_FrontFacing)
-	{
-		return -N;
-	}
-	else
-	{
-		return N;
-	}
+	return normalize(v_normal);
 }
 
 void GetLightDistanceDirection(int id, out vec3 lightDistance, out vec3 lightDir)
@@ -98,7 +93,9 @@ void GetDiffuseSpecular(out vec3 diffuse, out vec3 specular)
 			att *= spot;
 			att *= spot;
 		}
-		diffuse += lights[i].diffuse * att * max((dot(lightDistance, N)), 0.0);
+
+		float NdotL = abs(dot(lightDistance, N)); // Leaves should be lit on both sides as though semi-transparent
+		diffuse += lights[i].diffuse * att * max(NdotL, 0.0);
 		specular += lights[i].specular.rgb * att * pow(clamp(dot(lightDistance, viewReflected), 0.0, 1.0), lights[i].specular.w);
 	}
 }
@@ -111,6 +108,7 @@ void main(void)
 	ClipPlane();
 
 	vec4 base = texture(diffuseMap, v_tex);
+	vec4 colorLookup = texture(gradientMap, vec2(colorLookup, 0.5), 0);
 
 	if (base.a < 0.5)
 		discard;
@@ -118,5 +116,5 @@ void main(void)
 	vec3 diffuse, specular;
 	GetDiffuseSpecular(diffuse, specular);
 
-	f_color = vec4((ambient + diffuse) * base.rgb + specular, base.a);
+	f_color = vec4((ambient + diffuse) * base.rgb * colorLookup.rgb + specular, base.a);
 }

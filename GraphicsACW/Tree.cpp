@@ -64,7 +64,11 @@ void Tree::CreateLeaves(const Renderer& renderer)
 
 	_leafProgram.Create(renderer, _leafVertShader, _leafFragShader);
 
-	// setup uniforms
+	_leafProgram.Use();
+	_leafProgram.SetUniform("diffuseMap", 0);
+	_leafProgram.SetUniform("gradientMap", 1);
+	_leafProgram.SetUniform("colorLookup", 0.0f);
+
 	CreateLeafInstanceBuffer(renderer);
 
 	unsigned int stride = _branchModel.GetVertexStride();
@@ -160,6 +164,7 @@ void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 	renderer.UpdateStandardUniforms(_leafProgram);
 	_leafProgram.SetUniform("model", model);
 	_leafProgram.SetUniform("drawDepth", _drawDepth);
+	_leafProgram.SetUniform("colorLookup", 0.0f);
 
 	glDisable(GL_CULL_FACE);
 	renderer.DrawInstances(_leafBinding, PT_TRIANGLES, 0, _leafModel.GetNumIndices(), _leaves.size());
@@ -307,6 +312,7 @@ void Tree::ParseTree(const std::string& treestring, unsigned int leafDepth, unsi
 		// pick a random parent branch from the set of branches above the leafy branch depth
 		int parentBranch = rand() % _leafyBranchesIndices.size();
 
+		//_leaves.push_back(Leaf(_branches[1]));
 		_leaves.push_back(Leaf(_branches[_leafyBranchesIndices[parentBranch]]));
 	}
 }
@@ -399,19 +405,21 @@ Tree::Leaf::Leaf(const Branch& parent)
 	Matrix4 scale; 
 	Matrix4::Scale(scale, 0.3f);
 
-	Vector4 pos(0.07f, yPos, 0.0f, 1);
-	parent.MultiplyMatrix(pos);
-
 	Matrix4 pitch;
 	Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), orientation * PI * 2);
 
+	Vector4 pos (0.07f, yPos, 0.0f, 1);
+	pos = pitch * pos;
+
+	parent.MultiplyMatrix(pos);
+
 	Matrix4 yaw;
-	Matrix4::RotationAxis(yaw, Vector3(0, 0, 1), 0.8f + yawNoise);
+	Matrix4::RotationAxis(yaw, Vector3(0, 0, 1), 1.0f + yawNoise);
 
 	Matrix4 translation;
 	Matrix4::Translation(translation, Vector3(pos.x(), pos.y(), pos.z()));
 
-	_matrix = pitch * translation * yaw * scale;
+	_matrix = translation * pitch * yaw * scale;
 }
 
 void Tree::Leaf::PackLeaf(float* out) const

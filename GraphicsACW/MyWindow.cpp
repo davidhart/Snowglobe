@@ -37,22 +37,21 @@ void MyWindow::OnCreate()
 	test.AddRule("[]", "[---^B[]>>>>B[]>>>>B[]]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 6);
+	test.EvaluateRules("[]", result, 8);
 
 	// crimbo tree
-	/*
-	test.AddRule("L", "[---B[]^^>>>--BL>>>>BL>>>>BL]");
+	/*test.AddRule("L", "[---B[]^^>>>--BL>>>>BL>>>>BL]");
 	test.AddRule("L", "[---B[]^^>>>>--BL>>>>BL>>>>BL]");
 
 	test.AddRule("[]", "[--B[]^^>>>>>--BL>>>BL>>>BL>>>BL]");
 	test.AddRule("[]", "[--B[]^^>>>--BL>>>BL>>>BL>>>BL]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 5);
-	*/
+	test.EvaluateRules("[]", result, 5);*/
+	
 
 	_dome.Create(_renderer);
-	_tree.Create(_renderer, result, 2, 500);
+	_tree.Create(_renderer, result, 2, 4000);
 	_house.Create(_renderer);
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
@@ -64,9 +63,9 @@ void MyWindow::OnCreate()
 	_renderer.ProjectionMatrix(perspective);
 
 	Light light;
-	Light::Spot(light, Vector3(6, 6, 0), Vector3(-1, -1, 0), 30, 32, 1);
+	//Light::Spot(light, Vector3(6, 6, 0), Vector3(-1, -1, 0), 30, 32, 1);
 	//Light::Point(light, Vector3(6, 6, 0));
-	//Light::Directional(light, Vector3(-1, -1, 0));
+	Light::Directional(light, Vector3(-1, -1, 0));
 	light.SetDiffuseColor(Vector3(1));
 	light.SetSpecularColor(Vector3(1));
 	light.SetSpecularPower(200);
