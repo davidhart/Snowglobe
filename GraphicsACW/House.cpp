@@ -34,8 +34,11 @@ void House::Create(const Renderer& renderer)
 
 	_houseTexture.Create(renderer, "house_diffuse.jpg");
 
+	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
+	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
+
 	_shaderProgram.Use();
-	_shaderProgram.SetUniform("diffuseMap", 0);
+	_shaderProgram.SetUniform(diffuseMap, 0);
 	_vertBinding.Create(renderer, vertexLayout, 3, _houseIndices, AE_UINT);
 }
 
@@ -60,11 +63,11 @@ void House::Draw(const Renderer& renderer)
 	Matrix4::RotationAxis(houseRotation, Vector3(0, 1, 0), -0.4f);
 	Matrix4 houseTranslation;
 	Matrix4::Translation(houseTranslation, Vector3(-1.3f, 0, -3.4f));
-	_shaderProgram.SetUniform("model", houseTranslation * houseRotation);
+	_shaderProgram.SetUniform(_standardUniforms.Model, houseTranslation * houseRotation);
 
 	_houseTexture.Bind();
 
-	renderer.UpdateStandardUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _houseModel.GetNumIndices());
 }
 
@@ -79,9 +82,9 @@ void House::DrawReflection(const Renderer& renderer)
 
 	Matrix4 mirror;
 	Matrix4::Scale(mirror, Vector3(1,-1,1));
-	_shaderProgram.SetUniform("model", mirror * houseTranslation * houseRotation);
+	_shaderProgram.SetUniform(_standardUniforms.Model, mirror * houseTranslation * houseRotation);
 	_houseTexture.Bind();
 	
-	renderer.UpdateStandardUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _houseModel.GetNumIndices());
 }

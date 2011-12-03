@@ -6,8 +6,7 @@
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "ObjFile.h"
-
-class Renderer;
+#include "Renderer.h"
 
 class SmokeParticles
 {
@@ -30,6 +29,8 @@ private:
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
 	ShaderProgram _shader;
+	Renderer::StandardUniformBlock _standardUniforms;
+	Uniform _uniformTime;
 	Texture _texture;
 
 	float _elapsed;

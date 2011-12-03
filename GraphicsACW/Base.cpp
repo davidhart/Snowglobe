@@ -31,11 +31,13 @@ void Base::Create(const Renderer& renderer)
 		ArrayElement(_baseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _baseModel.GetVertexOffset()),
 	};
 
-	_shaderProgram.Use();
-
+	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
+	
 	Matrix4 identity;
 	Matrix4::Identity(identity);
-	_shaderProgram.SetUniform("model", identity);
+
+	_shaderProgram.Use();
+	_shaderProgram.SetUniform(_standardUniforms.Model, identity);
 
 	_vertBinding.Create(renderer, vertexLayout, 2, _baseIndices, AE_UINT);
 }
@@ -54,6 +56,6 @@ void Base::Dispose()
 void Base::Draw(const Renderer& renderer)
 {
 	_shaderProgram.Use();
-	renderer.UpdateStandardUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _baseModel.GetNumIndices());
 }

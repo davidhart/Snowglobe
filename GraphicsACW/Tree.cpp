@@ -31,8 +31,13 @@ void Tree::CreateBranches(const Renderer& renderer)
 	_branchFragShader.CreateFromFile(renderer, "textured_lit.fsh");
 
 	_branchProgram.Create(renderer, _branchVertShader, _branchFragShader);
+
+	renderer.GetStandardUniforms(_branchProgram, _branchStandardUniforms);
+	Uniform diffuseMap = _branchProgram.GetUniform("diffuseMap");
+	_uniformDrawDepth = _branchProgram.GetUniform("drawDepth");
+
 	_branchProgram.Use();
-	_branchProgram.SetUniform("diffuseMap", 0);
+	_branchProgram.SetUniform(diffuseMap, 0);
 
 	CreateBranchInstanceBuffer(renderer);
 
@@ -64,10 +69,14 @@ void Tree::CreateLeaves(const Renderer& renderer)
 
 	_leafProgram.Create(renderer, _leafVertShader, _leafFragShader);
 
+	renderer.GetStandardUniforms(_leafProgram, _leafStandardUniforms);
+	Uniform diffuseMap = _leafProgram.GetUniform("diffuseMap");
+	Uniform gradientMap = _leafProgram.GetUniform("gradientMap");
+	_uniformColorLookup = _leafProgram.GetUniform("colorLookup");
+
 	_leafProgram.Use();
-	_leafProgram.SetUniform("diffuseMap", 0);
-	_leafProgram.SetUniform("gradientMap", 1);
-	_leafProgram.SetUniform("colorLookup", 0.0f);
+	_leafProgram.SetUniform(diffuseMap, 0);
+	_leafProgram.SetUniform(gradientMap, 1);
 
 	CreateLeafInstanceBuffer(renderer);
 
@@ -148,9 +157,9 @@ void Tree::DrawBranches(const Renderer& renderer, const Matrix4& model)
 	_barkTexture.Bind();
 	_branchProgram.Use();
 
-	renderer.UpdateStandardUniforms(_branchProgram);
-	_branchProgram.SetUniform("model", model);
-	_branchProgram.SetUniform("drawDepth", _drawDepth);
+	renderer.UpdateStandardUniforms(_branchProgram, _branchStandardUniforms);
+	_branchProgram.SetUniform(_branchStandardUniforms.Model, model);
+	_branchProgram.SetUniform(_uniformDrawDepth, _drawDepth);
 
 	renderer.DrawInstances(_branchBinding, PT_TRIANGLES, 0, _branchModel.GetNumIndices(), _branches.size());
 }
@@ -161,10 +170,10 @@ void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 	_leafGradient.Bind(1);
 
 	_leafProgram.Use();
-	renderer.UpdateStandardUniforms(_leafProgram);
-	_leafProgram.SetUniform("model", model);
-	_leafProgram.SetUniform("drawDepth", _drawDepth);
-	_leafProgram.SetUniform("colorLookup", 0.0f);
+	renderer.UpdateStandardUniforms(_leafProgram, _leafStandardUniforms);
+
+	_leafProgram.SetUniform(_leafStandardUniforms.Model, model);
+	_leafProgram.SetUniform(_uniformColorLookup, 0.0f);
 
 	glDisable(GL_CULL_FACE);
 	renderer.DrawInstances(_leafBinding, PT_TRIANGLES, 0, _leafModel.GetNumIndices(), _leaves.size());

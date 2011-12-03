@@ -5,8 +5,7 @@
 #include "VertexBuffer.h"
 #include "VertexBinding.h"
 #include "Texture.h"
-
-class Renderer;
+#include "Renderer.h"
 
 class House
 {
@@ -26,6 +25,7 @@ private:
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
 	ShaderProgram _shaderProgram;
+	Renderer::StandardUniformBlock _standardUniforms;
 	VertexBuffer _houseBuffer;
 	VertexBuffer _houseIndices;
 	VertexBinding _vertBinding;

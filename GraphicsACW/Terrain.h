@@ -5,8 +5,7 @@
 #include "VertexBuffer.h"
 #include "VertexBinding.h"
 #include "Texture.h"
-
-class Renderer;
+#include "Renderer.h"
 
 class Terrain
 {
@@ -29,6 +28,7 @@ private:
 	VertexBuffer _terrainBuffer;
 	VertexBuffer _terrainIndices;
 	VertexBinding _vertBinding;
+	Renderer::StandardUniformBlock _standardUniforms;
 	ObjFile _terrainModel;
 	Texture _texture;
 };

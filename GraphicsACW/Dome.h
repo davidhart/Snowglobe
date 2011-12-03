@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "ObjFile.h"
 #include "Matrix4.h"
+#include "Renderer.h"
 
 class Dome : public Uncopyable
 {
@@ -23,6 +24,9 @@ private:
 
 	ShaderProgram _frontShader;
 	ShaderProgram _backShader;
+
+	Renderer::StandardUniformBlock _standardUniformBack;
+	Renderer::StandardUniformBlock _standardUniformFront;
 
 	VertexShader _vertShader;
 	FragmentShader _backFragShader;

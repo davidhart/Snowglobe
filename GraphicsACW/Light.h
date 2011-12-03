@@ -2,6 +2,7 @@
 
 #include "Vector3.h"
 #include "Vector4.h"
+#include "ShaderProgram.h"
 
 class ShaderProgram;
 
@@ -9,6 +10,17 @@ class Light
 {
 
 public:
+
+	static const unsigned int MAX_LIGHTS = 4;
+	struct LightUniformBlock
+	{
+		Uniform Position;
+		Uniform SpotDirection;
+		Uniform Spot;
+		Uniform Attenuation;
+		Uniform Specular;
+		Uniform Diffuse;
+	};
 
 	Light();
 
@@ -25,7 +37,9 @@ public:
 	static void Point(Light& light, const Vector3& position);
 	static void Spot(Light& light, const Vector3& position, const Vector3& direction, float innerangle, float outerangle, float falloffPower);
 
-	void UpdateShaderUniforms(const ShaderProgram& shaderProgram, unsigned int lightID) const;
+	void UpdateShaderUniforms(const ShaderProgram& shaderProgram, const LightUniformBlock& uniforms) const;
+
+	static void GetShaderUniforms(const ShaderProgram& shaderProgram, unsigned int id, LightUniformBlock& uniforms);
 
 private:
 
@@ -37,14 +51,6 @@ private:
 	Vector3 _spot;			// { cos(innerangle), cos(outerangle), power }
 							// or { 0, 0, 0 } if point / directional light
 	Vector3 _attenuation;	// {constant attenuation, linear attenuation, quadratic attenuation}
-
-	static const std::string strBefore;
-	static const std::string strPosition;
-	static const std::string strSpotDirection;
-	static const std::string strSpot;
-	static const std::string strAttenuation;
-	static const std::string strSpecular;
-	static const std::string strDiffuse;
 };
 
 inline void Light::SetDiffuseColor(const Vector3& diffuse)

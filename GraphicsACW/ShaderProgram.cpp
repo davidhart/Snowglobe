@@ -3,6 +3,16 @@
 #include <string>
 #include <iostream>
 
+Uniform::Uniform() :
+	_location(-1)
+{
+}
+
+Uniform::Uniform(GLint location) :
+	_location(location)
+{
+}
+
 ShaderProgram::ShaderProgram() : 
 	_glex (NULL),
 	_spHandle (0)
@@ -59,53 +69,52 @@ void ShaderProgram::Use()
 	_glex->glUseProgram(_spHandle);
 }
 
-int ShaderProgram::GetAttributeIndex(const char* attribute)
+int ShaderProgram::GetAttributeIndex(const char* attribute) const
 {
 	return _glex->glGetAttribLocation(_spHandle, attribute);
 }
 
-void ShaderProgram::SetUniform(const char* uniform, const Matrix4& value) const
+Uniform ShaderProgram::GetUniform(const char* name) const
 {
-	int location = _glex->glGetUniformLocation(_spHandle, uniform);
-	if (location >= 0)
+	return Uniform(_glex->glGetUniformLocation(_spHandle, name));
+}
+
+void ShaderProgram::SetUniform(const Uniform& uniform, const Matrix4& value) const
+{
+	if (uniform._location >= 0)
 	{
-		_glex->glUniformMatrix4fv(location, 1, false, (const float*)&value);
+		_glex->glUniformMatrix4fv(uniform._location, 1, false, (const float*)&value);
 	}
 }
 
-void ShaderProgram::SetUniform(const char* uniform, const Vector4& value) const
+void ShaderProgram::SetUniform(const Uniform& uniform, const Vector4& value) const
 {
-	int location = _glex->glGetUniformLocation(_spHandle, uniform);
-	if (location >= 0)
+	if (uniform._location >= 0)
 	{
-		_glex->glUniform4fv(location, 1, (const float*)&value);
+		_glex->glUniform4fv(uniform._location, 1, (const float*)&value);
 	}
 }
 
-void ShaderProgram::SetUniform(const char* uniform, const Vector3& value) const
+void ShaderProgram::SetUniform(const Uniform& uniform, const Vector3& value) const
 {
-	int location = _glex->glGetUniformLocation(_spHandle, uniform);
-	if (location >= 0)
+	if (uniform._location >= 0)
 	{
-		_glex->glUniform3fv(location, 1, (const float*)&value);
+		_glex->glUniform3fv(uniform._location, 1, (const float*)&value);
 	}
 }
 
-void ShaderProgram::SetUniform(const char* uniform, float value) const
+void ShaderProgram::SetUniform(const Uniform& uniform, float value) const
 {
-	int location = _glex->glGetUniformLocation(_spHandle, uniform);
-	if (location >= 0)
+	if (uniform._location >= 0)
 	{
-		_glex->glUniform1f(location, value);
+		_glex->glUniform1f(uniform._location, value);
 	}
 }
 
-void ShaderProgram::SetUniform(const char* uniform, int value) const
+void ShaderProgram::SetUniform(const Uniform& uniform, int value) const
 {
-	int location = _glex->glGetUniformLocation(_spHandle, uniform);
-	if (location >= 0)
+	if (uniform._location >= 0)
 	{
-		_glex->glUniform1i(location, value);
+		_glex->glUniform1i(uniform._location, value);
 	}
 }
-

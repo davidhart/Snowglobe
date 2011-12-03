@@ -6,6 +6,7 @@
 #include "VertexBinding.h"
 #include "Matrix4.h"
 #include "Texture.h"
+#include "Renderer.h"
 
 #include <vector>
 #include <string>
@@ -45,6 +46,8 @@ private:
 	VertexShader _branchVertShader;
 	FragmentShader _branchFragShader;
 	ShaderProgram _branchProgram;
+	Renderer::StandardUniformBlock _branchStandardUniforms;
+	Uniform _uniformDrawDepth;
 	VertexBuffer _branchBuffer;
 	VertexBuffer _branchIndices;
 	VertexBuffer _branchInstanceBuffer;
@@ -55,6 +58,8 @@ private:
 	VertexShader _leafVertShader;
 	FragmentShader _leafFragShader;
 	ShaderProgram _leafProgram;
+	Renderer::StandardUniformBlock _leafStandardUniforms;
+	Uniform _uniformColorLookup;
 	VertexBuffer _leafBuffer;
 	VertexBuffer _leafIndices;
 	VertexBuffer _leafInstanceBuffer;

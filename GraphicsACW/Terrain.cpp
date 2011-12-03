@@ -26,8 +26,12 @@ void Terrain::Create(const Renderer& renderer)
 
 	_texture.Create(renderer, "grass.jpg");
 
+	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
 	_shaderProgram.Use();
-	_shaderProgram.SetUniform("diffuseMap", 0);
+	
+	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
+	_shaderProgram.SetUniform(diffuseMap, 0);
+
 	_vertBinding.Create(renderer, vertexLayout, 3, _terrainIndices, AE_UINT);
 }
 
@@ -51,11 +55,11 @@ void Terrain::Draw(const Renderer& renderer)
 	Matrix4 identity;
 	Matrix4::Identity(identity);
 	
-	_shaderProgram.SetUniform("model", identity);
+	_shaderProgram.SetUniform(_standardUniforms.Model, identity);
 
 	_texture.Bind();
 
-	renderer.UpdateStandardUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _terrainModel.GetNumIndices());
 }
 
@@ -66,10 +70,10 @@ void Terrain::DrawReflection(const Renderer& renderer)
 	Matrix4 mirror;
 	Matrix4::Scale(mirror, Vector3(1,-1,1));
 	
-	_shaderProgram.SetUniform("model", mirror);
+	_shaderProgram.SetUniform(_standardUniforms.Model, mirror);
 
 	_texture.Bind();
 
-	renderer.UpdateStandardUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _terrainModel.GetNumIndices());
 }

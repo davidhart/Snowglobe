@@ -3,6 +3,7 @@
 #include "GXBase.h"
 #include "Uncopyable.h"
 #include "Matrix4.h"
+#include "ShaderProgram.h"
 #include "Light.h"
 
 class glex;
@@ -24,6 +25,17 @@ class Renderer : public Uncopyable
 
 public:
 
+	struct StandardUniformBlock
+	{
+		Uniform Model;
+		Uniform View;
+		Uniform Projection;
+		Uniform ClipPlane;
+
+		Uniform Ambient;
+		Light::LightUniformBlock Lights[Light::MAX_LIGHTS];
+	};
+
 	Renderer();
 	~Renderer();
 	void Create(glex* glex);
@@ -39,14 +51,14 @@ public:
 	void SetLight(unsigned int id, const Light& light);
 	void GetLight(unsigned int id, Light& light) const;
 
-	void UpdateStandardUniforms(const ShaderProgram& shader) const;
+	void UpdateStandardUniforms(const ShaderProgram& shader, const StandardUniformBlock& uniforms) const;
+	void GetStandardUniforms(const ShaderProgram& shader, StandardUniformBlock& uniforms) const;
 
 	glex* GetEx() const;
 
 private:
 
-	static const unsigned int MAX_LIGHTS = 4;
-	Light _lights[MAX_LIGHTS];
+	Light _lights[Light::MAX_LIGHTS];
 	Matrix4 _view;
 	Matrix4 _projection;
 	Vector4 _clipPlane;

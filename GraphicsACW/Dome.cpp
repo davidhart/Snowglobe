@@ -31,11 +31,14 @@ void Dome::Create(const Renderer& renderer)
 	Matrix4 identity;
 	Matrix4::Identity(identity);
 
+	renderer.GetStandardUniforms(_frontShader, _standardUniformFront);
+	renderer.GetStandardUniforms(_backShader, _standardUniformBack);
+
 	_backShader.Use();
-	_frontShader.SetUniform("model", identity);
+	_backShader.SetUniform(_standardUniformBack.Model, identity);
 
 	_frontShader.Use();
-	_frontShader.SetUniform("model", identity);
+	_frontShader.SetUniform(_standardUniformBack.Model, identity);
 
 
 	ArrayElement frontVertLayout[] = 
@@ -77,7 +80,7 @@ void Dome::DrawBack(const Renderer& renderer)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	_backShader.Use();
-	renderer.UpdateStandardUniforms(_backShader);
+	renderer.UpdateStandardUniforms(_backShader, _standardUniformBack);
 	glCullFace(GL_FRONT);
 	renderer.Draw(_backBinding, PT_TRIANGLES, 0, _domeModel.GetNumIndices());
 
@@ -92,7 +95,7 @@ void Dome::DrawFront(const Renderer& renderer)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	_frontShader.Use();
-	renderer.UpdateStandardUniforms(_frontShader);
+	renderer.UpdateStandardUniforms(_frontShader, _standardUniformFront);
 	renderer.Draw(_frontBinding, PT_TRIANGLES, 0, _domeModel.GetNumIndices());
 
 	glDisable(GL_BLEND);

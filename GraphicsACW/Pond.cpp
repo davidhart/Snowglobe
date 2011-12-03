@@ -25,12 +25,15 @@ void Pond::Create(const Renderer& renderer)
 		ArrayElement(_pondBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _pondModel.GetVertexOffset()),
 	};
 
-	_shaderProgram.Use();
+	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
+	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
 
 	Matrix4 identity;
 	Matrix4::Identity(identity);
-	_shaderProgram.SetUniform("model", identity);
-	_shaderProgram.SetUniform("diffuseMap", 0);
+	
+	_shaderProgram.Use();
+	_shaderProgram.SetUniform(_standardUniforms.Model, identity);
+	_shaderProgram.SetUniform(diffuseMap, 0);
 	_vertBinding.Create(renderer, vertexLayout, 3, _pondIndices, AE_UINT);
 }
 
@@ -54,7 +57,7 @@ void Pond::Draw(const Renderer& renderer)
 
 	_texture.Bind();
 	_shaderProgram.Use();
-	renderer.UpdateStandardUniforms(_shaderProgram);
+	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _pondModel.GetNumIndices());
 
 	glDisable(GL_BLEND);

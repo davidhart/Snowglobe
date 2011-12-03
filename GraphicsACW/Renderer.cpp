@@ -76,28 +76,43 @@ void Renderer::ClipPlane(const Vector4& clipPlane)
 
 void Renderer::SetLight(unsigned int id, const Light& light)
 {
-	assert(id < MAX_LIGHTS);
+	assert(id < Light::MAX_LIGHTS);
 
 	_lights[id] = light;
 }
 
 void Renderer::GetLight(unsigned int id, Light& light) const
 {
-	assert(id < MAX_LIGHTS);
+	assert(id < Light::MAX_LIGHTS);
 	
 	light = _lights[id];
 }
 
-void Renderer::UpdateStandardUniforms(const ShaderProgram& shaderprogram) const
+void Renderer::UpdateStandardUniforms(const ShaderProgram& shaderprogram, const StandardUniformBlock& uniforms) const
 {
-	shaderprogram.SetUniform("view", _view);
-	
+	// TODO: ambient
 	// TODO: evaluate these on change only as they are unlikely to change frequently
-	shaderprogram.SetUniform("projection", _projection);
-	shaderprogram.SetUniform("clipPlane", _clipPlane);
+	shaderprogram.SetUniform(uniforms.View, _view);
+	shaderprogram.SetUniform(uniforms.Projection, _projection);
+	shaderprogram.SetUniform(uniforms.ClipPlane, _clipPlane);
 
-	for (unsigned int i = 0; i < MAX_LIGHTS; ++i)
+	for (unsigned int i = 0; i < Light::MAX_LIGHTS; ++i)
 	{
-		_lights[i].UpdateShaderUniforms(shaderprogram, i);
+		_lights[i].UpdateShaderUniforms(shaderprogram, uniforms.Lights[i]);
+	}
+}
+
+void Renderer::GetStandardUniforms(const ShaderProgram& shaderProgram, StandardUniformBlock & uniforms) const
+{
+	uniforms.Model = shaderProgram.GetUniform("model");
+	uniforms.View = shaderProgram.GetUniform("view");
+	uniforms.Projection = shaderProgram.GetUniform("projection");
+	uniforms.ClipPlane = shaderProgram.GetUniform("clipPlane");
+
+	uniforms.Ambient = shaderProgram.GetUniform("ambient");
+
+	for (unsigned int i = 0; i < Light::MAX_LIGHTS; ++i)
+	{
+		Light::GetShaderUniforms(shaderProgram, i, uniforms.Lights[i]);
 	}
 }

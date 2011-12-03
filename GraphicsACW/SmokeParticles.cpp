@@ -28,14 +28,25 @@ void SmokeParticles::Create(const Renderer& renderer, unsigned int numParticles)
 		ArrayElement(_instancedQuadBuffer, _shader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _instancedQuadModel.GetVertexOffset()),
 	};
 
+	renderer.GetStandardUniforms(_shader, _standardUniforms);
+	Uniform diffuseMap = _shader.GetUniform("diffuseMap");
+	Uniform particleSystemShape = _shader.GetUniform("particleSystemShape");
+	Uniform particleSystemHeight = _shader.GetUniform("particleSystemHeight");
+	Uniform particleSpread = _shader.GetUniform("particleSpread");
+	Uniform windDirection = _shader.GetUniform("windDirection");
+	Uniform particleSize = _shader.GetUniform("particleSize");
+	Uniform particleSpeed = _shader.GetUniform("particleSpeed");
+	_uniformTime = _shader.GetUniform("time");
+
 	_shader.Use();
-	_shader.SetUniform("diffuseMap", 0);
-	_shader.SetUniform("particleSystemShape", 1.4f);
-	_shader.SetUniform("particleSystemHeight", 3.5f);
-	_shader.SetUniform("particleSpread", 1.2f);
-	_shader.SetUniform("windDirection", Vector3(2.0f, 0.0f, 5.0f));
-	_shader.SetUniform("particleSize", 0.8f);
-	_shader.SetUniform("particleSpeed", 0.3f);
+	_shader.SetUniform(diffuseMap, 0);
+	_shader.SetUniform(particleSystemShape, 1.4f);
+	_shader.SetUniform(particleSystemHeight, 3.5f);
+	_shader.SetUniform(particleSpread, 1.2f);
+	_shader.SetUniform(windDirection, Vector3(2.0f, 0.0f, 5.0f));
+	_shader.SetUniform(particleSize, 0.8f);
+	_shader.SetUniform(particleSpeed, 0.3f);
+
 	_vertBinding.Create(renderer, vertexLayout, 2, _instancedQuadIndices, AE_UINT);
 }
 
@@ -62,13 +73,13 @@ void SmokeParticles::Draw(const Renderer& renderer)
 
 	_shader.Use();
 
-	_shader.SetUniform("time", _elapsed);
+	_shader.SetUniform(_uniformTime, _elapsed);
 
 	Matrix4 model;
 	Matrix4::Translation(model, Vector3(-2.69f, 2.1f, -4.4f));
-	_shader.SetUniform("model", model);
+	_shader.SetUniform(_standardUniforms.Model, model);
 
-	renderer.UpdateStandardUniforms(_shader);
+	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _instancedQuadModel.GetNumIndices(), _numParticles);
 
 	glDepthMask(GL_TRUE);
@@ -86,15 +97,15 @@ void SmokeParticles::DrawReflected(const Renderer& renderer)
 
 	_shader.Use();
 
-	_shader.SetUniform("time", _elapsed);
+	_shader.SetUniform(_uniformTime, _elapsed);
 
 	Matrix4 model;
 	Matrix4 flip;
 	Matrix4::Translation(model, Vector3(-2.69f, 2.1f, -4.4f));
 	Matrix4::Scale(flip, Vector3(1, -1, 1));
-	_shader.SetUniform("model", flip * model);
+	_shader.SetUniform(_standardUniforms.Model, flip * model);
 
-	renderer.UpdateStandardUniforms(_shader);
+	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _instancedQuadModel.GetNumIndices(), _numParticles);
 
 	glDepthMask(GL_TRUE);

@@ -4,8 +4,7 @@
 #include "ObjFile.h"
 #include "VertexBuffer.h"
 #include "VertexBinding.h"
-
-class Renderer;
+#include "Renderer.h"
 
 class Base
 {
@@ -24,6 +23,7 @@ private:
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
 	ShaderProgram _shaderProgram;
+	Renderer::StandardUniformBlock _standardUniforms;
 	VertexBuffer _baseBuffer;
 	VertexBuffer _baseIndices;
 	VertexBinding _vertBinding;

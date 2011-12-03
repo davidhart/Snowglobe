@@ -9,25 +9,20 @@ class Vector4;
 class Vector3;
 class ShaderProgram;
 
-template <typename T> class Uniform
+class Uniform
 {
+
+	friend class ShaderProgram;
 
 public:
 
-	Uniform(const char* name);
-	void SetValue(const T& value);
+	Uniform();	
 
 private:
 
-	static void SetUniformValue(float value, GLint location);
-	static void SetUniformValue(const Vector4& value, GLint location);
-	static void SetUniformValue(const Vector3& value, GLint location);
-	static void SetUniformValue(const Matrix4& value, GLint location);
+	Uniform(GLint uniformLocation);
 
-	void SetValue();
-
-	ShaderProgram& shaderProgram;
-	GLint _uniformLocation;
+	GLint _location;
 
 };
 
@@ -42,13 +37,16 @@ public:
 	void Create(const Renderer& renderer, const VertexShader& vertexShader, const FragmentShader& fragmentShader);
 	void Dispose();
 
-	int GetAttributeIndex(const char* attribute);
+	int GetAttributeIndex(const char* attribute) const;
+	Uniform GetUniform(const char* name) const;
+
+	void SetUniform(const Uniform& uniform, int value) const;
+	void SetUniform(const Uniform& uniform, float value) const;
+	void SetUniform(const Uniform& uniform, const Vector3& value) const;
+	void SetUniform(const Uniform& uniform, const Vector4& value) const;
+	void SetUniform(const Uniform& uniform, const Matrix4& value) const;
+
 	void Use();
-	void SetUniform(const char* uniform, const Matrix4& value) const;
-	void SetUniform(const char* uniform, const Vector4& value) const;
-	void SetUniform(const char* uniform, const Vector3& value) const;
-	void SetUniform(const char* uniform, float value) const;
-	void SetUniform(const char* uniform, int value) const;
 
 private:
 
