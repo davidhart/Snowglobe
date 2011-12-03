@@ -88,13 +88,18 @@ void Renderer::GetLight(unsigned int id, Light& light) const
 	light = _lights[id];
 }
 
+void Renderer::SetAmbient(const Vector3& ambient)
+{
+	_ambient = ambient;
+}
+
 void Renderer::UpdateStandardUniforms(const ShaderProgram& shaderprogram, const StandardUniformBlock& uniforms) const
 {
-	// TODO: ambient
 	// TODO: evaluate these on change only as they are unlikely to change frequently
 	shaderprogram.SetUniform(uniforms.View, _view);
 	shaderprogram.SetUniform(uniforms.Projection, _projection);
 	shaderprogram.SetUniform(uniforms.ClipPlane, _clipPlane);
+	shaderprogram.SetUniform(uniforms.Ambient, _ambient);
 
 	for (unsigned int i = 0; i < Light::MAX_LIGHTS; ++i)
 	{

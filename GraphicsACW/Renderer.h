@@ -51,6 +51,8 @@ public:
 	void SetLight(unsigned int id, const Light& light);
 	void GetLight(unsigned int id, Light& light) const;
 
+	void SetAmbient(const Vector3& ambient);
+
 	void UpdateStandardUniforms(const ShaderProgram& shader, const StandardUniformBlock& uniforms) const;
 	void GetStandardUniforms(const ShaderProgram& shader, StandardUniformBlock& uniforms) const;
 
@@ -59,6 +61,7 @@ public:
 private:
 
 	Light _lights[Light::MAX_LIGHTS];
+	Vector3 _ambient;
 	Matrix4 _view;
 	Matrix4 _projection;
 	Vector4 _clipPlane;

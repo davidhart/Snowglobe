@@ -34,5 +34,15 @@ private:
 	Pond _pond;
 	SmokeParticles _smoke;
 	bool _growTree;
+
+	Light _spotLights[4];
+	Light _directionalLights[4];
+
+	bool _cursorKeyDown[4];
+	bool _sunMode;
+	Vector3 _sunDirection;
+
+	float _cameraPitch;
+	float _cameraYaw;
 };
 
