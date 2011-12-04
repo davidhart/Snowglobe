@@ -173,6 +173,7 @@ void Tree::Draw(const Renderer& renderer)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
+
 	DrawBranches(renderer, model);
 	DrawLeaves(renderer, model);
 
@@ -190,8 +191,18 @@ void Tree::DrawReflection(const Renderer& renderer)
 	Matrix4 model;
 	ConstructModelMatrix(model);
 
+	if (_currentDrawMode == DRAW_WIREFRAME)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
 	DrawBranches(renderer, model * mirror);
 	DrawLeaves(renderer, model * mirror);
+
+	if (_currentDrawMode == DRAW_WIREFRAME)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 void Tree::DrawBranches(const Renderer& renderer, const Matrix4& model)
