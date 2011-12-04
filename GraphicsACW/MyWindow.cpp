@@ -60,7 +60,7 @@ void MyWindow::OnCreate()
 	
 
 	_dome.Create(_renderer);
-	_tree.Create(_renderer, result, 2, 4000);
+	_tree.Create(_renderer, result, 2, 2000);
 	_house.Create(_renderer);
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
@@ -280,6 +280,10 @@ void MyWindow::OnKeyboard(int key, bool down)
 				_renderer.SetLight(i, _spotLights[i]);
 			}
 		}
+	}
+	if (key == 'M' && down)
+	{
+		_tree.NextDrawMode();
 	}
 }
 

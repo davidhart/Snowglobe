@@ -147,5 +147,14 @@
     <None Include="leaf.fsh">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="tree_flat.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="lit_flat.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="unlit.fsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

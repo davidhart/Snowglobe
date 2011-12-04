@@ -7,7 +7,12 @@
 
 Tree::Tree() : 
 	_maxDepth(0),
-	_drawDepth(0)
+	_drawDepth(0),
+	_currentBranchProgram(&_branchTexturedLitProgram),
+	_branchCurrentUniforms(&_branchTexturedLitUniforms),
+	_currentLeafProgram(&_leafProgram),
+	_leafCurrentUniforms(&_leafStandardUniforms),
+	_currentDrawMode(DRAW_TEXTURED_LIT)
 {
 
 }
@@ -27,35 +32,50 @@ void Tree::CreateBranches(const Renderer& renderer)
 	assert(_branchModel.HasTextureCoordinates());
 	assert(_branchModel.HasVertexNormals());
 
-	_branchVertShader.CreateFromFile(renderer, "tree.vsh");
-	_branchFragShader.CreateFromFile(renderer, "textured_lit.fsh");
+	_branchVert.CreateFromFile(renderer, "tree.vsh");
+	_branchVertFlat.CreateFromFile(renderer, "tree_flat.vsh");
 
-	_branchProgram.Create(renderer, _branchVertShader, _branchFragShader);
+	_branchFlatShadedFrag.CreateFromFile(renderer, "lit_flat.fsh");
+	_branchTexturedLitFrag.CreateFromFile(renderer, "textured_lit.fsh");
+	_branchUnlitFrag.CreateFromFile(renderer, "unlit.fsh");
 
-	renderer.GetStandardUniforms(_branchProgram, _branchStandardUniforms);
-	Uniform diffuseMap = _branchProgram.GetUniform("diffuseMap");
-	_uniformDrawDepth = _branchProgram.GetUniform("drawDepth");
+	_branchTexturedLitProgram.Create(renderer, _branchVert, _branchTexturedLitFrag);
+	_branchFlatProgram.Create(renderer, _branchVertFlat, _branchFlatShadedFrag);
+	_branchUnlitProgram.Create(renderer, _branchVert, _branchUnlitFrag);
 
-	_branchProgram.Use();
-	_branchProgram.SetUniform(diffuseMap, 0);
+	renderer.GetStandardUniforms(_branchTexturedLitProgram, _branchTexturedLitUniforms);
+	renderer.GetStandardUniforms(_branchFlatProgram, _branchFlatUniforms);
+	renderer.GetStandardUniforms(_branchUnlitProgram, _branchUnlitUniforms);
+
+	Uniform diffuseMap = _branchTexturedLitProgram.GetUniform("diffuseMap");
+	_uniformDrawDepth = _branchTexturedLitProgram.GetUniform("drawDepth");
+
+	_branchTexturedLitProgram.Use();
+	_branchTexturedLitProgram.SetUniform(diffuseMap, 0);
+
+	diffuseMap = _branchUnlitProgram.GetUniform("diffuseMap");
+	_branchUnlitProgram.Use();
+	_branchUnlitProgram.SetUniform(diffuseMap, 0);
 
 	CreateBranchInstanceBuffer(renderer);
 
 	unsigned int stride = _branchModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
 	{
-		ArrayElement(_branchBuffer, _branchProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _branchModel.GetTexCoordOffset(), 0),
-		ArrayElement(_branchBuffer, _branchProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _branchModel.GetNormalOffset(), 0),
-		ArrayElement(_branchBuffer, _branchProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _branchModel.GetVertexOffset(), 0),
+		ArrayElement(_branchBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _branchModel.GetTexCoordOffset(), 0),
+		ArrayElement(_branchBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _branchModel.GetNormalOffset(), 0),
+		ArrayElement(_branchBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _branchModel.GetVertexOffset(), 0),
 	
-		ArrayElement(_branchInstanceBuffer, _branchProgram.GetAttributeIndex("in_modelRow0"), 4, AE_FLOAT, 13 * sizeof(float), 0, 1),
-		ArrayElement(_branchInstanceBuffer, _branchProgram.GetAttributeIndex("in_modelRow1"), 4, AE_FLOAT, 13 * sizeof(float), 4 * sizeof(float), 1),
-		ArrayElement(_branchInstanceBuffer, _branchProgram.GetAttributeIndex("in_modelRow2"), 4, AE_FLOAT, 13 * sizeof(float), 8 * sizeof(float), 1),
-		ArrayElement(_branchInstanceBuffer, _branchProgram.GetAttributeIndex("in_branchDepth"), 1, AE_FLOAT, 13 * sizeof(float), 12 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_modelRow0"), 4, AE_FLOAT, 13 * sizeof(float), 0, 1),
+		ArrayElement(_branchInstanceBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_modelRow1"), 4, AE_FLOAT, 13 * sizeof(float), 4 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_modelRow2"), 4, AE_FLOAT, 13 * sizeof(float), 8 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_branchDepth"), 1, AE_FLOAT, 13 * sizeof(float), 12 * sizeof(float), 1),
 	};
 
 	_branchBinding.Create(renderer, vertexLayout, 7, _branchIndices, AE_UINT);
 	_barkTexture.Create(renderer, "tree_bark.jpg");
+
+	_textureOff.Create(renderer, "white.tga");
 }
 
 void Tree::CreateLeaves(const Renderer& renderer)
@@ -66,10 +86,14 @@ void Tree::CreateLeaves(const Renderer& renderer)
 
 	_leafVertShader.CreateFromFile(renderer, "leaf.vsh");
 	_leafFragShader.CreateFromFile(renderer, "leaf.fsh");
+	_leafFragUnlit.CreateFromFile(renderer, "unlit.fsh");
 
 	_leafProgram.Create(renderer, _leafVertShader, _leafFragShader);
+	_leafProgramUnlit.Create(renderer, _leafVertShader, _leafFragUnlit);
 
 	renderer.GetStandardUniforms(_leafProgram, _leafStandardUniforms);
+	renderer.GetStandardUniforms(_leafProgramUnlit, _leafUnlitUniforms);
+
 	Uniform diffuseMap = _leafProgram.GetUniform("diffuseMap");
 	Uniform gradientMap = _leafProgram.GetUniform("gradientMap");
 	_uniformColorLookup = _leafProgram.GetUniform("colorLookup");
@@ -103,17 +127,26 @@ void Tree::Dispose()
 	_branchBuffer.Dispose();
 	_branchIndices.Dispose();
 	_branchInstanceBuffer.Dispose();
-	_branchProgram.Dispose();
-	_branchFragShader.Dispose();
-	_branchVertShader.Dispose();
+	_branchTexturedLitProgram.Dispose();
+	_branchVert.Dispose();
+	_branchTexturedLitFrag.Dispose();
+	_branchFlatProgram.Dispose();
+	_branchFlatShadedFrag.Dispose();
+	_branchVertFlat.Dispose();
+	_branchUnlitProgram.Dispose();
+	_branchUnlitFrag.Dispose();
+
 	_barkTexture.Dispose();
+	_textureOff.Dispose();
 
 	_leafBinding.Dispose();
 	_leafBuffer.Dispose();
 	_leafIndices.Dispose();
 	_leafInstanceBuffer.Dispose();
 	_leafProgram.Dispose();
+	_leafProgramUnlit.Dispose();
 	_leafFragShader.Dispose();
+	_leafFragUnlit.Dispose();
 	_leafVertShader.Dispose();
 	_leafTexture.Dispose();
 	_leafGradient.Dispose();
@@ -136,8 +169,17 @@ void Tree::Draw(const Renderer& renderer)
 	Matrix4 model;
 	ConstructModelMatrix(model);
 
+	if (_currentDrawMode == DRAW_WIREFRAME)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
 	DrawBranches(renderer, model);
 	DrawLeaves(renderer, model);
+
+	if (_currentDrawMode == DRAW_WIREFRAME)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 void Tree::DrawReflection(const Renderer& renderer)
@@ -154,26 +196,41 @@ void Tree::DrawReflection(const Renderer& renderer)
 
 void Tree::DrawBranches(const Renderer& renderer, const Matrix4& model)
 {
-	_barkTexture.Bind();
-	_branchProgram.Use();
+	if (_currentDrawMode == DRAW_LIT_SMOOTH || _currentDrawMode == DRAW_WIREFRAME)
+	{
+		_textureOff.Bind();
+	}
+	else
+	{
+		_barkTexture.Bind();
+	}
+	_currentBranchProgram->Use();
 
-	renderer.UpdateStandardUniforms(_branchProgram, _branchStandardUniforms);
-	_branchProgram.SetUniform(_branchStandardUniforms.Model, model);
-	_branchProgram.SetUniform(_uniformDrawDepth, _drawDepth);
+	renderer.UpdateStandardUniforms(*_currentBranchProgram, *_branchCurrentUniforms);
+	_currentBranchProgram->SetUniform(_branchCurrentUniforms->Model, model);
+	_currentBranchProgram->SetUniform(_uniformDrawDepth, _drawDepth);
 
 	renderer.DrawInstances(_branchBinding, PT_TRIANGLES, 0, _branchModel.GetNumIndices(), _branches.size());
 }
 
 void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 {
-	_leafTexture.Bind(0);
-	_leafGradient.Bind(1);
+	_currentLeafProgram->Use();
 
-	_leafProgram.Use();
-	renderer.UpdateStandardUniforms(_leafProgram, _leafStandardUniforms);
+	if (_currentDrawMode == DRAW_LIT_SMOOTH || _currentDrawMode == DRAW_WIREFRAME || _currentDrawMode == DRAW_LIT_FLAT)
+	{
+		_textureOff.Bind(0);
+		_textureOff.Bind(1);
+	}
+	else
+	{
+		_leafTexture.Bind(0);
+		_leafGradient.Bind(1);
+		_currentLeafProgram->SetUniform(_uniformColorLookup, 0.0f);
+	}
 
-	_leafProgram.SetUniform(_leafStandardUniforms.Model, model);
-	_leafProgram.SetUniform(_uniformColorLookup, 0.0f);
+	renderer.UpdateStandardUniforms(*_currentLeafProgram, *_leafCurrentUniforms);
+	_currentLeafProgram->SetUniform(_leafCurrentUniforms->Model, model);
 
 	glDisable(GL_CULL_FACE);
 	renderer.DrawInstances(_leafBinding, PT_TRIANGLES, 0, _leafModel.GetNumIndices(), _leaves.size());
@@ -183,6 +240,43 @@ void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 unsigned int Tree::MaxBranchDepth() const
 {
 	return _maxDepth;
+}
+
+void Tree::NextDrawMode()
+{
+	_currentDrawMode = (eDrawMode)((int)_currentDrawMode + 1);
+
+	if (_currentDrawMode > 3)
+		_currentDrawMode = DRAW_TEXTURED_LIT;
+
+	if (_currentDrawMode == DRAW_TEXTURED_LIT || _currentDrawMode == DRAW_LIT_SMOOTH)
+	{
+		_currentBranchProgram = &_branchTexturedLitProgram;
+		_branchCurrentUniforms = &_branchTexturedLitUniforms;
+	}
+	else if (_currentDrawMode == DRAW_LIT_FLAT)
+	{
+		_currentBranchProgram = &_branchFlatProgram;
+		_branchCurrentUniforms = &_branchFlatUniforms;
+	}
+	else if (_currentDrawMode == DRAW_WIREFRAME)
+	{
+		_currentBranchProgram = &_branchUnlitProgram;
+		_branchCurrentUniforms = &_branchUnlitUniforms;
+	}
+
+	if (_currentDrawMode == DRAW_WIREFRAME)
+	{
+		_currentLeafProgram = &_leafProgramUnlit;
+		_leafCurrentUniforms = &_leafUnlitUniforms;
+	}
+	else
+	{
+		_currentLeafProgram = &_leafProgram;
+		_leafCurrentUniforms = &_leafStandardUniforms;
+	}
+
+	_uniformDrawDepth = _currentBranchProgram->GetUniform("drawDepth");
 }
 
 void Tree::ConstructModelMatrix(Matrix4& out)

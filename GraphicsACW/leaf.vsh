@@ -4,14 +4,14 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-in vec3 in_vertex;
-in vec3 in_normal;
-in vec2 in_tex;
+layout(location = 0) in vec3 in_vertex;
+layout(location = 1) in vec3 in_normal;
+layout(location = 2) in vec2 in_tex;
 
-in vec4 in_modelRow0;
-in vec4 in_modelRow1;
-in vec4 in_modelRow2;
-in float in_branchDepth;
+layout(location = 3) in vec4 in_modelRow0;
+layout(location = 4) in vec4 in_modelRow1;
+layout(location = 5) in vec4 in_modelRow2;
+layout(location = 6) in float in_branchDepth;
 
 out vec3 v_normal;
 out vec2 v_tex;

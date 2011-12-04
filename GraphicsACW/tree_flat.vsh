@@ -14,10 +14,10 @@ layout(location = 4) in vec4 in_modelRow1;
 layout(location = 5) in vec4 in_modelRow2;
 layout(location = 6) in float in_branchDepth;
 
-out vec3 v_normal;
-out vec2 v_tex;
-out vec3 v_wsPos;
-out vec3 v_viewDir;
+flat out vec3 v_normal;
+flat out vec2 v_tex;
+flat out vec3 v_wsPos;
+flat out vec3 v_viewDir;
 
 ///////////////////////////////////////////////////////////////
 // Clip plane begin

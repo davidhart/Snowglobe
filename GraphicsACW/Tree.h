@@ -31,6 +31,8 @@ public:
 
 	unsigned int MaxBranchDepth() const;
 
+	void NextDrawMode();
+
 private:
 
 	void ParseTree(const std::string& treestring, unsigned int leafDepth, unsigned int numLeaves);
@@ -43,22 +45,45 @@ private:
 
 	void ConstructModelMatrix(Matrix4& out);
 
-	VertexShader _branchVertShader;
-	FragmentShader _branchFragShader;
-	ShaderProgram _branchProgram;
-	Renderer::StandardUniformBlock _branchStandardUniforms;
+	VertexShader _branchVert;
+	VertexShader _branchVertFlat;
+
+	FragmentShader _branchFlatShadedFrag;
+	FragmentShader _branchTexturedLitFrag;
+	FragmentShader _branchUnlitFrag;
+
+	ShaderProgram _branchUnlitProgram;
+	ShaderProgram _branchFlatProgram;
+	ShaderProgram _branchTexturedLitProgram;
+	ShaderProgram* _currentBranchProgram;
+
+	Renderer::StandardUniformBlock _branchUnlitUniforms;
+	Renderer::StandardUniformBlock _branchFlatUniforms;
+	Renderer::StandardUniformBlock _branchTexturedLitUniforms;
+	Renderer::StandardUniformBlock* _branchCurrentUniforms;
 	Uniform _uniformDrawDepth;
+
 	VertexBuffer _branchBuffer;
 	VertexBuffer _branchIndices;
 	VertexBuffer _branchInstanceBuffer;
 	VertexBinding _branchBinding;
+
+	Texture _textureOff;
 	Texture _barkTexture;
 	ObjFile _branchModel;
 
+
 	VertexShader _leafVertShader;
 	FragmentShader _leafFragShader;
+	FragmentShader _leafFragUnlit;
 	ShaderProgram _leafProgram;
+	ShaderProgram _leafProgramUnlit;
+	ShaderProgram* _currentLeafProgram;
+
 	Renderer::StandardUniformBlock _leafStandardUniforms;
+	Renderer::StandardUniformBlock _leafUnlitUniforms;
+	Renderer::StandardUniformBlock* _leafCurrentUniforms;
+
 	Uniform _uniformColorLookup;
 	VertexBuffer _leafBuffer;
 	VertexBuffer _leafIndices;
@@ -67,6 +92,16 @@ private:
 	Texture _leafTexture;
 	Texture _leafGradient;
 	ObjFile _leafModel;
+
+	enum eDrawMode
+	{
+		DRAW_TEXTURED_LIT = 0,
+		DRAW_LIT_SMOOTH = 1,
+		DRAW_LIT_FLAT = 2,
+		DRAW_WIREFRAME = 3,
+	};
+
+	eDrawMode _currentDrawMode;
 
 	class Branch
 	{

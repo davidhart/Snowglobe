@@ -127,12 +127,15 @@
     <None Include="domeFront.fsh" />
     <None Include="leaf.fsh" />
     <None Include="leaf.vsh" />
+    <None Include="lit_flat.fsh" />
     <None Include="particle_smoke.vsh" />
     <None Include="textured_lit.fsh" />
     <None Include="textured_lit.vsh" />
     <None Include="textured_unlit.fsh" />
     <None Include="textured_unlit.vsh" />
     <None Include="tree.vsh" />
+    <None Include="tree_flat.vsh" />
+    <None Include="unlit.fsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
