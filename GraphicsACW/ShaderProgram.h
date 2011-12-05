@@ -20,7 +20,7 @@ public:
 
 private:
 
-	Uniform(GLint uniformLocation);
+	explicit Uniform(GLint uniformLocation);
 
 	GLint _location;
 

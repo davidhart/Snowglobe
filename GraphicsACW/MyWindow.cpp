@@ -11,10 +11,10 @@ using namespace gxbase;
 
 MyWindow::MyWindow() :
 	_growTree (true),
-	_cameraPitch(0),
-	_cameraYaw(0),
 	_sunMode(true),
-	_sunDirection(0, -1, 0)
+	_sunDirection(0, -1, 0),
+	_cameraPitch(0),
+	_cameraYaw(0)
 {
 	for (int i = 0; i < 4; ++i)
 	{

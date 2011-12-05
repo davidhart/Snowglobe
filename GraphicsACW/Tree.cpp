@@ -6,13 +6,13 @@
 #include <stack>
 
 Tree::Tree() : 
-	_maxDepth(0),
-	_drawDepth(0),
 	_currentBranchProgram(&_branchTexturedLitProgram),
 	_branchCurrentUniforms(&_branchTexturedLitUniforms),
 	_currentLeafProgram(&_leafProgram),
 	_leafCurrentUniforms(&_leafStandardUniforms),
-	_currentDrawMode(DRAW_TEXTURED_LIT)
+	_currentDrawMode(DRAW_TEXTURED_LIT),
+	_maxDepth(0),
+	_drawDepth(0)
 {
 
 }
