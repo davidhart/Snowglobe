@@ -46,6 +46,7 @@
     <ClCompile Include="Light.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="SnowParticles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dome.h" />
@@ -95,6 +96,7 @@
     <ClInclude Include="Light.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="SnowParticles.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -154,6 +156,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="unlit.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="particle_snow.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="depth_clear.fsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

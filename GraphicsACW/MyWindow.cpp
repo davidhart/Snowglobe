@@ -66,6 +66,7 @@ void MyWindow::OnCreate()
 	_terrain.Create(_renderer);
 	_pond.Create(_renderer);
 	_smoke.Create(_renderer, 200);
+	_snow.Create(_renderer, 10000);
 
 	Matrix4 perspective;
 	Matrix4::PerspectiveFov(perspective, 85, (float)Width() / Height(), 0.1f, 1000);
@@ -131,6 +132,7 @@ void MyWindow::OnDisplay()
 		_cameraPitch -= delta;
 
 	_smoke.Update(delta);
+	_snow.Update(delta);
 
 	if (_growTree)
 		_tree.Grow(delta);
@@ -169,35 +171,28 @@ void MyWindow::OnDisplay()
 	_base.Draw(_renderer);
 	_dome.DrawBack(_renderer);
 
-	_smoke.Draw(_renderer);
-
-	glStencilFunc(GL_ALWAYS, 1, 1);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glDepthMask(GL_FALSE);
-	glEnable(GL_STENCIL_TEST);
-
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); 
-	_pond.Draw(_renderer);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-	glDepthMask(GL_TRUE);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glStencilFunc(GL_EQUAL, 1, 1);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-	glCullFace(GL_FRONT);
+	_pond.DrawStencilMask(_renderer);
 
 	_renderer.ClipPlane(Vector4(0, -1, 0, 0));
+
+	glCullFace(GL_FRONT);
+	glEnable(GL_STENCIL_TEST);
 
 	_terrain.DrawReflection(_renderer);
 	_tree.DrawReflection(_renderer);
 	_house.DrawReflection(_renderer);
 	_smoke.DrawReflected(_renderer);
+	_snow.DrawReflected(_renderer);
 
 	glCullFace(GL_BACK);
 	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
 
-	_pond.Draw(_renderer);
 	glDisable(GL_STENCIL_TEST);
+	
+	_pond.Draw(_renderer);
+
+	_snow.Draw(_renderer);
+	_smoke.Draw(_renderer);
 
 	_dome.DrawFront(_renderer);
 	
@@ -220,6 +215,7 @@ void MyWindow::OnDestroy()
 	_terrain.Dispose();
 	_pond.Dispose();
 	_smoke.Dispose();
+	_snow.Dispose();
 
 	_renderer.Dispose();
 

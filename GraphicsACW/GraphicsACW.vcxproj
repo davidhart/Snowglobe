@@ -84,6 +84,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SmokeParticles.cpp" />
+    <ClCompile Include="SnowParticles.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tree.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SmokeParticles.h" />
+    <ClInclude Include="SnowParticles.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tree.h" />
@@ -122,6 +124,7 @@
   <ItemGroup>
     <None Include="basic.fsh" />
     <None Include="basic.vsh" />
+    <None Include="depth_clear.fsh" />
     <None Include="dome.vsh" />
     <None Include="domeBack.fsh" />
     <None Include="domeFront.fsh" />
@@ -129,6 +132,7 @@
     <None Include="leaf.vsh" />
     <None Include="lit_flat.fsh" />
     <None Include="particle_smoke.vsh" />
+    <None Include="particle_snow.vsh" />
     <None Include="textured_lit.fsh" />
     <None Include="textured_lit.vsh" />
     <None Include="textured_unlit.fsh" />

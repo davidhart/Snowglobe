@@ -18,17 +18,22 @@ public:
 	void Dispose();
 
 	void Draw(const Renderer& renderer);
+	void DrawStencilMask(const Renderer& renderer);
 
 private:
 
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
+	FragmentShader _fragDepthClear;
 	ShaderProgram _shaderProgram;
+	ShaderProgram _shaderDepthClear;
 	Renderer::StandardUniformBlock _standardUniforms;
+	Renderer::StandardUniformBlock _depthClearUniforms;
 	Texture _texture;
 	VertexBuffer _pondBuffer;
 	VertexBuffer _pondIndices;
 	VertexBinding _vertBinding;
+	VertexBinding _vertDepthClearBinding;
 	ObjFile _pondModel;
 
 };
