@@ -5,14 +5,18 @@
 #include "Util.h"
 #include <stack>
 
+const float Tree::LEAF_BROWN_TIME = 1.0f;
+const float Tree::LEAF_FALL_TIME = 30.0f;
+
 Tree::Tree() : 
 	_currentBranchProgram(&_branchTexturedLitProgram),
 	_branchCurrentUniforms(&_branchTexturedLitUniforms),
 	_currentLeafProgram(&_leafProgram),
 	_leafCurrentUniforms(&_leafStandardUniforms),
 	_currentDrawMode(DRAW_TEXTURED_LIT),
-	_maxDepth(0),
-	_drawDepth(0)
+	_currentState(TREE_GROWING_BRANCHES),
+	_time(0),
+	_maxDepth(0)
 {
 
 }
@@ -24,6 +28,7 @@ void Tree::Create(const Renderer& renderer, const std::string& treestring, unsig
 
 	CreateBranches(renderer);
 	CreateLeaves(renderer);
+	FetchNonStandardUniforms();
 }
 
 void Tree::CreateBranches(const Renderer& renderer)
@@ -48,7 +53,6 @@ void Tree::CreateBranches(const Renderer& renderer)
 	renderer.GetStandardUniforms(_branchUnlitProgram, _branchUnlitUniforms);
 
 	Uniform diffuseMap = _branchTexturedLitProgram.GetUniform("diffuseMap");
-	_uniformDrawDepth = _branchTexturedLitProgram.GetUniform("drawDepth");
 
 	_branchTexturedLitProgram.Use();
 	_branchTexturedLitProgram.SetUniform(diffuseMap, 0);
@@ -96,7 +100,6 @@ void Tree::CreateLeaves(const Renderer& renderer)
 
 	Uniform diffuseMap = _leafProgram.GetUniform("diffuseMap");
 	Uniform gradientMap = _leafProgram.GetUniform("gradientMap");
-	_uniformColorLookup = _leafProgram.GetUniform("colorLookup");
 
 	_leafProgram.Use();
 	_leafProgram.SetUniform(diffuseMap, 0);
@@ -119,6 +122,16 @@ void Tree::CreateLeaves(const Renderer& renderer)
 	_leafBinding.Create(renderer, vertexLayout, 6, _leafIndices, AE_UINT);
 	_leafTexture.Create(renderer, "leaf.tga", T_CLAMP_EDGE);
 	_leafGradient.Create(renderer, "leaf_gradient.tga");
+}
+
+void Tree::FetchNonStandardUniforms()
+{
+	_uniformDrawDepth = _currentBranchProgram->GetUniform("drawDepth");
+
+	_uniformColorLookup = _currentLeafProgram->GetUniform("colorLookup");
+	_uniformLeafScale = _currentLeafProgram->GetUniform("leafScale");
+	_uniformFallTime = _currentLeafProgram->GetUniform("fallTime");
+	_uniformFallSpeed = _currentLeafProgram->GetUniform("fallSpeed");
 }
 
 void Tree::Dispose()
@@ -152,56 +165,111 @@ void Tree::Dispose()
 	_leafGradient.Dispose();
 }
 
-void Tree::Grow(float elapsed)
+void Tree::Grow()
 {
-	_drawDepth += elapsed;
-	_drawDepth = Util::Min(_drawDepth, (float)_maxDepth);
+	_currentState = TREE_GROWING_BRANCHES;
+	_time = 0;
 }
 
-void Tree::Shrink(float elapsed)
+void Tree::Die()
 {
-	_drawDepth -= elapsed;
-	_drawDepth = Util::Max(_drawDepth, 0.0f);
+	_currentState = TREE_DROPPING_LEAVES;
+	_time = 0;
+}
+
+void Tree::Update(float dt)
+{
+	_time += dt;
+
+	if (_currentState == TREE_GROWING_BRANCHES)
+	{
+		if (_time > 1)
+		{
+			_time -= 1;
+			_currentState = TREE_GROWING_LEAVES;
+		}
+	}
+
+	if (_currentState == TREE_GROWING_LEAVES)
+	{
+		if (_time > 1)
+		{
+			_currentState = TREE_ALIVE;
+		}
+	}
+
+	if (_currentState == TREE_ALIVE)
+	{
+		_time = 0;
+	}
+
+	if (_currentState == TREE_DROPPING_LEAVES)
+	{
+		if (_time > LEAF_BROWN_TIME + LEAF_FALL_TIME)
+		{
+			_time -= LEAF_BROWN_TIME + LEAF_FALL_TIME;
+			_currentState = TREE_LOSING_BRANCHES;
+		}
+	}
+
+	if (_currentState == TREE_LOSING_BRANCHES)
+	{
+		if (_time > 1)
+		{
+			_currentState = TREE_DEAD;
+		}
+	}
+
+	if (_currentState == TREE_DEAD)
+	{
+		_time = 0;
+	}
 }
 
 void Tree::Draw(const Renderer& renderer)
 {
-	Matrix4 model;
-	ConstructModelMatrix(model);
-
-	if (_currentDrawMode == DRAW_WIREFRAME)
+	if (_currentState != TREE_DEAD)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
+		Matrix4 model;
+		ConstructModelMatrix(model);
 
-	DrawBranches(renderer, model);
-	DrawLeaves(renderer, model);
+		if (_currentDrawMode == DRAW_WIREFRAME)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
 
-	if (_currentDrawMode == DRAW_WIREFRAME)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		DrawBranches(renderer, model);
+		DrawLeaves(renderer, model);
+
+		if (_currentDrawMode == DRAW_WIREFRAME)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 	}
 }
 
 void Tree::DrawReflection(const Renderer& renderer)
 {
-	Matrix4 mirror;
-	Matrix4::Scale(mirror, Vector3(1, -1, 1));
-
-	Matrix4 model;
-	ConstructModelMatrix(model);
-
-	if (_currentDrawMode == DRAW_WIREFRAME)
+	if (_currentState != TREE_DEAD)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
+		Matrix4 mirror;
+		Matrix4::Scale(mirror, Vector3(1, -1, 1));
 
-	DrawBranches(renderer, model * mirror);
-	DrawLeaves(renderer, model * mirror);
+		Matrix4 model;
+		ConstructModelMatrix(model);
 
-	if (_currentDrawMode == DRAW_WIREFRAME)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		if (_currentDrawMode == DRAW_WIREFRAME)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+
+		DrawBranches(renderer, model * mirror);
+		DrawLeaves(renderer, model * mirror);
+
+		if (_currentDrawMode == DRAW_WIREFRAME)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 	}
 }
 
@@ -219,33 +287,46 @@ void Tree::DrawBranches(const Renderer& renderer, const Matrix4& model)
 
 	renderer.UpdateStandardUniforms(*_currentBranchProgram, *_branchCurrentUniforms);
 	_currentBranchProgram->SetUniform(_branchCurrentUniforms->Model, model);
-	_currentBranchProgram->SetUniform(_uniformDrawDepth, _drawDepth);
+
+
+	float drawDepth = GetDrawDepth();
+
+	_currentBranchProgram->SetUniform(_uniformDrawDepth, drawDepth);
 
 	renderer.DrawInstances(_branchBinding, PT_TRIANGLES, 0, _branchModel.GetNumIndices(), _branches.size());
 }
 
 void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 {
-	_currentLeafProgram->Use();
-
-	if (_currentDrawMode == DRAW_LIT_SMOOTH || _currentDrawMode == DRAW_WIREFRAME || _currentDrawMode == DRAW_LIT_FLAT)
+	if (_currentState != TREE_GROWING_BRANCHES && _currentState != TREE_LOSING_BRANCHES)
 	{
-		_textureOff.Bind(0);
-		_textureOff.Bind(1);
-	}
-	else
-	{
-		_leafTexture.Bind(0);
-		_leafGradient.Bind(1);
-		_currentLeafProgram->SetUniform(_uniformColorLookup, 0.0f);
-	}
+		_currentLeafProgram->Use();
 
-	renderer.UpdateStandardUniforms(*_currentLeafProgram, *_leafCurrentUniforms);
-	_currentLeafProgram->SetUniform(_leafCurrentUniforms->Model, model);
+		if (_currentDrawMode == DRAW_LIT_SMOOTH || _currentDrawMode == DRAW_WIREFRAME || _currentDrawMode == DRAW_LIT_FLAT)
+		{
+			_textureOff.Bind(0);
+			_textureOff.Bind(1);
+		}
+		else
+		{
+			_leafTexture.Bind(0);
+			_leafGradient.Bind(1);
+			_currentLeafProgram->SetUniform(_uniformColorLookup, 0.0f);
+		}
 
-	glDisable(GL_CULL_FACE);
-	renderer.DrawInstances(_leafBinding, PT_TRIANGLES, 0, _leafModel.GetNumIndices(), _leaves.size());
-	glEnable(GL_CULL_FACE);
+		renderer.UpdateStandardUniforms(*_currentLeafProgram, *_leafCurrentUniforms);
+		_currentLeafProgram->SetUniform(_leafCurrentUniforms->Model, model);
+
+		_currentLeafProgram->SetUniform(_uniformLeafScale, GetLeafScale());
+		_currentLeafProgram->SetUniform(_uniformColorLookup, GetLeafColorLookup());
+
+		_currentLeafProgram->SetUniform(_uniformFallSpeed, 1.0f);
+		_currentLeafProgram->SetUniform(_uniformFallTime, GetLeafFallTime());
+
+		glDisable(GL_CULL_FACE);
+		renderer.DrawInstances(_leafBinding, PT_TRIANGLES, 0, _leafModel.GetNumIndices(), _leaves.size());
+		glEnable(GL_CULL_FACE);
+	}
 }
 
 unsigned int Tree::MaxBranchDepth() const
@@ -287,12 +368,12 @@ void Tree::NextDrawMode()
 		_leafCurrentUniforms = &_leafStandardUniforms;
 	}
 
-	_uniformDrawDepth = _currentBranchProgram->GetUniform("drawDepth");
+	FetchNonStandardUniforms();
 }
 
 void Tree::ConstructModelMatrix(Matrix4& out)
 {
-	float growfraction = 0.8f * _drawDepth / (float)_maxDepth + 0.2f;
+	float growfraction = 0.8f * GetDrawDepth() / (float)_maxDepth + 0.2f;
 
 	Matrix4 translate;
 	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
@@ -300,6 +381,48 @@ void Tree::ConstructModelMatrix(Matrix4& out)
 	Matrix4::Scale(scale, Vector3(0.9f, 1.6f, 0.9f) * growfraction);
 
 	out = translate * scale;
+}
+
+float Tree::GetDrawDepth()
+{
+	float drawDepth;
+	if (_currentState == TREE_GROWING_BRANCHES)
+		drawDepth = _time * _maxDepth;
+	else if (_currentState == TREE_LOSING_BRANCHES)
+		drawDepth = (1 - _time) * _maxDepth;
+	else
+		drawDepth = (float)_maxDepth;
+
+	return drawDepth;
+}
+
+float Tree::GetLeafScale()
+{
+	float leafScale;
+	if (_currentState == TREE_GROWING_LEAVES)
+		leafScale = _time;
+	else
+		leafScale = 1;
+
+	return leafScale;
+}
+
+float Tree::GetLeafColorLookup()
+{
+	float color;
+	if (_currentState == TREE_DROPPING_LEAVES)
+		color = Util::Min(_time / LEAF_BROWN_TIME, 1.0f);
+	else
+		color = 0;
+	return color;
+}
+
+float Tree::GetLeafFallTime()
+{
+	if (_currentState == TREE_DROPPING_LEAVES)
+		return Util::Max(_time - LEAF_BROWN_TIME, 0.0f);
+	else
+		return 0;
 }
 
 void Tree::ParseTree(const std::string& treestring, unsigned int leafDepth, unsigned int numLeaves)
@@ -416,8 +539,6 @@ void Tree::ParseTree(const std::string& treestring, unsigned int leafDepth, unsi
 			uniformScale -= 0.1f;
 		}
 	}
-
-	_drawDepth = (float)_maxDepth;
 	
 	_leaves.reserve(numLeaves);
 

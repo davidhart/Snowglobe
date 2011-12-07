@@ -36,8 +36,6 @@ private:
 	SmokeParticles _smoke;
 	SnowParticles _snow;
 
-	bool _growTree;
-
 	Light _spotLights[4];
 	Light _directionalLights[4];
 

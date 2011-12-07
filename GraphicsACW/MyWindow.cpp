@@ -10,7 +10,6 @@
 using namespace gxbase;
 
 MyWindow::MyWindow() :
-	_growTree (true),
 	_sunMode(true),
 	_sunDirection(0, -1, 0),
 	_cameraPitch(0),
@@ -133,11 +132,7 @@ void MyWindow::OnDisplay()
 
 	_smoke.Update(delta);
 	_snow.Update(delta);
-
-	if (_growTree)
-		_tree.Grow(delta);
-	else
-		_tree.Shrink(delta);
+	_tree.Update(delta);
 
 	Matrix4 sunRotation;
 	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), delta);
@@ -191,7 +186,7 @@ void MyWindow::OnDisplay()
 	
 	_pond.Draw(_renderer);
 
-	_snow.Draw(_renderer);
+	//_snow.Draw(_renderer);
 	_smoke.Draw(_renderer);
 
 	_dome.DrawFront(_renderer);
@@ -235,11 +230,11 @@ void MyWindow::OnKeyboard(int key, bool down)
 
 	if (VK_ADD == key)
 	{
-		_growTree = true;
+		_tree.Grow();
 	}
 	else if (VK_SUBTRACT == key)
 	{
-		_growTree = false;
+		_tree.Die();
 	}
 
 	if (key == VK_RIGHT)

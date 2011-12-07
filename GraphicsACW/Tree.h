@@ -22,9 +22,10 @@ public:
 
 	void Create(const Renderer& renderer, const std::string& treestring, unsigned int leafDepth, unsigned int numLeaves);
 	void Dispose();
-
-	void Grow(float elapsed);
-	void Shrink(float elapsed);
+	
+	void Grow();
+	void Die();
+	void Update(float dt);
 
 	void Draw(const Renderer& renderer);
 	void DrawReflection(const Renderer& renderer);
@@ -42,8 +43,13 @@ private:
 	void CreateLeafInstanceBuffer(const Renderer& renderer);
 	void DrawBranches(const Renderer& renderer, const Matrix4& model);
 	void DrawLeaves(const Renderer& renderer, const Matrix4& mdoel);
+	void FetchNonStandardUniforms();
 
 	void ConstructModelMatrix(Matrix4& out);
+	float GetDrawDepth();
+	float GetLeafScale();
+	float GetLeafColorLookup();
+	float GetLeafFallTime();
 
 	VertexShader _branchVert;
 	VertexShader _branchVertFlat;
@@ -72,7 +78,6 @@ private:
 	Texture _barkTexture;
 	ObjFile _branchModel;
 
-
 	VertexShader _leafVertShader;
 	FragmentShader _leafFragShader;
 	FragmentShader _leafFragUnlit;
@@ -85,6 +90,9 @@ private:
 	Renderer::StandardUniformBlock* _leafCurrentUniforms;
 
 	Uniform _uniformColorLookup;
+	Uniform _uniformLeafScale;
+	Uniform _uniformFallTime;
+	Uniform _uniformFallSpeed;
 	VertexBuffer _leafBuffer;
 	VertexBuffer _leafIndices;
 	VertexBuffer _leafInstanceBuffer;
@@ -102,6 +110,19 @@ private:
 	};
 
 	eDrawMode _currentDrawMode;
+
+	enum eTreeState
+	{
+		TREE_GROWING_BRANCHES,
+		TREE_GROWING_LEAVES,
+		TREE_ALIVE,
+		TREE_DROPPING_LEAVES,
+		TREE_LOSING_BRANCHES,
+		TREE_DEAD,
+	};
+
+	eTreeState _currentState;
+	float _time;
 
 	class Branch
 	{
@@ -142,6 +163,8 @@ private:
 	std::vector<unsigned int> _leafyBranchesIndices;
 	std::vector<Leaf> _leaves;
 	unsigned int _maxDepth;
-	float _drawDepth;
+
+	static const float LEAF_BROWN_TIME;
+	static const float LEAF_FALL_TIME;
 	
 };

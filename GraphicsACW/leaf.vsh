@@ -3,6 +3,9 @@
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform float leafScale;
+uniform float fallTime;
+uniform float fallSpeed;
 
 layout(location = 0) in vec3 in_vertex;
 layout(location = 1) in vec3 in_normal;
@@ -44,9 +47,24 @@ void main()
 	
 	mat4 modelmatrix = model * modelinstance;
 
-	vec3 pos = in_vertex;
 
-	vec4 wsPos = modelmatrix * vec4(pos,1.0);
+
+	float t = max(-abs(cos(gl_InstanceID * 3213.354)) * 20 + fallTime, 0);
+	vec2 xyRot = vec2(gl_InstanceID + t * 0.1,
+							t * 0.2 + float(gl_InstanceID));
+
+	mat3 rotationY = mat3(cos(xyRot.y), 0, -sin(xyRot.y), 0, 1, 0, sin(xyRot.y), 0, cos(xyRot.y));
+	mat3 rotationX = mat3(1, 0, 0, 0, cos(xyRot.x), sin(xyRot.x), 0, -sin(xyRot.x), cos(xyRot.x));
+	
+	vec3 offset = rotationY * vec3(min(0.35*t * cos(gl_InstanceID * 1646.46), 4), 
+								-t * fallSpeed * (abs(cos(gl_InstanceID * 2007.466874)) * 0.5 + 0.5), 0);
+
+	float shrink =  pow(clamp(3.5 + offset.y, 0, 1), 4);
+
+	vec3 pos = in_vertex * leafScale * shrink;
+	vec4 wsPos = modelmatrix * vec4(rotationX * pos,1.0);
+	wsPos.xyz += offset;
+
 	ClipPlane(wsPos);
 
 	gl_Position = projection * view * wsPos;
