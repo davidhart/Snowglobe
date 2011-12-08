@@ -186,7 +186,7 @@ void MyWindow::OnDisplay()
 	
 	_pond.Draw(_renderer);
 
-	//_snow.Draw(_renderer);
+	_snow.Draw(_renderer);
 	_smoke.Draw(_renderer);
 
 	_dome.DrawFront(_renderer);
