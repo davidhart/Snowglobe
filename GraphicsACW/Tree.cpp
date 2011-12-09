@@ -371,7 +371,7 @@ void Tree::NextDrawMode()
 	FetchNonStandardUniforms();
 }
 
-void Tree::ConstructModelMatrix(Matrix4& out)
+void Tree::ConstructModelMatrix(Matrix4& out) const
 {
 	float growfraction = 0.8f * GetDrawDepth() / (float)_maxDepth + 0.2f;
 
@@ -383,7 +383,7 @@ void Tree::ConstructModelMatrix(Matrix4& out)
 	out = translate * scale;
 }
 
-float Tree::GetDrawDepth()
+float Tree::GetDrawDepth() const
 {
 	float drawDepth;
 	if (_currentState == TREE_GROWING_BRANCHES)
@@ -396,7 +396,7 @@ float Tree::GetDrawDepth()
 	return drawDepth;
 }
 
-float Tree::GetLeafScale()
+float Tree::GetLeafScale() const
 {
 	float leafScale;
 	if (_currentState == TREE_GROWING_LEAVES)
@@ -407,7 +407,7 @@ float Tree::GetLeafScale()
 	return leafScale;
 }
 
-float Tree::GetLeafColorLookup()
+float Tree::GetLeafColorLookup() const
 {
 	float color;
 	if (_currentState == TREE_DROPPING_LEAVES)
@@ -417,7 +417,7 @@ float Tree::GetLeafColorLookup()
 	return color;
 }
 
-float Tree::GetLeafFallTime()
+float Tree::GetLeafFallTime() const
 {
 	if (_currentState == TREE_DROPPING_LEAVES)
 		return Util::Max(_time - LEAF_BROWN_TIME, 0.0f);

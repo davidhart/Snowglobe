@@ -44,10 +44,6 @@ void main()
 								in_modelRow0.y, in_modelRow1.y, in_modelRow2.y, 0,
 								in_modelRow0.z, in_modelRow1.z, in_modelRow2.z, 0,
 								in_modelRow0.w, in_modelRow1.w, in_modelRow2.w, 1);
-	
-	mat4 modelmatrix = model * modelinstance;
-
-
 
 	float t = max(-abs(cos(gl_InstanceID * 3213.354)) * 20 + fallTime, 0);
 	vec2 xyRot = vec2(gl_InstanceID + t * 0.1,
@@ -62,8 +58,9 @@ void main()
 	float shrink =  pow(clamp(3.5 + offset.y, 0, 1), 4);
 
 	vec3 pos = in_vertex * leafScale * shrink;
-	vec4 wsPos = modelmatrix * vec4(rotationX * pos,1.0);
+	vec4 wsPos = modelinstance * vec4(rotationX * pos,1.0);
 	wsPos.xyz += offset;
+	wsPos = model * wsPos;
 
 	ClipPlane(wsPos);
 
@@ -72,7 +69,7 @@ void main()
 
 	v_viewDir.xyz = (transpose(view) * vec4(0, 0, -1, 0)).xyz;
 
-	v_normal =  (modelmatrix * vec4(in_normal, 0)).xyz;
+	v_normal =  (model * modelinstance * vec4(rotationY * rotationX * in_normal, 0)).xyz;
 
 	v_tex = in_tex;
 }

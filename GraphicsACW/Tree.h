@@ -45,11 +45,11 @@ private:
 	void DrawLeaves(const Renderer& renderer, const Matrix4& mdoel);
 	void FetchNonStandardUniforms();
 
-	void ConstructModelMatrix(Matrix4& out);
-	float GetDrawDepth();
-	float GetLeafScale();
-	float GetLeafColorLookup();
-	float GetLeafFallTime();
+	void ConstructModelMatrix(Matrix4& out) const;
+	float GetDrawDepth() const;
+	float GetLeafScale() const;
+	float GetLeafColorLookup() const;
+	float GetLeafFallTime() const;
 
 	VertexShader _branchVert;
 	VertexShader _branchVertFlat;

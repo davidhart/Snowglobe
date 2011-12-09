@@ -26,9 +26,9 @@ void main()
 
 	float id = gl_InstanceID / 5000.0;
 
-	vec3 pos = vec3(sin(62.0 * id),
+	vec3 pos = vec3(fract(34234.0 * id) * 2.0 - 1.0,
 					abs(cos(3541 * id)) * 0.5 + 0.5,
-					cos(163.0 * id));
+					fract(13413.43 * id) * 2.0 - 1.0);
 	pos.xyz = normalize(pos.xyz) * particleSpread;
 
 	float h = pos.y + 1.5;
