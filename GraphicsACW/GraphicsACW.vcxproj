@@ -84,6 +84,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SmokeParticles.cpp" />
+    <ClCompile Include="SnowDrift.cpp" />
     <ClCompile Include="SnowParticles.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SmokeParticles.h" />
+    <ClInclude Include="SnowDrift.h" />
     <ClInclude Include="SnowParticles.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />

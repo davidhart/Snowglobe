@@ -47,6 +47,7 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SnowParticles.cpp" />
+    <ClCompile Include="SnowDrift.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dome.h" />
@@ -97,6 +98,7 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SnowParticles.h" />
+    <ClInclude Include="SnowDrift.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

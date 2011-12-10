@@ -107,5 +107,5 @@ void main(void)
 	vec3 diffuse, specular;
 	GetDiffuseSpecular(diffuse, specular);
 
-	f_color = vec4((ambient + diffuse) * base.rgb + specular, base.a);
+	f_color = vec4(min(ambient + diffuse, vec3(1)) * base.rgb + specular, base.a);
 }

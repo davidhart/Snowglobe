@@ -65,7 +65,8 @@ void MyWindow::OnCreate()
 	_terrain.Create(_renderer);
 	_pond.Create(_renderer);
 	_smoke.Create(_renderer, 200);
-	_snow.Create(_renderer, 10000);
+	_snowParticles.Create(_renderer, 10000);
+	_snowDrift.Create(_renderer);
 
 	Matrix4 perspective;
 	Matrix4::PerspectiveFov(perspective, 85, (float)Width() / Height(), 0.1f, 1000);
@@ -131,8 +132,9 @@ void MyWindow::OnDisplay()
 		_cameraPitch -= delta;
 
 	_smoke.Update(delta);
-	_snow.Update(delta);
+	_snowParticles.Update(delta);
 	_tree.Update(delta);
+	_snowDrift.Update(delta);
 
 	Matrix4 sunRotation;
 	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), delta);
@@ -163,6 +165,7 @@ void MyWindow::OnDisplay()
 	_tree.Draw(_renderer);
 	_house.Draw(_renderer);
 	_terrain.Draw(_renderer);
+	_snowDrift.Draw(_renderer);
 	_base.Draw(_renderer);
 	_dome.DrawBack(_renderer);
 
@@ -174,10 +177,11 @@ void MyWindow::OnDisplay()
 	glEnable(GL_STENCIL_TEST);
 
 	_terrain.DrawReflection(_renderer);
+	_snowDrift.DrawReflection(_renderer);
 	_tree.DrawReflection(_renderer);
 	_house.DrawReflection(_renderer);
 	_smoke.DrawReflected(_renderer);
-	_snow.DrawReflected(_renderer);
+	_snowParticles.DrawReflected(_renderer);
 
 	glCullFace(GL_BACK);
 	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
@@ -186,7 +190,7 @@ void MyWindow::OnDisplay()
 	
 	_pond.Draw(_renderer);
 
-	_snow.Draw(_renderer);
+	_snowParticles.Draw(_renderer);
 	_smoke.Draw(_renderer);
 
 	_dome.DrawFront(_renderer);
@@ -210,7 +214,8 @@ void MyWindow::OnDestroy()
 	_terrain.Dispose();
 	_pond.Dispose();
 	_smoke.Dispose();
-	_snow.Dispose();
+	_snowParticles.Dispose();
+	_snowDrift.Dispose();
 
 	_renderer.Dispose();
 
@@ -231,10 +236,12 @@ void MyWindow::OnKeyboard(int key, bool down)
 	if (VK_ADD == key)
 	{
 		_tree.Grow();
+		_snowDrift.Raise();
 	}
 	else if (VK_SUBTRACT == key)
 	{
 		_tree.Die();
+		_snowDrift.Lower();
 	}
 
 	if (key == VK_RIGHT)
