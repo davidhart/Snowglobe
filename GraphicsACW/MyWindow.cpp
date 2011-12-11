@@ -29,7 +29,7 @@ void MyWindow::OnCreate()
 {
 	GLWindowEx::OnCreate();
 
-	glEnable(GL_MULTISAMPLE_ARB);
+	glClearStencil(0);
 
 	_renderer.Create(this);
 
@@ -151,7 +151,6 @@ void MyWindow::OnDisplay()
 		_renderer.SetLight(0, _directionalLights[0]);
 	}
 
-	glClearStencil(0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	Matrix4 view;
