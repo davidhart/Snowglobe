@@ -162,36 +162,36 @@ void MyWindow::OnDisplay()
 
 	_renderer.ViewMatrix(view * pitch * yaw * t);
 
-	//_tree.Draw(_renderer);
+	_tree.Draw(_renderer);
 	_house.Draw(_renderer);
 	_terrain.Draw(_renderer);
-	//_snowDrift.Draw(_renderer);
+	_snowDrift.Draw(_renderer);
 	_base.Draw(_renderer);
-	//_dome.DrawBack(_renderer);
+	_dome.DrawBack(_renderer);
 
-	//_pond.DrawStencilMask(_renderer);
+	_pond.DrawStencilMask(_renderer);
 
 	_renderer.ClipPlane(Vector4(0, -1, 0, 0));
 
 	glCullFace(GL_FRONT);
 	glEnable(GL_STENCIL_TEST);
 
-	//_terrain.DrawReflection(_renderer);
-	//_snowDrift.DrawReflection(_renderer);
-	//_tree.DrawReflection(_renderer);
-	//_house.DrawReflection(_renderer);
-	//_smoke.DrawReflected(_renderer);
-	//_snowParticles.DrawReflected(_renderer);
+	_terrain.DrawReflection(_renderer);
+	_snowDrift.DrawReflection(_renderer);
+	_tree.DrawReflection(_renderer);
+	_house.DrawReflection(_renderer);
+	_smoke.DrawReflected(_renderer);
+	_snowParticles.DrawReflected(_renderer);
 
 	glCullFace(GL_BACK);
 	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
 
 	glDisable(GL_STENCIL_TEST);
 	
-	//_pond.Draw(_renderer);
+	_pond.Draw(_renderer);
 
-	//_snowParticles.Draw(_renderer);
-	//_smoke.Draw(_renderer);
+	_snowParticles.Draw(_renderer);
+	_smoke.Draw(_renderer);
 
 	_dome.DrawFront(_renderer);
 	

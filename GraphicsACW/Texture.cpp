@@ -28,8 +28,6 @@ void Texture::Create(const Renderer& renderer, const char* filename, TextureRepe
 
 	glBindTexture(GL_TEXTURE_2D, _textureHandle);
 
-	_image.glTexImage2D();
-
 	if (repeat == T_CLAMP_EDGE)
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -51,8 +49,11 @@ void Texture::Create(const Renderer& renderer, const char* filename, TextureRepe
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
-	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f); // TODO: config file
+
+	_image.glTexImage2D();
+
+	_glex->glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 

@@ -72,7 +72,7 @@ void Terrain::DrawReflection(const Renderer& renderer)
 	
 	_shaderProgram.SetUniform(_standardUniforms.Model, mirror);
 
-	_texture.Bind();
+	_texture.Bind(0);
 
 	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _terrainModel.GetNumIndices());
