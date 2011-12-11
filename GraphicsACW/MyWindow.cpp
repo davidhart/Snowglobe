@@ -21,6 +21,8 @@ MyWindow::MyWindow() :
 	}
 
 	SetSize(1280, 768);
+	SetStencilBits(8);
+	SetDepthBits(24);
 }
 
 void MyWindow::OnCreate()
@@ -149,6 +151,7 @@ void MyWindow::OnDisplay()
 		_renderer.SetLight(0, _directionalLights[0]);
 	}
 
+	glClearStencil(0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	Matrix4 view;
