@@ -1,4 +1,5 @@
-#version 130
+#version 140
+#extension GL_ARB_explicit_attrib_location : enable
 
 uniform mat4 model;
 uniform mat4 view;

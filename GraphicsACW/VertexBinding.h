@@ -21,7 +21,7 @@ enum ElementType
 struct ArrayElement
 {
 	const VertexBuffer& buffer;
-	unsigned int attribLocation;
+	int attribLocation;
 	unsigned int numComponents;
 	ElementType type;
 	unsigned int stride;
