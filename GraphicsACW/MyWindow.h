@@ -27,6 +27,9 @@ public:
 
 private:
 
+	void Update(float dt);
+	void UpdateViewMatrix();
+
 	Renderer _renderer;
 	Dome _dome;
 	Tree _tree;
@@ -41,11 +44,33 @@ private:
 	Light _spotLights[4];
 	Light _directionalLights[4];
 
+	Matrix4 _view;
+
 	bool _cursorKeyDown[4];
 	bool _sunMode;
 	Vector3 _sunDirection;
 
 	float _cameraPitch;
 	float _cameraYaw;
+
+	enum eSeason
+	{
+		SEASON_SPRING,
+		SEASON_SUMMER,
+		SEASON_AUTUMN,
+		SEASON_WINTER,
+	};
+	eSeason _season;
+	float _elapsed;
+	float _animationSpeed;
+
+	const float _lengthSpring;
+	const float _lengthSummer;
+	const float _lengthAutumn;
+	const float _lengthWinter;
+
+	static const float ANIMATION_SPEED_INCREMENT;
+	static const float ANIMATION_SPEED_MAX;
+	static const float ANIMATION_SPEED_MIN;
 };
 

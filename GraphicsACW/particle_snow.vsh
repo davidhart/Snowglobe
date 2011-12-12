@@ -6,6 +6,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 uniform float time;
+uniform float endTime;
 uniform float particleSpread;
 uniform float particleSpeed;
 uniform float particleSize;
@@ -33,12 +34,21 @@ void main()
 
 	float h = pos.y + 1.5;
 
-	float t = fract(cos(id * 5464.54) + time / h);
+	float timeOffset = cos(id * 5464.54);
+
+	float deathTime = timeOffset + (endTime - h) / h;
+	float ft = timeOffset + (time - h) / h;
+	float t = fract(ft);
+
+	float s = 1;
+	if (ft < 0) s = 0;
+	if (ft - deathTime > 1 - fract(deathTime)) s = 0;
+
 	pos.y -= t * h;
 
 	vec4 vertex = (model * vec4(pos, 1.0));
 
-	vertex.xyz += transpose(mat3(view)) * (particleSize * in_vertex.zyx);
+	vertex.xyz += transpose(mat3(view)) * (particleSize * s * in_vertex.zyx);
 
 	gl_Position = (projection * view) * vertex;
 

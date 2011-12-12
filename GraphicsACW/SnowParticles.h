@@ -19,6 +19,8 @@ public:
 	void Draw(const Renderer& renderer);
 	void DrawReflected(const Renderer& renderer);
 	void Update(float delta);
+	void BeginEmit();
+	void EndEmit();
 
 private:
 
@@ -31,9 +33,12 @@ private:
 	ShaderProgram _shader;
 	Renderer::StandardUniformBlock _standardUniforms;
 	Uniform _uniformTime;
+	Uniform _uniformEndTime;
 	Texture _texture;
 
+	bool _emitting;
 	float _elapsed;
+	float _endEmissionTime;
 	unsigned int _numParticles;
 
 };

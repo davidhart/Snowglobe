@@ -164,7 +164,10 @@ private:
 	std::vector<Leaf> _leaves;
 	unsigned int _maxDepth;
 
-	static const float LEAF_BROWN_TIME;
-	static const float LEAF_FALL_TIME;
+	static const float ANIMATION_LENGTH_LEAF_BROWN;
+	static const float ANIMATION_LENGTH_LEAF_FALL;
+	static const float ANIMATION_LENGTH_BRANCH_GROW;
+	static const float ANIMATION_LENGTH_LEAF_GROW;
+	static const float ANIMATION_LENGTH_BRANCH_DIE;
 	
 };

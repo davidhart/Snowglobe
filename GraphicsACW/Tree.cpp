@@ -5,8 +5,11 @@
 #include "Util.h"
 #include <stack>
 
-const float Tree::LEAF_BROWN_TIME = 1.0f;
-const float Tree::LEAF_FALL_TIME = 30.0f;
+const float Tree::ANIMATION_LENGTH_LEAF_BROWN = 3.0f;
+const float Tree::ANIMATION_LENGTH_LEAF_FALL = 22.0f;
+const float Tree::ANIMATION_LENGTH_BRANCH_GROW = 13.0f;
+const float Tree::ANIMATION_LENGTH_LEAF_GROW = 9.0f;
+const float Tree::ANIMATION_LENGTH_BRANCH_DIE = 15.0f;
 
 Tree::Tree() : 
 	_currentBranchProgram(&_branchTexturedLitProgram),
@@ -183,16 +186,16 @@ void Tree::Update(float dt)
 
 	if (_currentState == TREE_GROWING_BRANCHES)
 	{
-		if (_time > 1)
+		if (_time > ANIMATION_LENGTH_BRANCH_GROW)
 		{
-			_time -= 1;
+			_time -= ANIMATION_LENGTH_BRANCH_GROW;
 			_currentState = TREE_GROWING_LEAVES;
 		}
 	}
 
 	if (_currentState == TREE_GROWING_LEAVES)
 	{
-		if (_time > 1)
+		if (_time > ANIMATION_LENGTH_LEAF_GROW)
 		{
 			_currentState = TREE_ALIVE;
 		}
@@ -205,16 +208,16 @@ void Tree::Update(float dt)
 
 	if (_currentState == TREE_DROPPING_LEAVES)
 	{
-		if (_time > LEAF_BROWN_TIME + LEAF_FALL_TIME)
+		if (_time > ANIMATION_LENGTH_LEAF_BROWN + ANIMATION_LENGTH_LEAF_FALL)
 		{
-			_time -= LEAF_BROWN_TIME + LEAF_FALL_TIME;
+			_time -= ANIMATION_LENGTH_LEAF_BROWN + ANIMATION_LENGTH_LEAF_FALL;
 			_currentState = TREE_LOSING_BRANCHES;
 		}
 	}
 
 	if (_currentState == TREE_LOSING_BRANCHES)
 	{
-		if (_time > 1)
+		if (_time > ANIMATION_LENGTH_BRANCH_DIE)
 		{
 			_currentState = TREE_DEAD;
 		}
@@ -387,9 +390,9 @@ float Tree::GetDrawDepth() const
 {
 	float drawDepth;
 	if (_currentState == TREE_GROWING_BRANCHES)
-		drawDepth = _time * _maxDepth;
+		drawDepth = _time * _maxDepth / ANIMATION_LENGTH_BRANCH_GROW;
 	else if (_currentState == TREE_LOSING_BRANCHES)
-		drawDepth = (1 - _time) * _maxDepth;
+		drawDepth = (ANIMATION_LENGTH_BRANCH_DIE - _time) * _maxDepth / ANIMATION_LENGTH_BRANCH_DIE;
 	else
 		drawDepth = (float)_maxDepth;
 
@@ -400,7 +403,7 @@ float Tree::GetLeafScale() const
 {
 	float leafScale;
 	if (_currentState == TREE_GROWING_LEAVES)
-		leafScale = _time;
+		leafScale = _time / ANIMATION_LENGTH_LEAF_GROW;
 	else
 		leafScale = 1;
 
@@ -411,7 +414,7 @@ float Tree::GetLeafColorLookup() const
 {
 	float color;
 	if (_currentState == TREE_DROPPING_LEAVES)
-		color = Util::Min(_time / LEAF_BROWN_TIME, 1.0f);
+		color = Util::Min(_time / ANIMATION_LENGTH_LEAF_BROWN, 1.0f);
 	else
 		color = 0;
 	return color;
@@ -420,7 +423,7 @@ float Tree::GetLeafColorLookup() const
 float Tree::GetLeafFallTime() const
 {
 	if (_currentState == TREE_DROPPING_LEAVES)
-		return Util::Max(_time - LEAF_BROWN_TIME, 0.0f);
+		return Util::Max(_time - ANIMATION_LENGTH_LEAF_BROWN, 0.0f);
 	else
 		return 0;
 }

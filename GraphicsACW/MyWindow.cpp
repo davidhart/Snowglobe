@@ -9,11 +9,22 @@
 
 using namespace gxbase;
 
+const float MyWindow::ANIMATION_SPEED_INCREMENT = 0.25f;
+const float MyWindow::ANIMATION_SPEED_MIN = 0.0f;
+const float MyWindow::ANIMATION_SPEED_MAX = 5.0f;
+
 MyWindow::MyWindow() :
 	_sunMode(true),
 	_sunDirection(0, -1, 0),
 	_cameraPitch(0),
-	_cameraYaw(0)
+	_cameraYaw(0),
+	_season(SEASON_SPRING),
+	_elapsed(0.0f),
+	_animationSpeed(1.0f),
+	_lengthSpring(25.0f),
+	_lengthSummer(20.0f),
+	_lengthAutumn(25.0f),
+	_lengthWinter(25.0f)
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -27,6 +38,8 @@ MyWindow::MyWindow() :
 
 void MyWindow::OnCreate()
 {
+	UpdateViewMatrix();
+
 	GLWindowEx::OnCreate();
 
 	glClearStencil(0);
@@ -61,7 +74,7 @@ void MyWindow::OnCreate()
 	
 
 	_dome.Create(_renderer);
-	_tree.Create(_renderer, result, 2, 2000);
+	_tree.Create(_renderer, result, 2, 1500);
 	_house.Create(_renderer);
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
@@ -124,6 +137,8 @@ void MyWindow::OnDisplay()
 	float elapsed = time - startTime;
 	float delta = time - prevTime;
 
+	Update(delta * _animationSpeed);
+
 	if (_cursorKeyDown[0])
 		_cameraYaw += delta;
 	if (_cursorKeyDown[1])
@@ -133,36 +148,11 @@ void MyWindow::OnDisplay()
 	if (_cursorKeyDown[3])
 		_cameraPitch -= delta;
 
-	_smoke.Update(delta);
-	_snowParticles.Update(delta);
-	_tree.Update(delta);
-	_snowDrift.Update(delta);
-
-	Matrix4 sunRotation;
-	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), delta);
-
-	Vector4 sunTemp (_sunDirection, 0);
-	sunRotation.Transform(sunTemp);
-	_sunDirection = Vector3(sunTemp.x(), sunTemp.y(), sunTemp.z());
-
-	if (_sunMode)
-	{
-		Light::Directional(_directionalLights[0], _sunDirection);
-		_renderer.SetLight(0, _directionalLights[0]);
-	}
+	UpdateViewMatrix();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	Matrix4 view;
-	Matrix4::LookAt(view, Vector3(9, 2, 0), Vector3(0, 0, 0), Vector3(0, 1, 0));
-	Matrix4 pitch;
-	Matrix4::RotationAxis(pitch, Vector3(0, 0, 1), _cameraPitch);
-	Matrix4 yaw;
-	Matrix4::RotationAxis(yaw, Vector3(0, 1, 0), _cameraYaw);
-	Matrix4 t;
-	Matrix4::Translation(t, Vector3(0, -2.0f, 0));
-
-	_renderer.ViewMatrix(view * pitch * yaw * t);
+	_renderer.ViewMatrix(_view);
 
 	_tree.Draw(_renderer);
 	_house.Draw(_renderer);
@@ -202,6 +192,78 @@ void MyWindow::OnDisplay()
 	prevTime = time;
 }
 
+void MyWindow::UpdateViewMatrix()
+{
+	Matrix4 lookat;
+	Matrix4::LookAt(lookat, Vector3(9, 2, 0), Vector3(0, 0, 0), Vector3(0, 1, 0));
+	Matrix4 pitch;
+	Matrix4::RotationAxis(pitch, Vector3(0, 0, 1), _cameraPitch);
+	Matrix4 yaw;
+	Matrix4::RotationAxis(yaw, Vector3(0, 1, 0), _cameraYaw);
+	Matrix4 translation;
+	Matrix4::Translation(translation, Vector3(0, -2.0f, 0));
+
+	_view = lookat * pitch * yaw * translation;
+}	
+
+
+void MyWindow::Update(float dt)
+{
+	_elapsed += dt;
+
+	_tree.Update(dt);
+	_snowDrift.Update(dt);
+	_snowParticles.Update(dt);
+	_smoke.Update(dt);
+
+	Matrix4 sunRotation;
+	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), dt);
+
+	Vector4 sunTemp (_sunDirection, 0);
+	sunRotation.Transform(sunTemp);
+	_sunDirection = Vector3(sunTemp.x(), sunTemp.y(), sunTemp.z());
+
+	if (_sunMode)
+	{
+		Light::Directional(_directionalLights[0], _sunDirection);
+		_renderer.SetLight(0, _directionalLights[0]);
+	}
+
+	if (_season == SEASON_SPRING && _elapsed > _lengthSpring)
+	{
+		_elapsed -= _lengthSpring;
+		_season = SEASON_SUMMER;
+		std::cout << "summer" << std::endl;
+	}
+
+	if (_season == SEASON_SUMMER && _elapsed > _lengthSummer)
+	{
+		_elapsed -= _lengthSummer;
+		_season = SEASON_AUTUMN;
+		std::cout << "autumn" << std::endl;
+		_tree.Die();
+	}
+
+	if (_season == SEASON_AUTUMN && _elapsed > _lengthAutumn)
+	{
+		_elapsed -= _lengthAutumn;
+		_season = SEASON_WINTER;
+		std::cout << "winter" << std::endl;
+		_snowDrift.Raise();
+		_snowParticles.BeginEmit();
+	}
+
+	if (_season == SEASON_WINTER && _elapsed > _lengthWinter)
+	{
+		_elapsed -= _lengthWinter;
+		_season = SEASON_SPRING;
+		std::cout << "spring" << std::endl;
+		_snowDrift.Lower();
+		_snowParticles.EndEmit();
+		_tree.Grow();
+	}
+}
+
 void MyWindow::OnIdle()
 {
 	Redraw();
@@ -237,13 +299,14 @@ void MyWindow::OnKeyboard(int key, bool down)
 
 	if (VK_ADD == key)
 	{
-		_tree.Grow();
-		_snowDrift.Raise();
+		_animationSpeed += ANIMATION_SPEED_INCREMENT;
+
+		_animationSpeed = Util::Min(_animationSpeed, ANIMATION_SPEED_MAX);
 	}
 	else if (VK_SUBTRACT == key)
 	{
-		_tree.Die();
-		_snowDrift.Lower();
+		_animationSpeed -= ANIMATION_SPEED_INCREMENT;
+		_animationSpeed = Util::Max(_animationSpeed, ANIMATION_SPEED_MIN);
 	}
 
 	if (key == VK_RIGHT)

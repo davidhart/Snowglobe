@@ -3,7 +3,9 @@
 #include "Renderer.h"
 
 SnowParticles::SnowParticles() :
+	_emitting(false),
 	_elapsed(0.0f),
+	_endEmissionTime(-100.0f),
 	_numParticles(0)
 {
 }
@@ -34,6 +36,7 @@ void SnowParticles::Create(const Renderer& renderer, unsigned int numParticles)
 	Uniform particleSize = _shader.GetUniform("particleSize");
 	Uniform particleSpeed = _shader.GetUniform("particleSpeed");
 	_uniformTime = _shader.GetUniform("time");
+	_uniformEndTime = _shader.GetUniform("endTime");
 
 	_shader.Use();
 	_shader.SetUniform(diffuseMap, 0);
@@ -73,6 +76,8 @@ void SnowParticles::Draw(const Renderer& renderer)
 	Matrix4::Translation(model, Vector3(0.0f, 1.5f, 0.0f));
 	_shader.SetUniform(_standardUniforms.Model, model);
 
+	_shader.SetUniform(_uniformEndTime, _emitting ? _elapsed : _endEmissionTime);
+
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _instancedQuadModel.GetNumIndices(), _numParticles);
 
@@ -110,4 +115,16 @@ void SnowParticles::DrawReflected(const Renderer& renderer)
 void SnowParticles::Update(float delta)
 {
 	_elapsed += delta;
+}
+
+void SnowParticles::BeginEmit()
+{
+	_elapsed = 0.0f;
+	_emitting = true;
+}
+
+void SnowParticles::EndEmit()
+{
+	_emitting = false;
+	_endEmissionTime = _elapsed;
 }

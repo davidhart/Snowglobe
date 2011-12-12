@@ -46,7 +46,7 @@ void main()
 								in_modelRow0.z, in_modelRow1.z, in_modelRow2.z, 0,
 								in_modelRow0.w, in_modelRow1.w, in_modelRow2.w, 1);
 
-	float t = max(-abs(cos(gl_InstanceID * 3213.354)) * 20 + fallTime, 0);
+	float t = max(-abs(cos(gl_InstanceID * 3213.354)) * 16 + fallTime, 0);
 	vec2 xyRot = vec2(gl_InstanceID + t * 0.1,
 							t * 0.2 + float(gl_InstanceID));
 
