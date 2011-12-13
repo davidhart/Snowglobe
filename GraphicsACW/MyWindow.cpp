@@ -250,6 +250,7 @@ void MyWindow::Update(float dt)
 		_season = SEASON_WINTER;
 		std::cout << "winter" << std::endl;
 		_snowDrift.Raise();
+		_smoke.BeginEmit();
 		_snowParticles.BeginEmit();
 	}
 
@@ -259,6 +260,7 @@ void MyWindow::Update(float dt)
 		_season = SEASON_SPRING;
 		std::cout << "spring" << std::endl;
 		_snowDrift.Lower();
+		_smoke.EndEmit();
 		_snowParticles.EndEmit();
 		_tree.Grow();
 	}
@@ -296,6 +298,12 @@ void MyWindow::OnKeyboard(int key, bool down)
 
 	if (VK_ESCAPE == key && down)
 		Close();
+
+	if (VK_RETURN == key && down)
+		_smoke.BeginEmit();
+
+	if (VK_NUMPAD0 == key && down)
+		_smoke.EndEmit();
 
 	if (VK_ADD == key)
 	{

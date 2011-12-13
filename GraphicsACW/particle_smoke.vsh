@@ -6,6 +6,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 uniform float time;
+uniform float endTime;
 uniform float particleSystemShape;
 uniform float particleSystemHeight;
 uniform float particleSpread;
@@ -28,18 +29,24 @@ void main()
 	v_clipDistance = dot(model * vec4(in_vertex, 1.0), clipPlane);
 
 	float id = gl_InstanceID / 201.0;
-	float t = fract(id + particleSpeed * time);
-	float s = pow(t, particleSystemShape);
+	float ft = id + particleSpeed * time - 1;
+	float deathTime = id + particleSpeed * endTime - 1;
+	float t = fract(ft);
+	float spread = pow(t, particleSystemShape);
 
 	vec3 pos = vec3(sin(62.0 * id),
 					particleSystemHeight * t,
 					cos(163.0 * id));
-	pos.xz = normalize(pos.xz) * particleSpread * cos(1231.0 * id) * s;
+	pos.xz = normalize(pos.xz) * particleSpread * cos(1231.0 * id) * spread;
 	pos.xyz += pow(windDirection, vec3(t));
 
 	vec4 vertex = (model * vec4(pos, 1.0));
 
-	vertex.xyz += transpose(mat3(view)) * (particleSize * (t*0.6 + 0.4) * in_vertex.zyx);
+	float s = 1;
+	if (ft < 0) s = 0;
+	if (ft - deathTime > 1 - fract(deathTime)) s = 0;
+
+	vertex.xyz += transpose(mat3(view)) * (particleSize * s * (t*0.6 + 0.4) * in_vertex.zyx);
 
 	gl_Position = (projection * view) * vertex;
 

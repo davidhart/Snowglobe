@@ -75,7 +75,6 @@ void SnowParticles::Draw(const Renderer& renderer)
 	Matrix4 model;
 	Matrix4::Translation(model, Vector3(0.0f, 1.5f, 0.0f));
 	_shader.SetUniform(_standardUniforms.Model, model);
-
 	_shader.SetUniform(_uniformEndTime, _emitting ? _elapsed : _endEmissionTime);
 
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
@@ -103,6 +102,7 @@ void SnowParticles::DrawReflected(const Renderer& renderer)
 	Matrix4::Translation(model, Vector3(0.0f, 1.5f, 0.0f));
 	Matrix4::Scale(flip, Vector3(1, -1, 1));
 	_shader.SetUniform(_standardUniforms.Model, flip * model);
+	_shader.SetUniform(_uniformEndTime, _emitting ? _elapsed : _endEmissionTime);
 
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _instancedQuadModel.GetNumIndices(), _numParticles);

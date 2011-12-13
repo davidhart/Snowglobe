@@ -3,7 +3,9 @@
 #include "Renderer.h"
 
 SmokeParticles::SmokeParticles() :
+	_emitting(false),
 	_elapsed(0.0f),
+	_endEmissionTime(-100.0f),
 	_numParticles(0)
 {
 }
@@ -37,6 +39,7 @@ void SmokeParticles::Create(const Renderer& renderer, unsigned int numParticles)
 	Uniform particleSize = _shader.GetUniform("particleSize");
 	Uniform particleSpeed = _shader.GetUniform("particleSpeed");
 	_uniformTime = _shader.GetUniform("time");
+	_uniformEndTime = _shader.GetUniform("endTime");
 
 	_shader.Use();
 	_shader.SetUniform(diffuseMap, 0);
@@ -78,6 +81,7 @@ void SmokeParticles::Draw(const Renderer& renderer)
 	Matrix4 model;
 	Matrix4::Translation(model, Vector3(-2.69f, 2.1f, -4.4f));
 	_shader.SetUniform(_standardUniforms.Model, model);
+	_shader.SetUniform(_uniformEndTime, _emitting ? _elapsed : _endEmissionTime);
 
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _instancedQuadModel.GetNumIndices(), _numParticles);
@@ -104,6 +108,7 @@ void SmokeParticles::DrawReflected(const Renderer& renderer)
 	Matrix4::Translation(model, Vector3(-2.69f, 2.1f, -4.4f));
 	Matrix4::Scale(flip, Vector3(1, -1, 1));
 	_shader.SetUniform(_standardUniforms.Model, flip * model);
+	_shader.SetUniform(_uniformEndTime, _emitting ? _elapsed : _endEmissionTime);
 
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _instancedQuadModel.GetNumIndices(), _numParticles);
@@ -116,4 +121,16 @@ void SmokeParticles::DrawReflected(const Renderer& renderer)
 void SmokeParticles::Update(float delta)
 {
 	_elapsed += delta;
+}
+
+void SmokeParticles::BeginEmit()
+{
+	_elapsed = 0.0f;
+	_emitting = true;
+}
+
+void SmokeParticles::EndEmit()
+{
+	_emitting = false;
+	_endEmissionTime = _elapsed;
 }
