@@ -1,6 +1,5 @@
 #version 140
 
-uniform vec4 clipPlane;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
@@ -19,8 +18,23 @@ in vec3 in_normal;
 in vec2 in_tex;
 
 out vec2 v_tex;
-out float v_clipDistance;
 out float v_alpha;
+
+///////////////////////////////////////////////////////////////
+// Clip plane begin
+///////////////////////////////////////////////////////////////
+uniform vec4 clipPlane;
+out float v_clipDistance;
+
+void ClipPlane(vec4 vertex)
+{
+	// If we were emulating the FFP this should be the view space vertex
+	// however we are defining the clip plane in world space
+	v_clipDistance = dot(vertex, clipPlane);
+}
+///////////////////////////////////////////////////////////////
+// Clip plane end
+///////////////////////////////////////////////////////////////
 
 void main()
 {
@@ -47,7 +61,8 @@ void main()
 	if (ft - deathTime > 1 - fract(deathTime)) s = 0;
 
 	vertex.xyz += transpose(mat3(view)) * (particleSize * s * (t*0.6 + 0.4) * in_vertex.zyx);
-
+	
+	ClipPlane(vertex);
 	gl_Position = (projection * view) * vertex;
 
 	v_tex = in_tex;

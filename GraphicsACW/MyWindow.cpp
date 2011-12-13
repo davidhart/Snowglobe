@@ -125,8 +125,6 @@ void MyWindow::OnCreate()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-
-	std::cout << _tree.MaxBranchDepth() << std::endl;
 }
 
 void MyWindow::OnDisplay()
@@ -298,12 +296,6 @@ void MyWindow::OnKeyboard(int key, bool down)
 
 	if (VK_ESCAPE == key && down)
 		Close();
-
-	if (VK_RETURN == key && down)
-		_smoke.BeginEmit();
-
-	if (VK_NUMPAD0 == key && down)
-		_smoke.EndEmit();
 
 	if (VK_ADD == key)
 	{
