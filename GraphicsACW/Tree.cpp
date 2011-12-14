@@ -374,14 +374,22 @@ void Tree::NextDrawMode()
 	FetchNonStandardUniforms();
 }
 
+float Tree::GetFireScale() const
+{
+	if (_currentState != TREE_LOSING_BRANCHES)
+		return 0;
+
+	return GetDrawDepth() / (float)_maxDepth;
+}
+
 void Tree::ConstructModelMatrix(Matrix4& out) const
 {
-	float growfraction = 0.8f * GetDrawDepth() / (float)_maxDepth + 0.2f;
+	float drawscale = 0.8f * GetDrawDepth() / (float)_maxDepth + 0.2f;
 
 	Matrix4 translate;
 	Matrix4::Translation(translate, Vector3(2, 0, 0.0f));
 	Matrix4 scale;
-	Matrix4::Scale(scale, Vector3(0.9f, 1.6f, 0.9f) * growfraction);
+	Matrix4::Scale(scale, Vector3(0.9f, 1.6f, 0.9f) * drawscale);
 
 	out = translate * scale;
 }

@@ -8,9 +8,10 @@
 #include "Base.h"
 #include "Terrain.h"
 #include "Pond.h"
-#include "SmokeParticles.h"
+#include "ParticleSystem.h"
 #include "SnowParticles.h"
 #include "SnowDrift.h"
+#include "Texture.h"
 
 class MyWindow : public gxbase::GLWindowEx
 {
@@ -37,7 +38,12 @@ private:
 	Base _base;
 	Terrain _terrain;
 	Pond _pond;
-	SmokeParticles _smoke;
+	ParticleSystem _particleSystem;
+	ParticleEmitter _fireEmitter;
+	ParticleEmitter _smokeEmitter;
+	Texture _smokeTexture;
+	Texture _fireTexture;
+
 	SnowParticles _snowParticles;
 	SnowDrift _snowDrift;
 

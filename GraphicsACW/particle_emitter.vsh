@@ -6,6 +6,7 @@ uniform mat4 projection;
 
 uniform float time;
 uniform float endTime;
+uniform float numParticles;
 uniform float particleSystemShape;
 uniform float particleSystemHeight;
 uniform float particleSpread;
@@ -42,7 +43,7 @@ void main()
 	// however we are defining the clip plane in world space
 	v_clipDistance = dot(model * vec4(in_vertex, 1.0), clipPlane);
 
-	float id = gl_InstanceID / 201.0;
+	float id = gl_InstanceID / numParticles;
 	float ft = id + particleSpeed * time - 1;
 	float deathTime = id + particleSpeed * endTime - 1;
 	float t = fract(ft);

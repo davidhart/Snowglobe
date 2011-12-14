@@ -34,6 +34,8 @@ public:
 
 	void NextDrawMode();
 
+	float GetFireScale() const;
+
 private:
 
 	void ParseTree(const std::string& treestring, unsigned int leafDepth, unsigned int numLeaves);

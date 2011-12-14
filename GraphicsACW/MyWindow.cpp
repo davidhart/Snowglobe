@@ -11,7 +11,7 @@ using namespace gxbase;
 
 const float MyWindow::ANIMATION_SPEED_INCREMENT = 0.25f;
 const float MyWindow::ANIMATION_SPEED_MIN = 0.0f;
-const float MyWindow::ANIMATION_SPEED_MAX = 5.0f;
+const float MyWindow::ANIMATION_SPEED_MAX = 15.0f;
 
 MyWindow::MyWindow() :
 	_sunMode(true),
@@ -79,7 +79,34 @@ void MyWindow::OnCreate()
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
 	_pond.Create(_renderer);
-	_smoke.Create(_renderer, 200);
+
+
+	_particleSystem.Create(_renderer);
+
+	_smokeEmitter.SetPosition(Vector3(-2.69f, 2.1f, -4.4f));
+	_smokeEmitter.SetWindDirection(Vector3(2.0f, 0.0f, 5.0f));
+	_smokeEmitter.SetNumParticles(200);
+	_smokeTexture.Create(_renderer, "smoke_alpha.jpg");
+	_smokeEmitter.SetTexture(&_smokeTexture);
+	_smokeEmitter.SetShape(1.4f);
+	_smokeEmitter.SetSpread(1.2f);
+	_smokeEmitter.SetParticleSize(0.8f);
+	_smokeEmitter.SetSpeed(0.3f);
+	_smokeEmitter.SetHeight(3.5f);
+	_particleSystem.AddEmitter(&_smokeEmitter);
+
+	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f, 0.0f));
+	_fireEmitter.SetWindDirection(Vector3(0.0f));
+	_fireEmitter.SetNumParticles(450);
+	_fireTexture.Create(_renderer, "fire.jpg");
+	_fireEmitter.SetTexture(&_fireTexture);
+	_fireEmitter.SetShape(1.2f);
+	_fireEmitter.SetSpread(2.0f);
+	_fireEmitter.SetParticleSize(1.0f);
+	_fireEmitter.SetSpeed(0.3f);
+	_fireEmitter.SetHeight(4.5f);
+	_particleSystem.AddEmitter(&_fireEmitter);
+	
 	_snowParticles.Create(_renderer, 10000);
 	_snowDrift.Create(_renderer);
 
@@ -137,6 +164,11 @@ void MyWindow::OnDisplay()
 
 	Update(delta * _animationSpeed);
 
+	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f * _tree.GetFireScale(), 0.0f));
+	_fireEmitter.SetHeight(4.0f * _tree.GetFireScale());
+	_fireEmitter.SetParticleSize(1.0f * _tree.GetFireScale());
+	_fireEmitter.SetSpread(2.0f * _tree.GetFireScale());
+
 	if (_cursorKeyDown[0])
 		_cameraYaw += delta;
 	if (_cursorKeyDown[1])
@@ -170,7 +202,7 @@ void MyWindow::OnDisplay()
 	_snowDrift.DrawReflection(_renderer);
 	_tree.DrawReflection(_renderer);
 	_house.DrawReflection(_renderer);
-	_smoke.DrawReflected(_renderer);
+	_particleSystem.DrawReflected(_renderer);
 	_snowParticles.DrawReflected(_renderer);
 
 	glCullFace(GL_BACK);
@@ -181,7 +213,7 @@ void MyWindow::OnDisplay()
 	_pond.Draw(_renderer);
 
 	_snowParticles.Draw(_renderer);
-	_smoke.Draw(_renderer);
+	_particleSystem.Draw(_renderer);
 
 	_dome.DrawFront(_renderer);
 	
@@ -212,7 +244,7 @@ void MyWindow::Update(float dt)
 	_tree.Update(dt);
 	_snowDrift.Update(dt);
 	_snowParticles.Update(dt);
-	_smoke.Update(dt);
+	_particleSystem.Update(dt);
 
 	Matrix4 sunRotation;
 	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), dt);
@@ -248,7 +280,8 @@ void MyWindow::Update(float dt)
 		_season = SEASON_WINTER;
 		std::cout << "winter" << std::endl;
 		_snowDrift.Raise();
-		_smoke.BeginEmit();
+		_smokeEmitter.BeginEmit();
+		_fireEmitter.BeginEmit();
 		_snowParticles.BeginEmit();
 	}
 
@@ -258,7 +291,8 @@ void MyWindow::Update(float dt)
 		_season = SEASON_SPRING;
 		std::cout << "spring" << std::endl;
 		_snowDrift.Lower();
-		_smoke.EndEmit();
+		_smokeEmitter.EndEmit();
+		_fireEmitter.EndEmit();
 		_snowParticles.EndEmit();
 		_tree.Grow();
 	}
@@ -277,7 +311,9 @@ void MyWindow::OnDestroy()
 	_house.Dispose();
 	_terrain.Dispose();
 	_pond.Dispose();
-	_smoke.Dispose();
+	_particleSystem.Dispose();
+	_smokeTexture.Dispose();
+	_fireTexture.Dispose();
 	_snowParticles.Dispose();
 	_snowDrift.Dispose();
 
@@ -300,13 +336,14 @@ void MyWindow::OnKeyboard(int key, bool down)
 	if (VK_ADD == key)
 	{
 		_animationSpeed += ANIMATION_SPEED_INCREMENT;
-
 		_animationSpeed = Util::Min(_animationSpeed, ANIMATION_SPEED_MAX);
+		std::cout << "Speed: " << _animationSpeed << "x" << std::endl;
 	}
 	else if (VK_SUBTRACT == key)
 	{
 		_animationSpeed -= ANIMATION_SPEED_INCREMENT;
 		_animationSpeed = Util::Max(_animationSpeed, ANIMATION_SPEED_MIN);
+		std::cout << "Speed: " << _animationSpeed << "x" << std::endl;
 	}
 
 	if (key == VK_RIGHT)

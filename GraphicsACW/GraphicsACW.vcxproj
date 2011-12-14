@@ -79,11 +79,11 @@
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="ObjFile.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Pond.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="SmokeParticles.cpp" />
     <ClCompile Include="SnowDrift.cpp" />
     <ClCompile Include="SnowParticles.cpp" />
     <ClCompile Include="Terrain.cpp" />
@@ -106,11 +106,11 @@
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="ObjFile.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Pond.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="SmokeParticles.h" />
     <ClInclude Include="SnowDrift.h" />
     <ClInclude Include="SnowParticles.h" />
     <ClInclude Include="Terrain.h" />
@@ -133,7 +133,7 @@
     <None Include="leaf.fsh" />
     <None Include="leaf.vsh" />
     <None Include="lit_flat.fsh" />
-    <None Include="particle_smoke.vsh" />
+    <None Include="particle_emitter.vsh" />
     <None Include="particle_snow.vsh" />
     <None Include="textured_lit.fsh" />
     <None Include="textured_lit.vsh" />
