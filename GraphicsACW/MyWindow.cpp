@@ -49,38 +49,39 @@ void MyWindow::OnCreate()
 	LSystem test;
 	// regular tree
 	/*
-	test.AddRule("[]", "[--^B[]>>>B[]>>>B[]>>>B[]]");
+	test.AddRule("L", "B[--^L>>>L>>>L>>>L]");
 	std::string result;
-	test.EvaluateRules("[]", result, 3);
+	test.EvaluateRules("L", result, 3);
 	*/
 
 	// tree with mutations
-	test.AddRule("[]", "[---^B[]>>>B[]>>>vB[]>>>^B[]]");
-	test.AddRule("[]", "[---^B[]>>>>>>>B[]]");
-	test.AddRule("[]", "[---^B[]>>>>B[]>>>>B[]]");
+	
+	test.AddRule("L", "B[---^L>>>L>>>vL>>>^L]");
+	test.AddRule("L", "B[---^L>>>>>>>L]");
+	test.AddRule("L", "B[---^L>>>>L>>>>L]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 8);
+	test.EvaluateRules("L", result, 6);
 
 	// crimbo tree
-	/*test.AddRule("L", "[---B[]^^>>>--BL>>>>BL>>>>BL]");
-	test.AddRule("L", "[---B[]^^>>>>--BL>>>>BL>>>>BL]");
-
-	test.AddRule("[]", "[--B[]^^>>>>>--BL>>>BL>>>BL>>>BL]");
-	test.AddRule("[]", "[--B[]^^>>>--BL>>>BL>>>BL>>>BL]");
+	/*
+	test.AddRule("L", "B[--L^^>>>---L>>>>L>>>>L]");
+	test.AddRule("L", "B[--L^^>>>>---L>>>>L>>>>L]");
+	test.AddRule("L", "B[--L^^>>>>---L>>>L>>>>>L]");
+	test.AddRule("L", "B[--L^^>>>>>---L>>>L>>>L>>>L]");
+	test.AddRule("L", "B[--L^^>>---L>>>L>>>L>>>L]");
 
 	std::string result;
-	test.EvaluateRules("[]", result, 5);*/
-	
+	test.EvaluateRules("L", result, 5);
+	*/
 
 	_dome.Create(_renderer);
-	_tree.Create(_renderer, result, 2, 1500);
+	_tree.Create(_renderer, result, 1500);
 	_house.Create(_renderer);
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
 	_pond.Create(_renderer);
 	_lightning.Create(_renderer);
-
 	_particleSystem.Create(_renderer);
 
 	_smokeEmitter.SetPosition(Vector3(-2.69f, 2.1f, -4.4f));

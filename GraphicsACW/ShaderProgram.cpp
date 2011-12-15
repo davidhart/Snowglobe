@@ -40,8 +40,8 @@ void ShaderProgram::Create(const Renderer& renderer, const VertexShader& vertexS
 
 	_glex->glLinkProgram(_spHandle);
 
+#ifdef DEBUG
 	GLint loglength;
-
 	_glex->glGetProgramiv(_spHandle, GL_INFO_LOG_LENGTH, &loglength);
 
 	if (loglength != 0)
@@ -53,6 +53,7 @@ void ShaderProgram::Create(const Renderer& renderer, const VertexShader& vertexS
 
 		std::cout << log << std::endl;
 	}
+#endif
 }
 
 void ShaderProgram::Dispose()

@@ -21,8 +21,11 @@ void Shader::CreateFromFile(const Renderer& renderer, const char* filename)
 	std::string shaderSource;
 	Util::ReadTextFileToString(filename, shaderSource);
 
+#ifdef DEBUG
 	std::cout << filename << std::endl; 
+#endif
 	Create(renderer, shaderSource.c_str());
+
 }
 
 void Shader::Create(const Renderer& renderer, const char* shadersource)
@@ -41,6 +44,7 @@ void Shader::Create(const Renderer& renderer, const char* shadersource)
 	_glex->glCompileShader(_shHandle);
 
 
+#ifdef DEBUG
 	GLint loglength;
 	_glex->glGetShaderiv(_shHandle, GL_INFO_LOG_LENGTH, &loglength);
 	
@@ -53,6 +57,7 @@ void Shader::Create(const Renderer& renderer, const char* shadersource)
 
 		std::cout << log << std::endl;
 	}
+#endif
 }
 
 

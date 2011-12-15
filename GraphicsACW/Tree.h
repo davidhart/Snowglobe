@@ -20,7 +20,7 @@ public:
 
 	Tree();
 
-	void Create(const Renderer& renderer, const std::string& treestring, unsigned int leafDepth, unsigned int numLeaves);
+	void Create(const Renderer& renderer, const std::string& treestring, unsigned int numLeaves);
 	void Dispose();
 	
 	void Grow();
@@ -38,7 +38,7 @@ public:
 
 private:
 
-	void ParseTree(const std::string& treestring, unsigned int leafDepth, unsigned int numLeaves);
+	void ParseTree(const std::string& treestring, unsigned int numLeaves);
 	void CreateBranches(const Renderer& renderer);
 	void CreateLeaves(const Renderer& renderer);
 	void CreateBranchInstanceBuffer(const Renderer& renderer);

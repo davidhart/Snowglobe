@@ -10,13 +10,9 @@ Base::Base()
 void Base::Create(const Renderer& renderer)
 {
 	_texture.Create(renderer, "base_diffuse.tga");
-	std::string shadersource;
-	Util::ReadTextFileToString("textured_lit.vsh", shadersource);
 
-	_vertShader.Create(renderer, shadersource.c_str());
-
-	Util::ReadTextFileToString("textured_lit.fsh", shadersource);
-	_fragShader.Create(renderer, shadersource.c_str());
+	_vertShader.CreateFromFile(renderer, "textured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "textured_lit.fsh");
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 

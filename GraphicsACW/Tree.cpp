@@ -24,13 +24,19 @@ Tree::Tree() :
 
 }
 
-void Tree::Create(const Renderer& renderer, const std::string& treestring, unsigned int leafDepth, unsigned int numLeaves)
+void Tree::Create(const Renderer& renderer, const std::string& treestring, unsigned int numLeaves)
 {
 	assert(numLeaves > 0);
-	ParseTree(treestring, leafDepth, numLeaves);
+	ParseTree(treestring, numLeaves);
 
-	CreateBranches(renderer);
-	CreateLeaves(renderer);
+	if (_branches.size() != 0)
+		CreateBranches(renderer);
+
+	if (_leaves.size() != 0)
+		CreateLeaves(renderer);
+
+	_textureOff.Create(renderer, "white.tga");
+
 	FetchNonStandardUniforms();
 }
 
@@ -81,8 +87,6 @@ void Tree::CreateBranches(const Renderer& renderer)
 
 	_branchBinding.Create(renderer, vertexLayout, 7, _branchIndices, AE_UINT);
 	_barkTexture.Create(renderer, "tree_bark.jpg");
-
-	_textureOff.Create(renderer, "white.tga");
 }
 
 void Tree::CreateLeaves(const Renderer& renderer)
@@ -129,43 +133,54 @@ void Tree::CreateLeaves(const Renderer& renderer)
 
 void Tree::FetchNonStandardUniforms()
 {
-	_uniformDrawDepth = _currentBranchProgram->GetUniform("drawDepth");
+	if (_branches.size() != 0)
+		_uniformDrawDepth = _currentBranchProgram->GetUniform("drawDepth");
 
-	_uniformColorLookup = _currentLeafProgram->GetUniform("colorLookup");
-	_uniformLeafScale = _currentLeafProgram->GetUniform("leafScale");
-	_uniformFallTime = _currentLeafProgram->GetUniform("fallTime");
-	_uniformFallSpeed = _currentLeafProgram->GetUniform("fallSpeed");
+	if (_leaves.size() != 0)
+	{
+		_uniformColorLookup = _currentLeafProgram->GetUniform("colorLookup");
+		_uniformLeafScale = _currentLeafProgram->GetUniform("leafScale");
+		_uniformFallTime = _currentLeafProgram->GetUniform("fallTime");
+		_uniformFallSpeed = _currentLeafProgram->GetUniform("fallSpeed");
+	}
 }
 
 void Tree::Dispose()
 {
-	_branchBinding.Dispose();
-	_branchBuffer.Dispose();
-	_branchIndices.Dispose();
-	_branchInstanceBuffer.Dispose();
-	_branchTexturedLitProgram.Dispose();
-	_branchVert.Dispose();
-	_branchTexturedLitFrag.Dispose();
-	_branchFlatProgram.Dispose();
-	_branchFlatShadedFrag.Dispose();
-	_branchVertFlat.Dispose();
-	_branchUnlitProgram.Dispose();
-	_branchUnlitFrag.Dispose();
-
-	_barkTexture.Dispose();
 	_textureOff.Dispose();
 
-	_leafBinding.Dispose();
-	_leafBuffer.Dispose();
-	_leafIndices.Dispose();
-	_leafInstanceBuffer.Dispose();
-	_leafProgram.Dispose();
-	_leafProgramUnlit.Dispose();
-	_leafFragShader.Dispose();
-	_leafFragUnlit.Dispose();
-	_leafVertShader.Dispose();
-	_leafTexture.Dispose();
-	_leafGradient.Dispose();
+	if (_branches.size() != 0)
+	{
+		_branchBinding.Dispose();
+		_branchBuffer.Dispose();
+		_branchIndices.Dispose();
+		_branchInstanceBuffer.Dispose();
+		_branchTexturedLitProgram.Dispose();
+		_branchVert.Dispose();
+		_branchTexturedLitFrag.Dispose();
+		_branchFlatProgram.Dispose();
+		_branchFlatShadedFrag.Dispose();
+		_branchVertFlat.Dispose();
+		_branchUnlitProgram.Dispose();
+		_branchUnlitFrag.Dispose();
+	
+		_barkTexture.Dispose();
+	}
+
+	if (_leaves.size() != 0)
+	{
+		_leafBinding.Dispose();
+		_leafBuffer.Dispose();
+		_leafIndices.Dispose();
+		_leafInstanceBuffer.Dispose();
+		_leafProgram.Dispose();
+		_leafProgramUnlit.Dispose();
+		_leafFragShader.Dispose();
+		_leafFragUnlit.Dispose();
+		_leafVertShader.Dispose();
+		_leafTexture.Dispose();
+		_leafGradient.Dispose();
+	}
 }
 
 void Tree::Grow()
@@ -278,6 +293,9 @@ void Tree::DrawReflection(const Renderer& renderer)
 
 void Tree::DrawBranches(const Renderer& renderer, const Matrix4& model)
 {
+	if (_branches.size() == 0)
+		return;
+
 	if (_currentDrawMode == DRAW_LIT_SMOOTH || _currentDrawMode == DRAW_WIREFRAME)
 	{
 		_textureOff.Bind();
@@ -301,6 +319,9 @@ void Tree::DrawBranches(const Renderer& renderer, const Matrix4& model)
 
 void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 {
+	if (_leaves.size() == 0)
+		return;
+
 	if (_currentState != TREE_GROWING_BRANCHES && _currentState != TREE_LOSING_BRANCHES)
 	{
 		_currentLeafProgram->Use();
@@ -436,29 +457,34 @@ float Tree::GetLeafFallTime() const
 		return 0;
 }
 
-void Tree::ParseTree(const std::string& treestring, unsigned int leafDepth, unsigned int numLeaves)
+void Tree::ParseTree(const std::string& treestring, unsigned int numLeaves)
 {
 	_maxDepth = 1;
 
-	unsigned int branchCount = 1;
+	unsigned int branchCount = 0;
+	unsigned int leafyBranchCount = 0;
 	for (unsigned int i = 0; i < treestring.size(); ++i)
 	{
 		if (treestring[i] == 'B')
 		{
 			++branchCount;
 		}
+		else if (treestring[i] == 'L')
+		{
+			++branchCount;
+			++leafyBranchCount;
+		}
 	}
 
 	_branches.resize(branchCount);
-	_leafyBranchesIndices.reserve(branchCount);
+	_leafyBranchesIndices.reserve(leafyBranchCount);
 
-	Matrix4 identity;
+	Matrix4 base;
 	//Matrix4::Identity(identity);
-	Matrix4::Scale(identity, Vector3(1.3f, 1, 1.3f));
-	_branches[0] = Branch(identity);
+	Matrix4::Scale(base, Vector3(1.3f, 1, 1.3f));
 
 	int parentBranch = 0;
-	int currentBranch = 1;
+	int currentBranch = 0;
 
 	std::stack<float> yawstack;
 	std::stack<float> pitchstack;
@@ -472,7 +498,7 @@ void Tree::ParseTree(const std::string& treestring, unsigned int leafDepth, unsi
 
 	for (unsigned int i = 0; i < treestring.size(); ++i)
 	{
-		if (treestring[i] == 'B')
+		if (treestring[i] == 'B' || treestring[i] == 'L')
 		{
 			Matrix4 translation;
 			Matrix4::Translation(translation, Vector3(0, 1, 0));
@@ -486,14 +512,21 @@ void Tree::ParseTree(const std::string& treestring, unsigned int leafDepth, unsi
 			Matrix4 yaw;
 			Matrix4::RotationAxis(yaw, Vector3(1, 0, 0), yawAngle);
 
-			_branches[currentBranch]
-				= Branch(parentBranch, _branches[parentBranch], translation * pitch * yaw * scale);
+			if (currentBranch == 0)
+			{
+				_branches[currentBranch] = Branch(base * pitch * yaw * scale);
+			}
+			else
+			{
+				_branches[currentBranch]
+					= Branch(parentBranch, _branches[parentBranch], translation * pitch * yaw * scale);
+			}
 
 			unsigned int depth = _branches[currentBranch].Depth();
 			if (depth + 1 > _maxDepth)
 				_maxDepth = depth + 1;
 
-			if (depth >= leafDepth)
+			if (treestring[i] == 'L')
 			{
 				_leafyBranchesIndices.push_back(currentBranch);
 			}
@@ -553,13 +586,18 @@ void Tree::ParseTree(const std::string& treestring, unsigned int leafDepth, unsi
 	
 	_leaves.reserve(numLeaves);
 
-	for (unsigned int i = 0; i < numLeaves; ++i)
+	if (_leafyBranchesIndices.size() != 0)
 	{
-		// pick a random parent branch from the set of branches above the leafy branch depth
-		int parentBranch = rand() % _leafyBranchesIndices.size();
+		_leaves.clear();
+		_leaves.reserve(numLeaves);
 
-		//_leaves.push_back(Leaf(_branches[1]));
-		_leaves.push_back(Leaf(_branches[_leafyBranchesIndices[parentBranch]]));
+		for (unsigned int i = 0; i < numLeaves; ++i)
+		{
+			// pick a random parent branch from the set of branches above the leafy branch depth
+			int parentBranch = rand() % _leafyBranchesIndices.size();
+
+			_leaves.push_back(Leaf(_branches[_leafyBranchesIndices[parentBranch]]));
+		}
 	}
 }
 

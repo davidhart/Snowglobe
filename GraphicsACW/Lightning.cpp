@@ -14,13 +14,8 @@ Lightning::Lightning() :
 
 void Lightning::Create(const Renderer& renderer)
 {
-	std::string shadersource;
-	Util::ReadTextFileToString("textured_unlit.vsh", shadersource);
-
-	_vertShader.Create(renderer, shadersource.c_str());
-
-	Util::ReadTextFileToString("textured_unlit.fsh", shadersource);
-	_fragShader.Create(renderer, shadersource.c_str());
+	_vertShader.CreateFromFile(renderer, "textured_unlit.vsh");
+	_fragShader.CreateFromFile(renderer, "textured_unlit.fsh");
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 
@@ -43,7 +38,7 @@ void Lightning::Create(const Renderer& renderer)
 
 	_shaderProgram.Use();
 	_shaderProgram.SetUniform(diffuseMap, 0);
-	_vertBinding.Create(renderer, vertexLayout, 3, _indexBuffer, AE_UINT);
+	_vertBinding.Create(renderer, vertexLayout, 2, _indexBuffer, AE_UINT);
 }
 
 void Lightning::Dispose()
