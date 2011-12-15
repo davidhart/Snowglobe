@@ -71,39 +71,42 @@ void Pond::Dispose()
 
 void Pond::DrawStencilMask(const Renderer& renderer)
 {
-	glStencilFunc(GL_ALWAYS, 1, 1);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glEnable(GL_STENCIL_TEST);
-	glDepthMask(GL_FALSE);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	renderer.EnableStencilTest(true);
+	renderer.StencilTest(STENCIL_ALWAYS, 1);
+	renderer.StencilOp(STENCIL_KEEP, STENCIL_KEEP, STENCIL_REPLACE);
+
+	renderer.EnableDepthWrite(false);
+	renderer.EnableColorWrite(false);
 
 	_texture.Bind();
 	_shaderProgram.Use();
 	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _pondModel.GetNumIndices());
 
-	glDepthMask(GL_TRUE);
-	glDepthFunc(GL_ALWAYS);
-	glStencilFunc(GL_EQUAL, 1, 1);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	renderer.EnableDepthWrite(true);
+	renderer.EnableDepthTest(false);
+	
+	renderer.StencilTest(STENCIL_EQUAL, 1);
+	renderer.StencilOp(STENCIL_KEEP, STENCIL_KEEP, STENCIL_KEEP);
 
 	_shaderDepthClear.Use();
 	renderer.UpdateStandardUniforms(_shaderDepthClear, _depthClearUniforms);
 	renderer.Draw(_vertDepthClearBinding, PT_TRIANGLES, 0, _pondModel.GetNumIndices());
-	glDisable(GL_STENCIL_TEST);
-	glDepthFunc(GL_LESS);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	
+	renderer.EnableStencilTest(false);
+	renderer.EnableDepthTest(true);
+	renderer.EnableColorWrite(true);
 }
 
 void Pond::Draw(const Renderer& renderer)
 {
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	renderer.EnableBlend(true);
+	renderer.BlendMode(BLEND_ALPHA);
 
 	_texture.Bind();
 	_shaderProgram.Use();
 	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _pondModel.GetNumIndices());
 
-	glDisable(GL_BLEND);
+	renderer.EnableBlend(false);
 }

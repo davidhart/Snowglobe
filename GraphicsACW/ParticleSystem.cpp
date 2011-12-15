@@ -104,10 +104,10 @@ void ParticleSystem::DrawReflected(const Renderer& renderer)
 
 void ParticleSystem::Draw(const Renderer& renderer, const Matrix4& modelMatrix)
 {
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_COLOR, GL_ONE);
-	glDepthMask(GL_FALSE);
+	renderer.EnableCullFace(false);
+	renderer.BlendMode(BLEND_ADDITIVE);
+	renderer.EnableBlend(true);
+	renderer.EnableDepthWrite(false);
 
 	_shader.Use();
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
@@ -134,9 +134,9 @@ void ParticleSystem::Draw(const Renderer& renderer, const Matrix4& modelMatrix)
 		renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _quadModel.GetNumIndices(), _particleEmitters[i]->_numParticles);
 	}
 
-	glDepthMask(GL_TRUE);
-	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
+	renderer.EnableCullFace(true);
+	renderer.EnableBlend(false);
+	renderer.EnableDepthWrite(true);
 }
 
 void ParticleSystem::Update(float delta)

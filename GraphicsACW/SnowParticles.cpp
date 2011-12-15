@@ -62,10 +62,10 @@ void SnowParticles::Dispose()
 
 void SnowParticles::Draw(const Renderer& renderer)
 {
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_COLOR, GL_ONE);
-	glDepthMask(GL_FALSE);
+	renderer.EnableCullFace(false);
+	renderer.EnableBlend(true);
+	renderer.BlendMode(BLEND_ADDITIVE);
+	renderer.EnableDepthWrite(false);
 	_texture.Bind();
 
 	_shader.Use();
@@ -80,17 +80,17 @@ void SnowParticles::Draw(const Renderer& renderer)
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _instancedQuadModel.GetNumIndices(), _numParticles);
 
-	glDepthMask(GL_TRUE);
-	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
+	renderer.EnableCullFace(true);
+	renderer.EnableBlend(false);
+	renderer.EnableDepthWrite(true);
 }
 
 void SnowParticles::DrawReflected(const Renderer& renderer)
 {
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_COLOR, GL_ONE);
-	glDepthMask(GL_FALSE);
+	renderer.EnableCullFace(false);
+	renderer.EnableBlend(true);
+	renderer.BlendMode(BLEND_ADDITIVE);
+	renderer.EnableDepthWrite(false);
 	_texture.Bind();
 
 	_shader.Use();
@@ -107,9 +107,9 @@ void SnowParticles::DrawReflected(const Renderer& renderer)
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
 	renderer.DrawInstances(_vertBinding, PT_TRIANGLES, 0, _instancedQuadModel.GetNumIndices(), _numParticles);
 
-	glDepthMask(GL_TRUE);
-	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
+	renderer.EnableCullFace(true);
+	renderer.EnableBlend(false);
+	renderer.EnableDepthWrite(true);
 }
 
 void SnowParticles::Update(float delta)

@@ -80,10 +80,10 @@ void Lightning::Draw(const Renderer& renderer, const Matrix4& modelMatrix)
 	if (!ShouldDraw())
 		return;
 
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_COLOR, GL_ONE);
-	glDepthMask(GL_FALSE);
+	renderer.EnableCullFace(false);
+	renderer.EnableBlend(true);
+	renderer.BlendMode(BLEND_ADDITIVE);
+	renderer.EnableDepthWrite(false);
 
 	_shaderProgram.Use();
 
@@ -99,9 +99,9 @@ void Lightning::Draw(const Renderer& renderer, const Matrix4& modelMatrix)
 	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _model.GetNumIndices());
 
-	glDepthMask(GL_TRUE);
-	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
+	renderer.EnableCullFace(true);
+	renderer.EnableBlend(false);
+	renderer.EnableDepthWrite(true);
 }
 
 bool Lightning::ShouldDraw() const

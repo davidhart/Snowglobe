@@ -326,9 +326,9 @@ void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 		_currentLeafProgram->SetUniform(_uniformFallSpeed, 1.0f);
 		_currentLeafProgram->SetUniform(_uniformFallTime, GetLeafFallTime());
 
-		glDisable(GL_CULL_FACE);
+		renderer.EnableCullFace(false);
 		renderer.DrawInstances(_leafBinding, PT_TRIANGLES, 0, _leafModel.GetNumIndices(), _leaves.size());
-		glEnable(GL_CULL_FACE);
+		renderer.EnableCullFace(true);
 	}
 }
 

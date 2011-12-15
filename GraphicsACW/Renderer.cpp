@@ -18,6 +18,9 @@ void Renderer::Create(glex* glex)
 	assert(glex != NULL);
 
 	_glex = glex;
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 }
 
 glex* Renderer::GetEx() const
@@ -34,7 +37,7 @@ void Renderer::Dispose()
 	_glex = NULL;
 }
 
-void Renderer::Draw(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices) const
+void Renderer::Draw(VertexBinding& binding, ePrimitive primitive, unsigned int offset, unsigned int indices) const
 {
 	binding.Bind();
 
@@ -50,7 +53,7 @@ void Renderer::Draw(VertexBinding& binding, Primitive primitive, unsigned int of
 	binding.Unbind();
 }
 
-void Renderer::DrawInstances(VertexBinding& binding, Primitive primitive, unsigned int offset, unsigned int indices, unsigned int instances) const
+void Renderer::DrawInstances(VertexBinding& binding, ePrimitive primitive, unsigned int offset, unsigned int indices, unsigned int instances) const
 {
 	binding.Bind();
 
@@ -120,4 +123,80 @@ void Renderer::GetStandardUniforms(const ShaderProgram& shaderProgram, StandardU
 	{
 		Light::GetShaderUniforms(shaderProgram, i, uniforms.Lights[i]);
 	}
+}
+
+void Renderer::EnableCullFace(bool enable) const
+{
+	if (enable)
+		glEnable(GL_CULL_FACE);
+	else
+		glDisable(GL_CULL_FACE);
+}
+
+void Renderer::CullFace(eCullFace face) const
+{
+	glCullFace(face);
+}
+
+void Renderer::EnableBlend(bool enable) const
+{
+	if (enable)
+		glEnable(GL_BLEND);
+	else
+		glDisable(GL_BLEND);
+}
+
+void Renderer::BlendMode(eBlendMode mode) const
+{
+	if (mode == BLEND_ADDITIVE)
+	{
+		glBlendFunc(GL_SRC_COLOR, GL_ONE);
+	}
+	else if (mode == BLEND_ALPHA)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+}
+
+void Renderer::EnableDepthTest(bool enable) const
+{
+	if (enable)
+		glDepthFunc(GL_LESS);
+	else
+		glDepthFunc(GL_ALWAYS);
+}
+
+void Renderer::EnableDepthWrite(bool enable) const
+{
+	if (enable)
+		glDepthMask(GL_TRUE);
+	else
+		glDepthMask(GL_FALSE);
+}
+
+
+void Renderer::EnableColorWrite(bool enable) const
+{
+	if (enable)
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	else
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+}
+
+void Renderer::EnableStencilTest(bool enable) const
+{
+	if (enable)
+		glEnable(GL_STENCIL_TEST);
+	else
+		glDisable(GL_STENCIL_TEST);
+}
+
+void Renderer::StencilOp(eStencilOp stencilFail, eStencilOp stencilPassDepthFail, eStencilOp stencilDepthPass) const
+{
+	glStencilOp(stencilFail, stencilPassDepthFail, stencilDepthPass);
+}
+
+void Renderer::StencilTest(eStencilFunc func, int ref) const
+{
+	glStencilFunc(func, ref, 0xFFFFFFFF);
 }

@@ -149,9 +149,6 @@ void MyWindow::OnCreate()
 
 	for (int i = 0; i < 4; ++i)
 		_renderer.SetLight(i, _directionalLights[i]);
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
 }
 
 void MyWindow::OnDisplay()
@@ -189,9 +186,9 @@ void MyWindow::OnDisplay()
 	_pond.DrawStencilMask(_renderer);
 
 	_renderer.ClipPlane(Vector4(0, -1, 0, 0));
-
-	glCullFace(GL_FRONT);
-	glEnable(GL_STENCIL_TEST);
+	_renderer.CullFace(C_FRONT);
+	_renderer.EnableStencilTest(true);
+	_renderer.StencilTest(STENCIL_EQUAL, 1);
 
 	_terrain.DrawReflection(_renderer);
 	_snowDrift.DrawReflection(_renderer);
@@ -201,10 +198,9 @@ void MyWindow::OnDisplay()
 	_snowParticles.DrawReflected(_renderer);
 	_lightning.DrawReflection(_renderer);
 
-	glCullFace(GL_BACK);
+	_renderer.CullFace(C_BACK);
 	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
-
-	glDisable(GL_STENCIL_TEST);
+	_renderer.EnableStencilTest(false);
 	
 	_pond.Draw(_renderer);
 

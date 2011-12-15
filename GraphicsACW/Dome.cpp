@@ -50,11 +50,9 @@ void Dome::Dispose()
 
 void Dome::DrawBack(const Renderer& renderer)
 {
-	glCullFace(GL_FRONT);
-	
+	renderer.CullFace(C_FRONT);
 	Draw(renderer, -1.0f, Vector4(0,0,0,0));
-
-	glCullFace(GL_BACK);
+	renderer.CullFace(C_BACK);
 }
 
 void Dome::DrawFront(const Renderer& renderer)
@@ -64,8 +62,8 @@ void Dome::DrawFront(const Renderer& renderer)
 
 void Dome::Draw(const Renderer& renderer, float normalScale, const Vector4& rimColor)
 {
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_COLOR, GL_ONE);
+	renderer.EnableBlend(true);
+	renderer.BlendMode(BLEND_ADDITIVE);
 
 	_shader.Use();
 	renderer.UpdateStandardUniforms(_shader, _standardUniforms);
@@ -74,5 +72,5 @@ void Dome::Draw(const Renderer& renderer, float normalScale, const Vector4& rimC
 
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _domeModel.GetNumIndices());
 
-	glDisable(GL_BLEND);
+	renderer.EnableBlend(false);
 }

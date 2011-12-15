@@ -56,7 +56,8 @@ void main()
 	vec3 offset = rotationY * vec3(min(0.35*t * cos(gl_InstanceID * 1646.46), 4), 
 								-t * fallSpeed * (abs(cos(gl_InstanceID * 2007.466874)) * 0.5 + 0.5), 0);
 
-	float shrink =  pow(clamp(3.5 + offset.y, 0, 1), 4);
+	vec4 p = model * modelinstance * vec4(0, 0, 0, 1);
+	float shrink =  pow(clamp(abs(p.y) - 1.0 + offset.y, 0, 1), 4);
 
 	vec3 pos = in_vertex * leafScale * shrink;
 	vec4 wsPos = modelinstance * vec4(rotationX * pos,1.0);
