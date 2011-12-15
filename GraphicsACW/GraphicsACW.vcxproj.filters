@@ -48,6 +48,7 @@
     <ClCompile Include="SnowParticles.cpp" />
     <ClCompile Include="SnowDrift.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="Lightning.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dome.h" />
@@ -99,6 +100,7 @@
     <ClInclude Include="SnowParticles.h" />
     <ClInclude Include="SnowDrift.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="Lightning.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -116,15 +118,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="basic.fsh">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="domeFront.fsh">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="dome.vsh">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="domeBack.fsh">
       <Filter>Shaders</Filter>
     </None>
     <None Include="tree.vsh">
@@ -164,6 +157,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="particle_emitter.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="untextured_lit.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="dome.fsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

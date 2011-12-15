@@ -79,7 +79,7 @@ void MyWindow::OnCreate()
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
 	_pond.Create(_renderer);
-
+	_lightning.Create(_renderer);
 
 	_particleSystem.Create(_renderer);
 
@@ -97,7 +97,7 @@ void MyWindow::OnCreate()
 
 	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f, 0.0f));
 	_fireEmitter.SetWindDirection(Vector3(0.0f));
-	_fireEmitter.SetNumParticles(450);
+	_fireEmitter.SetNumParticles(320);
 	_fireTexture.Create(_renderer, "fire.jpg");
 	_fireEmitter.SetTexture(&_fireTexture);
 	_fireEmitter.SetShape(1.2f);
@@ -127,22 +127,22 @@ void MyWindow::OnCreate()
 	Light::Off(_directionalLights[3]);
 
 	// Spotlights
-	Light::Spot(_spotLights[0], Vector3(-0.8f, 7.5f, 0), Vector3(0.6f, -1, 0), 19, 26, 1);
+	Light::Spot(_spotLights[0], Vector3(-3.8f, 11.5f, 0), Vector3(0.7f, -1, 0), 11, 13.5f, 1);
 	_spotLights[0].SetDiffuseColor(Vector3(1));
 	_spotLights[0].SetSpecularColor(Vector3(1));
 	_spotLights[0].SetSpecularPower(200);
 
-	Light::Spot(_spotLights[1], Vector3(0.8f, 7.5f, 0), Vector3(-0.6f, -1, 0), 19, 26, 1);
+	Light::Spot(_spotLights[1], Vector3(3.8f, 11.5f, 0), Vector3(-0.7f, -1, 0), 11, 13.5f, 1);
 	_spotLights[1].SetDiffuseColor(Vector3(1.0f, 0.6f, 0.6f));
 	_spotLights[1].SetSpecularColor(Vector3(1.0f, 0.6f, 0.6f));
 	_spotLights[1].SetSpecularPower(200);
 
-	Light::Spot(_spotLights[2], Vector3(0, 7.5f, -0.8f), Vector3(0, -1, 0.6f), 19, 26, 1);
+	Light::Spot(_spotLights[2], Vector3(0.0f, 11.5f, -3.8f), Vector3(0, -1, 0.7f), 11, 13.5f, 1);
 	_spotLights[2].SetDiffuseColor((Vector3(0.6f, 1.0f, 0.6f)));
 	_spotLights[2].SetSpecularColor((Vector3(0.6f, 1.0f, 0.6f)));
 	_spotLights[2].SetSpecularPower(200);
 
-	Light::Spot(_spotLights[3], Vector3(0, 7.5f, 0.8f), Vector3(0, -1, -0.6f), 19, 26, 1);
+	Light::Spot(_spotLights[3], Vector3(0.0f, 10.5f, 3.8f), Vector3(0, -1, -0.7f), 11, 13.5f, 1);
 	_spotLights[3].SetDiffuseColor(Vector3(0.75f, 0.75f, 1.0f));
 	_spotLights[3].SetSpecularColor(Vector3(0.75f, 0.75f, 1.0f));
 	_spotLights[3].SetSpecularPower(200);
@@ -163,11 +163,6 @@ void MyWindow::OnDisplay()
 	float delta = time - prevTime;
 
 	Update(delta * _animationSpeed);
-
-	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f * _tree.GetFireScale(), 0.0f));
-	_fireEmitter.SetHeight(4.0f * _tree.GetFireScale());
-	_fireEmitter.SetParticleSize(1.0f * _tree.GetFireScale());
-	_fireEmitter.SetSpread(2.0f * _tree.GetFireScale());
 
 	if (_cursorKeyDown[0])
 		_cameraYaw += delta;
@@ -204,6 +199,7 @@ void MyWindow::OnDisplay()
 	_house.DrawReflection(_renderer);
 	_particleSystem.DrawReflected(_renderer);
 	_snowParticles.DrawReflected(_renderer);
+	_lightning.DrawReflection(_renderer);
 
 	glCullFace(GL_BACK);
 	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
@@ -214,7 +210,7 @@ void MyWindow::OnDisplay()
 
 	_snowParticles.Draw(_renderer);
 	_particleSystem.Draw(_renderer);
-
+	_lightning.Draw(_renderer);
 	_dome.DrawFront(_renderer);
 	
 	SwapBuffers();
@@ -245,6 +241,13 @@ void MyWindow::Update(float dt)
 	_snowDrift.Update(dt);
 	_snowParticles.Update(dt);
 	_particleSystem.Update(dt);
+
+	_lightning.Update(dt);
+
+	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f * _tree.GetFireScale(), 0.0f));
+	_fireEmitter.SetHeight(4.0f * _tree.GetFireScale());
+	_fireEmitter.SetParticleSize(1.0f * _tree.GetFireScale());
+	_fireEmitter.SetSpread(2.0f * _tree.GetFireScale());
 
 	Matrix4 sunRotation;
 	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), dt);
@@ -282,6 +285,7 @@ void MyWindow::Update(float dt)
 		_snowDrift.Raise();
 		_smokeEmitter.BeginEmit();
 		_fireEmitter.BeginEmit();
+		_lightning.Flash();
 		_snowParticles.BeginEmit();
 	}
 
@@ -312,6 +316,7 @@ void MyWindow::OnDestroy()
 	_terrain.Dispose();
 	_pond.Dispose();
 	_particleSystem.Dispose();
+	_lightning.Dispose();
 	_smokeTexture.Dispose();
 	_fireTexture.Dispose();
 	_snowParticles.Dispose();

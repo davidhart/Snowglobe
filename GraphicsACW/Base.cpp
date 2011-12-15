@@ -9,12 +9,13 @@ Base::Base()
 
 void Base::Create(const Renderer& renderer)
 {
+	_texture.Create(renderer, "base_diffuse.tga");
 	std::string shadersource;
-	Util::ReadTextFileToString("basic.vsh", shadersource);
+	Util::ReadTextFileToString("textured_lit.vsh", shadersource);
 
 	_vertShader.Create(renderer, shadersource.c_str());
 
-	Util::ReadTextFileToString("basic.fsh", shadersource);
+	Util::ReadTextFileToString("textured_lit.fsh", shadersource);
 	_fragShader.Create(renderer, shadersource.c_str());
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
@@ -37,6 +38,8 @@ void Base::Create(const Renderer& renderer)
 	Matrix4::Identity(identity);
 
 	_shaderProgram.Use();
+	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
+	_shaderProgram.SetUniform(diffuseMap, 0);
 	_shaderProgram.SetUniform(_standardUniforms.Model, identity);
 
 	_vertBinding.Create(renderer, vertexLayout, 2, _baseIndices, AE_UINT);
@@ -51,10 +54,12 @@ void Base::Dispose()
 	_shaderProgram.Dispose();
 	_vertShader.Dispose();
 	_fragShader.Dispose();
+	_texture.Dispose();
 }
 
 void Base::Draw(const Renderer& renderer)
 {
+	_texture.Bind();
 	_shaderProgram.Use();
 	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _baseModel.GetNumIndices());

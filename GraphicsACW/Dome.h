@@ -12,26 +12,6 @@
 class Dome : public Uncopyable
 {
 	
-private:
-
-	ObjFile _domeModel;
-
-	VertexBuffer _vertexBuffer;
-	VertexBuffer _indexBuffer;
-
-	VertexBinding _frontBinding;
-	VertexBinding _backBinding;
-
-	ShaderProgram _frontShader;
-	ShaderProgram _backShader;
-
-	Renderer::StandardUniformBlock _standardUniformBack;
-	Renderer::StandardUniformBlock _standardUniformFront;
-
-	VertexShader _vertShader;
-	FragmentShader _backFragShader;
-	FragmentShader _frontFragShader;
-
 public:
 
 	Dome();
@@ -40,5 +20,23 @@ public:
 
 	void DrawBack(const Renderer& renderer);
 	void DrawFront(const Renderer& renderer);
+
+private:
+
+	void Draw(const Renderer& renderer, float normalScale, const Vector4& rimColor);
+
+	ObjFile _domeModel;
+
+	VertexBuffer _vertexBuffer;
+	VertexBuffer _indexBuffer;
+	VertexBinding _vertBinding;
+
+	VertexShader _vertShader;
+	FragmentShader _fragShader;
+	ShaderProgram _shader;
+
+	Uniform _uniformNormalScale;
+	Uniform _uniformRimColor;
+	Renderer::StandardUniformBlock _standardUniforms;
 
 };

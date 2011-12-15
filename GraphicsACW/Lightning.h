@@ -4,30 +4,40 @@
 #include "ObjFile.h"
 #include "VertexBuffer.h"
 #include "VertexBinding.h"
-#include "Renderer.h"
 #include "Texture.h"
+#include "Renderer.h"
 
-class Base
+class Lightning
 {
 
 public:
 
-	Base();
+	Lightning();
 
 	void Create(const Renderer& renderer);
 	void Dispose();
 
 	void Draw(const Renderer& renderer);
+	void DrawReflection(const Renderer& renderer);
+
+	void Flash();
+	void Update(float delta);
 
 private:
+
+	void Draw(const Renderer& renderer, const Matrix4& modelMatrix);
+	bool ShouldDraw();
+
 
 	VertexShader _vertShader;
 	FragmentShader _fragShader;
 	ShaderProgram _shaderProgram;
 	Renderer::StandardUniformBlock _standardUniforms;
-	VertexBuffer _baseBuffer;
-	VertexBuffer _baseIndices;
+	VertexBuffer _vertexBuffer;
+	VertexBuffer _indexBuffer;
 	VertexBinding _vertBinding;
-	ObjFile _baseModel;
+	ObjFile _model;
 	Texture _texture;
+	float _elapsed;
+	float _flashDuration;
 };

@@ -24,7 +24,7 @@ void Terrain::Create(const Renderer& renderer)
 		ArrayElement(_terrainBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset()),
 	};
 
-	_texture.Create(renderer, "grass.jpg");
+	_texture.Create(renderer, "grass.jpg", T_REPEAT, T_LINEAR);
 
 	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
 	_shaderProgram.Use();

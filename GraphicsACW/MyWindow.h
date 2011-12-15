@@ -12,6 +12,7 @@
 #include "SnowParticles.h"
 #include "SnowDrift.h"
 #include "Texture.h"
+#include "Lightning.h"
 
 class MyWindow : public gxbase::GLWindowEx
 {
@@ -38,6 +39,7 @@ private:
 	Base _base;
 	Terrain _terrain;
 	Pond _pond;
+	Lightning _lightning;
 	ParticleSystem _particleSystem;
 	ParticleEmitter _fireEmitter;
 	ParticleEmitter _smokeEmitter;
