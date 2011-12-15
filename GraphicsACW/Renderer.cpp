@@ -200,3 +200,9 @@ void Renderer::StencilTest(eStencilFunc func, int ref) const
 {
 	glStencilFunc(func, ref, 0xFFFFFFFF);
 }
+
+void Renderer::Clear() const
+{
+	// TODO: parameterise
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}

@@ -101,6 +101,8 @@ public:
 	void StencilOp(eStencilOp stencilFail, eStencilOp stencilPassDepthFail, eStencilOp stencilDepthPass) const;
 	void StencilTest(eStencilFunc func, int ref = 0) const;
 
+	void Clear() const;
+
 	glex* GetEx() const;
 
 private:
