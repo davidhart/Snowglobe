@@ -26,7 +26,7 @@ public:
 private:
 
 	void Draw(const Renderer& renderer, const Matrix4& modelMatrix);
-	bool ShouldDraw();
+	bool ShouldDraw() const;
 
 
 	VertexShader _vertShader;

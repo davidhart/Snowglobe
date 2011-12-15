@@ -104,7 +104,7 @@ void Lightning::Draw(const Renderer& renderer, const Matrix4& modelMatrix)
 	glEnable(GL_CULL_FACE);
 }
 
-bool Lightning::ShouldDraw()
+bool Lightning::ShouldDraw() const
 {
 	if (_elapsed < 0)
 		return false;

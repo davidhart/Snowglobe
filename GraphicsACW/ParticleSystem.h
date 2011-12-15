@@ -54,8 +54,8 @@ private:
 
 	Vector3 _position;
 	Vector3 _windDirection;
-	unsigned int _numParticles;
 	Texture* _texture;
+	unsigned int _numParticles;
 	float _shape;
 	float _spread;
 	float _particleSize;
@@ -72,6 +72,7 @@ class ParticleSystem
 
 public:
 
+	ParticleSystem();
 	void Create(const Renderer& renderer);
 	void Dispose();
 

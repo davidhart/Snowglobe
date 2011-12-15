@@ -7,8 +7,8 @@
 ParticleEmitter::ParticleEmitter() :
 	_position(0),
 	_windDirection(0),
-	_numParticles(0),
 	_texture(NULL),
+	_numParticles(0),
 	_shape(1),
 	_spread(1),
 	_particleSize(1),
@@ -35,6 +35,10 @@ void ParticleEmitter::EndEmit()
 void ParticleEmitter::Update(float delta)
 {
 	_elapsed += delta;
+}
+
+ParticleSystem::ParticleSystem()
+{
 }
 
 void ParticleSystem::Create(const Renderer& renderer)

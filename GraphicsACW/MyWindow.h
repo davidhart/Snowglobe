@@ -72,10 +72,10 @@ private:
 	float _elapsed;
 	float _animationSpeed;
 
-	const float _lengthSpring;
-	const float _lengthSummer;
-	const float _lengthAutumn;
-	const float _lengthWinter;
+	float _lengthSpring;
+	float _lengthSummer;
+	float _lengthAutumn;
+	float _lengthWinter;
 
 	static const float ANIMATION_SPEED_INCREMENT;
 	static const float ANIMATION_SPEED_MAX;
