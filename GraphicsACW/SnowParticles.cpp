@@ -23,13 +23,6 @@ void SnowParticles::Create(const Renderer& renderer, unsigned int numParticles)
 
 	Util::CreateObjFileWithBuffers("quad.obj", renderer, _instancedQuadModel, _instancedQuadBuffer, _instancedQuadIndices);
 
-	unsigned int stride = _instancedQuadModel.GetVertexStride();
-	ArrayElement vertexLayout[] =
-	{
-		ArrayElement(_instancedQuadBuffer, _shader.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _instancedQuadModel.GetTexCoordOffset()),
-		ArrayElement(_instancedQuadBuffer, _shader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _instancedQuadModel.GetVertexOffset()),
-	};
-
 	renderer.GetStandardUniforms(_shader, _standardUniforms);
 	Uniform diffuseMap = _shader.GetUniform("diffuseMap");
 	Uniform particleSpread = _shader.GetUniform("particleSpread");
@@ -44,7 +37,13 @@ void SnowParticles::Create(const Renderer& renderer, unsigned int numParticles)
 	_shader.SetUniform(particleSize, 0.05f);
 	_shader.SetUniform(particleSpeed, 0.3f);
 
-	_vertBinding.Create(renderer, vertexLayout, 2, _instancedQuadIndices, AE_UINT);
+	unsigned int stride = _instancedQuadModel.GetVertexStride();
+	ArrayElement vertexLayout[] =
+	{
+		ArrayElement(_instancedQuadBuffer, "in_tex", 2, AE_FLOAT, stride, _instancedQuadModel.GetTexCoordOffset()),
+		ArrayElement(_instancedQuadBuffer, "in_vertex", 3, AE_FLOAT, stride, _instancedQuadModel.GetVertexOffset()),
+	};
+	_vertBinding.Create(renderer, _shader, vertexLayout, 2, _instancedQuadIndices, AE_UINT);
 }
 
 void SnowParticles::Dispose()

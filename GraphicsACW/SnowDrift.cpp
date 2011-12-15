@@ -25,9 +25,9 @@ void SnowDrift::Create(const Renderer& renderer)
 	unsigned int stride = _terrainModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
 	{
-		ArrayElement(_vertexBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _terrainModel.GetTexCoordOffset()),
-		ArrayElement(_vertexBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _terrainModel.GetNormalOffset()),
-		ArrayElement(_vertexBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset()),
+		ArrayElement(_vertexBuffer, "in_tex", 2, AE_FLOAT, stride, _terrainModel.GetTexCoordOffset()),
+		ArrayElement(_vertexBuffer, "in_normal", 3, AE_FLOAT, stride, _terrainModel.GetNormalOffset()),
+		ArrayElement(_vertexBuffer, "in_vertex", 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset()),
 	};
 
 	_texture.Create(renderer, "snow.jpg");
@@ -38,7 +38,7 @@ void SnowDrift::Create(const Renderer& renderer)
 	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
 	_shaderProgram.SetUniform(diffuseMap, 0);
 
-	_vertBinding.Create(renderer, vertexLayout, 3, _indexBuffer, AE_UINT);
+	_vertBinding.Create(renderer, _shaderProgram, vertexLayout, 3, _indexBuffer, AE_UINT);
 }
 
 void SnowDrift::Dispose()

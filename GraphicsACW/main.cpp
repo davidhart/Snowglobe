@@ -1,8 +1,7 @@
 #include "GXBase.h"
 #include "MyWindow.h"
-using namespace gxbase;
 
-class MyApp :public App
+class MyApp :public gxbase::App
 {
 	
 public:

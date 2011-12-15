@@ -8,14 +8,14 @@
 #include <vector>
 
 ArrayElement::ArrayElement(const VertexBuffer& buffer, 
-				unsigned int attribLocation, 
+				const char* attribute, 
 				unsigned int numComponents, 
 				ElementType type,
 				unsigned int stride, 
 				unsigned int offset,
 				unsigned int instanceStep) :
 	buffer(buffer),
-	attribLocation(attribLocation),
+	attribute(attribute),
 	numComponents(numComponents),
 	type(type),
 	stride(stride),
@@ -37,24 +37,24 @@ VertexBinding::~VertexBinding()
 	assert(_vaoHandle == 0);
 }
 
-void VertexBinding::Create(const Renderer& renderer, const ArrayElement* elements, unsigned int numelements)
+void VertexBinding::Create(const Renderer& renderer, const ShaderProgram& shaderProgram, const ArrayElement* elements, unsigned int numelements)
 {
 	CreateVAO(renderer);
 
 	Bind();
 
-	SetupAttribPointers(elements, numelements);
+	SetupAttribPointers(shaderProgram, elements, numelements);
 
 	Unbind();
 }
 
-void VertexBinding::Create(const Renderer& renderer, const ArrayElement* elements, unsigned int numelements, const VertexBuffer& indices, ElementType indicesType)
+void VertexBinding::Create(const Renderer& renderer, const ShaderProgram& shaderProgram, const ArrayElement* elements, unsigned int numelements, const VertexBuffer& indices, ElementType indicesType)
 {
 	CreateVAO(renderer);
 
 	Bind();
 
-	SetupAttribPointers(elements, numelements);
+	SetupAttribPointers(shaderProgram, elements, numelements);
 	SetupIndices(indices, indicesType);
 
 	Unbind();
@@ -70,7 +70,7 @@ void VertexBinding::CreateVAO(const Renderer& renderer)
 	_glex->glGenVertexArrays(1, &_vaoHandle);
 }
 
-void VertexBinding::SetupAttribPointers(const ArrayElement* elements, unsigned int numelements)
+void VertexBinding::SetupAttribPointers(const ShaderProgram& shaderProram, const ArrayElement* elements, unsigned int numelements)
 {
 	for (unsigned int i = 0; i < numelements; ++i)
 	{
@@ -78,7 +78,9 @@ void VertexBinding::SetupAttribPointers(const ArrayElement* elements, unsigned i
 
 		// If the attrib location is less than zero GetAttribLocation must have returned -1
 		// indicating the attribute doesn't exist so we ignore it
-		if (element.attribLocation < 0)
+		int attribLocation = shaderProram.GetAttributeIndex(element.attribute);
+
+		if (attribLocation < 0)
 			continue;
 
 		_glex->glBindBuffer(GL_ARRAY_BUFFER, element.buffer._vbHandle);
@@ -90,11 +92,11 @@ void VertexBinding::SetupAttribPointers(const ArrayElement* elements, unsigned i
 		else if (AE_INT == element.type)
 			type = GL_INT;
 
-		_glex->glEnableVertexAttribArray(element.attribLocation);
-		_glex->glVertexAttribPointer(element.attribLocation, element.numComponents, type, GL_FALSE, element.stride,
+		_glex->glEnableVertexAttribArray(attribLocation);
+		_glex->glVertexAttribPointer(attribLocation, element.numComponents, type, GL_FALSE, element.stride,
 				(void*)element.offset);
 
-		_glex->glVertexAttribDivisorARB(element.attribLocation, element.instanceStep);
+		_glex->glVertexAttribDivisorARB(attribLocation, element.instanceStep);
 	}
 }
 

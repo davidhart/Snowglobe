@@ -52,11 +52,11 @@ void ParticleSystem::Create(const Renderer& renderer)
 	unsigned int stride = _quadModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
 	{
-		ArrayElement(_instancedQuadVertices, _shader.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _quadModel.GetTexCoordOffset()),
-		ArrayElement(_instancedQuadVertices, _shader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _quadModel.GetVertexOffset()),
+		ArrayElement(_instancedQuadVertices, "in_tex", 2, AE_FLOAT, stride, _quadModel.GetTexCoordOffset()),
+		ArrayElement(_instancedQuadVertices, "in_vertex", 3, AE_FLOAT, stride, _quadModel.GetVertexOffset()),
 	};
 
-	_vertBinding.Create(renderer, vertexLayout, 2, _instancedQuadIndices, AE_UINT);
+	_vertBinding.Create(renderer, _shader, vertexLayout, 2, _instancedQuadIndices, AE_UINT);
 
 	renderer.GetStandardUniforms(_shader, _standardUniforms);
 

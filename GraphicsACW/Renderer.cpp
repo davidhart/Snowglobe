@@ -21,6 +21,7 @@ void Renderer::Create(glex* glex)
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+	glClearStencil(0);
 }
 
 glex* Renderer::GetEx() const

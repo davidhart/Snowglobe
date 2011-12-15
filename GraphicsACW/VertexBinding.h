@@ -21,7 +21,7 @@ enum ElementType
 struct ArrayElement
 {
 	const VertexBuffer& buffer;
-	int attribLocation;
+	const char* attribute;
 	unsigned int numComponents;
 	ElementType type;
 	unsigned int stride;
@@ -29,7 +29,7 @@ struct ArrayElement
 	unsigned int instanceStep;
 
 	ArrayElement(const VertexBuffer& buffer, 
-				unsigned int attribLocation, 
+				const char* attribute, 
 				unsigned int numComponents, 
 				ElementType type,
 				unsigned int stride, 
@@ -45,8 +45,8 @@ public:
 
 	explicit VertexBinding();
 	~VertexBinding();
-	void Create(const Renderer& renderer, const ArrayElement* elements, unsigned int numelements);
-	void Create(const Renderer& renderer, const ArrayElement* elements, unsigned int numelements, const VertexBuffer& indices, ElementType indicesType);
+	void Create(const Renderer& renderer, const ShaderProgram& program, const ArrayElement* elements, unsigned int numelements);
+	void Create(const Renderer& renderer, const ShaderProgram& program, const ArrayElement* elements, unsigned int numelements, const VertexBuffer& indices, ElementType indicesType);
 	void Dispose();
 
 	void Bind();
@@ -55,7 +55,7 @@ public:
 private:
 
 	void CreateVAO(const Renderer& renderer);
-	void SetupAttribPointers(const ArrayElement* elements, unsigned int numelements);
+	void SetupAttribPointers(const ShaderProgram& shaderProgram, const ArrayElement* elements, unsigned int numelements);
 	void SetupElementPointers(const VertexBuffer& buffer);
 	void SetupIndices(const VertexBuffer& indices, ElementType indicesType);
 

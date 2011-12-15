@@ -22,9 +22,9 @@ void House::Create(const Renderer& renderer)
 	
 	ArrayElement vertexLayout[] =
 	{
-		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _houseModel.GetTexCoordOffset()),
-		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _houseModel.GetNormalOffset()),
-		ArrayElement(_houseBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _houseModel.GetVertexOffset()),
+		ArrayElement(_houseBuffer, "in_tex", 2, AE_FLOAT, stride, _houseModel.GetTexCoordOffset()),
+		ArrayElement(_houseBuffer, "in_normal", 3, AE_FLOAT, stride, _houseModel.GetNormalOffset()),
+		ArrayElement(_houseBuffer, "in_vertex", 3, AE_FLOAT, stride, _houseModel.GetVertexOffset()),
 	};
 
 	_houseTexture.Create(renderer, "house_diffuse.jpg");
@@ -35,7 +35,7 @@ void House::Create(const Renderer& renderer)
 	_shaderProgram.Use();
 	_shaderProgram.SetUniform(diffuseMap, 0);
 
-	_vertBinding.Create(renderer, vertexLayout, 3, _houseIndices, AE_UINT);
+	_vertBinding.Create(renderer, _shaderProgram, vertexLayout, 3, _houseIndices, AE_UINT);
 }
 
 void House::Dispose()

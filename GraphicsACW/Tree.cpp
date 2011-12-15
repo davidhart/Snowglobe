@@ -75,17 +75,17 @@ void Tree::CreateBranches(const Renderer& renderer)
 	unsigned int stride = _branchModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
 	{
-		ArrayElement(_branchBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _branchModel.GetTexCoordOffset(), 0),
-		ArrayElement(_branchBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _branchModel.GetNormalOffset(), 0),
-		ArrayElement(_branchBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _branchModel.GetVertexOffset(), 0),
+		ArrayElement(_branchBuffer, "in_tex", 2, AE_FLOAT, stride, _branchModel.GetTexCoordOffset(), 0),
+		ArrayElement(_branchBuffer, "in_normal", 3, AE_FLOAT, stride, _branchModel.GetNormalOffset(), 0),
+		ArrayElement(_branchBuffer, "in_vertex", 3, AE_FLOAT, stride, _branchModel.GetVertexOffset(), 0),
 	
-		ArrayElement(_branchInstanceBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_modelRow0"), 4, AE_FLOAT, 13 * sizeof(float), 0, 1),
-		ArrayElement(_branchInstanceBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_modelRow1"), 4, AE_FLOAT, 13 * sizeof(float), 4 * sizeof(float), 1),
-		ArrayElement(_branchInstanceBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_modelRow2"), 4, AE_FLOAT, 13 * sizeof(float), 8 * sizeof(float), 1),
-		ArrayElement(_branchInstanceBuffer, _branchTexturedLitProgram.GetAttributeIndex("in_branchDepth"), 1, AE_FLOAT, 13 * sizeof(float), 12 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, "in_modelRow0", 4, AE_FLOAT, 13 * sizeof(float), 0, 1),
+		ArrayElement(_branchInstanceBuffer, "in_modelRow1", 4, AE_FLOAT, 13 * sizeof(float), 4 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, "in_modelRow2", 4, AE_FLOAT, 13 * sizeof(float), 8 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, "in_branchDepth", 1, AE_FLOAT, 13 * sizeof(float), 12 * sizeof(float), 1),
 	};
 
-	_branchBinding.Create(renderer, vertexLayout, 7, _branchIndices, AE_UINT);
+	_branchBinding.Create(renderer, _branchTexturedLitProgram, vertexLayout, 7, _branchIndices, AE_UINT);
 	_barkTexture.Create(renderer, "tree_bark.jpg");
 }
 
@@ -117,16 +117,16 @@ void Tree::CreateLeaves(const Renderer& renderer)
 	unsigned int stride = _branchModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
 	{
-		ArrayElement(_leafBuffer, _leafProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _leafModel.GetTexCoordOffset(), 0),
-		ArrayElement(_leafBuffer, _leafProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _leafModel.GetNormalOffset(), 0),
-		ArrayElement(_leafBuffer, _leafProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _leafModel.GetVertexOffset(), 0),
+		ArrayElement(_leafBuffer, "in_tex", 2, AE_FLOAT, stride, _leafModel.GetTexCoordOffset(), 0),
+		ArrayElement(_leafBuffer, "in_normal", 3, AE_FLOAT, stride, _leafModel.GetNormalOffset(), 0),
+		ArrayElement(_leafBuffer, "in_vertex", 3, AE_FLOAT, stride, _leafModel.GetVertexOffset(), 0),
 	
-		ArrayElement(_leafInstanceBuffer, _leafProgram.GetAttributeIndex("in_modelRow0"), 4, AE_FLOAT, 12 * sizeof(float), 0, 1),
-		ArrayElement(_leafInstanceBuffer, _leafProgram.GetAttributeIndex("in_modelRow1"), 4, AE_FLOAT, 12 * sizeof(float), 4 * sizeof(float), 1),
-		ArrayElement(_leafInstanceBuffer, _leafProgram.GetAttributeIndex("in_modelRow2"), 4, AE_FLOAT, 12 * sizeof(float), 8 * sizeof(float), 1),
+		ArrayElement(_leafInstanceBuffer, "in_modelRow0", 4, AE_FLOAT, 12 * sizeof(float), 0, 1),
+		ArrayElement(_leafInstanceBuffer, "in_modelRow1", 4, AE_FLOAT, 12 * sizeof(float), 4 * sizeof(float), 1),
+		ArrayElement(_leafInstanceBuffer, "in_modelRow2", 4, AE_FLOAT, 12 * sizeof(float), 8 * sizeof(float), 1),
 	};
 
-	_leafBinding.Create(renderer, vertexLayout, 6, _leafIndices, AE_UINT);
+	_leafBinding.Create(renderer, _leafProgram, vertexLayout, 6, _leafIndices, AE_UINT);
 	_leafTexture.Create(renderer, "leaf.tga", T_CLAMP_EDGE);
 	_leafGradient.Create(renderer, "leaf_gradient.tga");
 }

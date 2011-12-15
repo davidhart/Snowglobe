@@ -16,14 +16,6 @@ void Terrain::Create(const Renderer& renderer)
 
 	Util::CreateObjFileWithBuffers("terrain.obj", renderer, _terrainModel, _terrainBuffer, _terrainIndices);
 	
-	unsigned int stride = _terrainModel.GetVertexStride();
-	ArrayElement vertexLayout[] =
-	{
-		ArrayElement(_terrainBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _terrainModel.GetTexCoordOffset()),
-		ArrayElement(_terrainBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _terrainModel.GetNormalOffset()),
-		ArrayElement(_terrainBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset()),
-	};
-
 	_texture.Create(renderer, "grass.jpg", T_REPEAT, T_LINEAR);
 
 	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
@@ -32,7 +24,15 @@ void Terrain::Create(const Renderer& renderer)
 	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
 	_shaderProgram.SetUniform(diffuseMap, 0);
 
-	_vertBinding.Create(renderer, vertexLayout, 3, _terrainIndices, AE_UINT);
+	unsigned int stride = _terrainModel.GetVertexStride();
+	ArrayElement vertexLayout[] =
+	{
+		ArrayElement(_terrainBuffer, "in_tex", 2, AE_FLOAT, stride, _terrainModel.GetTexCoordOffset()),
+		ArrayElement(_terrainBuffer, "in_normal", 3, AE_FLOAT, stride, _terrainModel.GetNormalOffset()),
+		ArrayElement(_terrainBuffer, "in_vertex", 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset()),
+	};
+
+	_vertBinding.Create(renderer, _shaderProgram, vertexLayout, 3, _terrainIndices, AE_UINT);
 }
 
 void Terrain::Dispose()

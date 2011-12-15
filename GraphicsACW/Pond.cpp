@@ -37,19 +37,13 @@ void Pond::Create(const Renderer& renderer)
 	unsigned int stride = _pondModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
 	{
-		ArrayElement(_pondBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _pondModel.GetTexCoordOffset()),
-		ArrayElement(_pondBuffer, _shaderProgram.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _pondModel.GetNormalOffset()),
-		ArrayElement(_pondBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _pondModel.GetVertexOffset()),
+		ArrayElement(_pondBuffer, "in_tex", 2, AE_FLOAT, stride, _pondModel.GetTexCoordOffset()),
+		ArrayElement(_pondBuffer, "in_normal", 3, AE_FLOAT, stride, _pondModel.GetNormalOffset()),
+		ArrayElement(_pondBuffer, "in_vertex", 3, AE_FLOAT, stride, _pondModel.GetVertexOffset()),
 	};
-	_vertBinding.Create(renderer, vertexLayout, 3, _pondIndices, AE_UINT);
 
-	ArrayElement vertexLayoutDepthClear[] =
-	{
-		ArrayElement(_pondBuffer, _shaderDepthClear.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _pondModel.GetTexCoordOffset()),
-		ArrayElement(_pondBuffer, _shaderDepthClear.GetAttributeIndex("in_normal"), 3, AE_FLOAT, stride, _pondModel.GetNormalOffset()),
-		ArrayElement(_pondBuffer, _shaderDepthClear.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _pondModel.GetVertexOffset()),
-	};
-	_vertDepthClearBinding.Create(renderer, vertexLayoutDepthClear, 3, _pondIndices, AE_UINT);
+	_vertBinding.Create(renderer, _shaderProgram, vertexLayout, 3, _pondIndices, AE_UINT);
+	_vertDepthClearBinding.Create(renderer, _shaderDepthClear, vertexLayout, 3, _pondIndices, AE_UINT);
 
 }
 

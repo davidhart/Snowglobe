@@ -30,11 +30,11 @@ void Dome::Create(const Renderer& renderer)
 
 	ArrayElement vertLayout[] = 
 	{
-		ArrayElement(_vertexBuffer, _shader.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset()),
-		ArrayElement(_vertexBuffer, _shader.GetAttributeIndex("in_normal"), 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetNormalOffset()),
+		ArrayElement(_vertexBuffer, "in_vertex", 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetVertexOffset()),
+		ArrayElement(_vertexBuffer, "in_normal", 3, AE_FLOAT, _domeModel.GetVertexStride(), _domeModel.GetNormalOffset()),
 	};
 
-	_vertBinding.Create(renderer, vertLayout, 2, _indexBuffer, AE_UINT);
+	_vertBinding.Create(renderer, _shader, vertLayout, 2, _indexBuffer, AE_UINT);
 }
 
 void Dome::Dispose()

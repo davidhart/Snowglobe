@@ -68,11 +68,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>gxbasem.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="Base.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Dome.cpp" />
     <ClCompile Include="House.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -100,7 +102,9 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="Base.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Dome.h" />
     <ClInclude Include="House.h" />
     <ClInclude Include="Light.h" />

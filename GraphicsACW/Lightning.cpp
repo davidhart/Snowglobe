@@ -27,8 +27,8 @@ void Lightning::Create(const Renderer& renderer)
 	
 	ArrayElement vertexLayout[] =
 	{
-		ArrayElement(_vertexBuffer, _shaderProgram.GetAttributeIndex("in_tex"), 2, AE_FLOAT, stride, _model.GetTexCoordOffset()),
-		ArrayElement(_vertexBuffer, _shaderProgram.GetAttributeIndex("in_vertex"), 3, AE_FLOAT, stride, _model.GetVertexOffset()),
+		ArrayElement(_vertexBuffer, "in_tex", 2, AE_FLOAT, stride, _model.GetTexCoordOffset()),
+		ArrayElement(_vertexBuffer, "in_vertex", 3, AE_FLOAT, stride, _model.GetVertexOffset()),
 	};
 
 	_texture.Create(renderer, "lightning.jpg");
@@ -38,7 +38,7 @@ void Lightning::Create(const Renderer& renderer)
 
 	_shaderProgram.Use();
 	_shaderProgram.SetUniform(diffuseMap, 0);
-	_vertBinding.Create(renderer, vertexLayout, 2, _indexBuffer, AE_UINT);
+	_vertBinding.Create(renderer, _shaderProgram, vertexLayout, 2, _indexBuffer, AE_UINT);
 }
 
 void Lightning::Dispose()
