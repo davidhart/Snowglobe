@@ -43,11 +43,11 @@ ParticleSystem::ParticleSystem()
 
 void ParticleSystem::Create(const Renderer& renderer)
 {
-	_vertShader.CreateFromFile(renderer, "particle_emitter.vsh");
-	_fragShader.CreateFromFile(renderer, "textured_unlit.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/particle_emitter.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/textured_unlit.fsh");
 	_shader.Create(renderer, _vertShader, _fragShader);
 
-	Util::CreateObjFileWithBuffers("quad.obj", renderer, _quadModel, _instancedQuadVertices, _instancedQuadIndices);
+	Util::CreateObjFileWithBuffers("assets/quad.obj", renderer, _quadModel, _instancedQuadVertices, _instancedQuadIndices);
 
 	unsigned int stride = _quadModel.GetVertexStride();
 	ArrayElement vertexLayout[] =

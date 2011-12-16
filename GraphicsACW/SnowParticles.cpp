@@ -15,13 +15,13 @@ void SnowParticles::Create(const Renderer& renderer, unsigned int numParticles)
 	assert(numParticles > 0);
 	_numParticles = numParticles;
 
-	_texture.Create(renderer, "snow_alpha.jpg");
+	_texture.Create(renderer, "assets/snow_alpha.jpg");
 
-	_vertShader.CreateFromFile(renderer, "particle_snow.vsh");
-	_fragShader.CreateFromFile(renderer, "textured_unlit.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/particle_snow.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/textured_unlit.fsh");
 	_shader.Create(renderer, _vertShader, _fragShader);
 
-	Util::CreateObjFileWithBuffers("quad.obj", renderer, _instancedQuadModel, _instancedQuadBuffer, _instancedQuadIndices);
+	Util::CreateObjFileWithBuffers("assets/quad.obj", renderer, _instancedQuadModel, _instancedQuadBuffer, _instancedQuadIndices);
 
 	renderer.GetStandardUniforms(_shader, _standardUniforms);
 	Uniform diffuseMap = _shader.GetUniform("diffuseMap");

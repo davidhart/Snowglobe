@@ -9,13 +9,13 @@ Dome::Dome()
 
 void Dome::Create(const Renderer& renderer)
 {
-	_domeModel.Read("dome.obj");
+	_domeModel.Read("assets/dome.obj");
 
 	_vertexBuffer.Create(renderer, _domeModel.GetVertexData(), _domeModel.GetNumVertices() * _domeModel.GetVertexStride());
 	_indexBuffer.Create(renderer, _domeModel.GetIndexData(), _domeModel.GetNumIndices() * sizeof(unsigned int));
 
-	_vertShader.CreateFromFile(renderer, "untextured_lit.vsh");
-	_fragShader.CreateFromFile(renderer, "dome.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/untextured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/dome.fsh");
 	_shader.Create(renderer, _vertShader, _fragShader);
 
 	Matrix4 identity;

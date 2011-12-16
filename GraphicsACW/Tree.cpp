@@ -35,23 +35,23 @@ void Tree::Create(const Renderer& renderer, const std::string& treestring, unsig
 	if (_leaves.size() != 0)
 		CreateLeaves(renderer);
 
-	_textureOff.Create(renderer, "white.tga");
+	_textureOff.Create(renderer, "assets/white.tga");
 
 	FetchNonStandardUniforms();
 }
 
 void Tree::CreateBranches(const Renderer& renderer)
 {
-	Util::CreateObjFileWithBuffers("cylinder.obj", renderer, _branchModel, _branchBuffer, _branchIndices);
+	Util::CreateObjFileWithBuffers("assets/cylinder.obj", renderer, _branchModel, _branchBuffer, _branchIndices);
 	assert(_branchModel.HasTextureCoordinates());
 	assert(_branchModel.HasVertexNormals());
 
-	_branchVert.CreateFromFile(renderer, "tree.vsh");
-	_branchVertFlat.CreateFromFile(renderer, "tree_flat.vsh");
+	_branchVert.CreateFromFile(renderer, "assets/tree.vsh");
+	_branchVertFlat.CreateFromFile(renderer, "assets/tree_flat.vsh");
 
-	_branchFlatShadedFrag.CreateFromFile(renderer, "lit_flat.fsh");
-	_branchTexturedLitFrag.CreateFromFile(renderer, "textured_lit.fsh");
-	_branchUnlitFrag.CreateFromFile(renderer, "unlit.fsh");
+	_branchFlatShadedFrag.CreateFromFile(renderer, "assets/lit_flat.fsh");
+	_branchTexturedLitFrag.CreateFromFile(renderer, "assets/textured_lit.fsh");
+	_branchUnlitFrag.CreateFromFile(renderer, "assets/unlit.fsh");
 
 	_branchTexturedLitProgram.Create(renderer, _branchVert, _branchTexturedLitFrag);
 	_branchFlatProgram.Create(renderer, _branchVertFlat, _branchFlatShadedFrag);
@@ -86,18 +86,18 @@ void Tree::CreateBranches(const Renderer& renderer)
 	};
 
 	_branchBinding.Create(renderer, _branchTexturedLitProgram, vertexLayout, 7, _branchIndices, AE_UINT);
-	_barkTexture.Create(renderer, "tree_bark.jpg");
+	_barkTexture.Create(renderer, "assets/tree_bark.jpg");
 }
 
 void Tree::CreateLeaves(const Renderer& renderer)
 {
-	Util::CreateObjFileWithBuffers("leaf.obj", renderer, _leafModel, _leafBuffer, _leafIndices);
+	Util::CreateObjFileWithBuffers("assets/leaf.obj", renderer, _leafModel, _leafBuffer, _leafIndices);
 	assert(_leafModel.HasTextureCoordinates());
 	assert(_leafModel.HasVertexNormals());
 
-	_leafVertShader.CreateFromFile(renderer, "leaf.vsh");
-	_leafFragShader.CreateFromFile(renderer, "leaf.fsh");
-	_leafFragUnlit.CreateFromFile(renderer, "unlit.fsh");
+	_leafVertShader.CreateFromFile(renderer, "assets/leaf.vsh");
+	_leafFragShader.CreateFromFile(renderer, "assets/leaf.fsh");
+	_leafFragUnlit.CreateFromFile(renderer, "assets/unlit.fsh");
 
 	_leafProgram.Create(renderer, _leafVertShader, _leafFragShader);
 	_leafProgramUnlit.Create(renderer, _leafVertShader, _leafFragUnlit);
@@ -127,8 +127,8 @@ void Tree::CreateLeaves(const Renderer& renderer)
 	};
 
 	_leafBinding.Create(renderer, _leafProgram, vertexLayout, 6, _leafIndices, AE_UINT);
-	_leafTexture.Create(renderer, "leaf.tga", T_CLAMP_EDGE);
-	_leafGradient.Create(renderer, "leaf_gradient.tga");
+	_leafTexture.Create(renderer, "assets/leaf.tga", T_CLAMP_EDGE);
+	_leafGradient.Create(renderer, "assets/leaf_gradient.tga");
 }
 
 void Tree::FetchNonStandardUniforms()

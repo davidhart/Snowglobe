@@ -9,14 +9,14 @@ Base::Base()
 
 void Base::Create(const Renderer& renderer)
 {
-	_texture.Create(renderer, "base_diffuse.tga");
+	_texture.Create(renderer, "assets/base_diffuse.tga");
 
-	_vertShader.CreateFromFile(renderer, "textured_lit.vsh");
-	_fragShader.CreateFromFile(renderer, "textured_lit.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/textured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/textured_lit.fsh");
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 
-	_baseModel.Read("base.obj");
+	_baseModel.Read("assets/base.obj");
 
 	unsigned int stride = _baseModel.GetVertexStride();
 	_baseBuffer.Create(renderer, _baseModel.GetVertexData(), _baseModel.GetNumVertices() * stride);

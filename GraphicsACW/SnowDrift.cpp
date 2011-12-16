@@ -16,11 +16,11 @@ SnowDrift::SnowDrift() :
 
 void SnowDrift::Create(const Renderer& renderer)
 {
-	_vertShader.CreateFromFile(renderer, "textured_lit.vsh");
-	_fragShader.CreateFromFile(renderer, "textured_lit.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/textured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/textured_lit.fsh");
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 
-	Util::CreateObjFileWithBuffers("snow.obj", renderer, _terrainModel, _vertexBuffer, _indexBuffer);
+	Util::CreateObjFileWithBuffers("assets/snow.obj", renderer, _terrainModel, _vertexBuffer, _indexBuffer);
 	
 	unsigned int stride = _terrainModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
@@ -30,7 +30,7 @@ void SnowDrift::Create(const Renderer& renderer)
 		ArrayElement(_vertexBuffer, "in_vertex", 3, AE_FLOAT, stride, _terrainModel.GetVertexOffset()),
 	};
 
-	_texture.Create(renderer, "snow.jpg");
+	_texture.Create(renderer, "assets/snow.jpg");
 
 	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
 	_shaderProgram.Use();

@@ -14,12 +14,12 @@ House::House() :
 
 void House::Create(const Renderer& renderer)
 {
-	_vertShader.CreateFromFile(renderer, "textured_lit.vsh");
-	_fragShader.CreateFromFile(renderer, "multitextured_lit.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/textured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/multitextured_lit.fsh");
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 
-	_houseModel.Read("house.obj");
+	_houseModel.Read("assets/house.obj");
 
 	unsigned int stride = _houseModel.GetVertexStride();
 	_houseBuffer.Create(renderer, _houseModel.GetVertexData(), _houseModel.GetNumVertices() * stride);
@@ -32,8 +32,8 @@ void House::Create(const Renderer& renderer)
 		ArrayElement(_houseBuffer, "in_vertex", 3, AE_FLOAT, stride, _houseModel.GetVertexOffset()),
 	};
 
-	_houseTexture.Create(renderer, "house_diffuse.jpg");
-	_houseSnowTexture.Create(renderer, "house_diffuse_snow.jpg");
+	_houseTexture.Create(renderer, "assets/house_diffuse.jpg");
+	_houseSnowTexture.Create(renderer, "assets/house_diffuse_snow.jpg");
 
 	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
 	_uniformTextureBlend = _shaderProgram.GetUniform("textureBlend");

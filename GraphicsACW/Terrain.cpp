@@ -10,13 +10,13 @@ Terrain::Terrain()
 
 void Terrain::Create(const Renderer& renderer)
 {
-	_vertShader.CreateFromFile(renderer, "textured_lit.vsh");
-	_fragShader.CreateFromFile(renderer, "textured_lit.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/textured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/textured_lit.fsh");
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 
-	Util::CreateObjFileWithBuffers("terrain.obj", renderer, _terrainModel, _terrainBuffer, _terrainIndices);
+	Util::CreateObjFileWithBuffers("assets/terrain.obj", renderer, _terrainModel, _terrainBuffer, _terrainIndices);
 	
-	_texture.Create(renderer, "grass.jpg", T_REPEAT, T_LINEAR);
+	_texture.Create(renderer, "assets/grass.jpg", T_REPEAT, T_LINEAR);
 
 	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
 	_shaderProgram.Use();

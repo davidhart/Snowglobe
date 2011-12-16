@@ -37,7 +37,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)build\</OutDir>
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)build\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -132,27 +138,27 @@
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="basic.fsh" />
-    <None Include="basic.vsh" />
-    <None Include="christmas.cfg" />
-    <None Include="default.cfg" />
-    <None Include="depth_clear.fsh" />
-    <None Include="dome.fsh" />
-    <None Include="leaf.fsh" />
-    <None Include="leaf.vsh" />
-    <None Include="lit_flat.fsh" />
-    <None Include="multitextured_lit.fsh" />
-    <None Include="particle_emitter.vsh" />
-    <None Include="particle_snow.vsh" />
-    <None Include="singleRule.cfg" />
-    <None Include="textured_lit.fsh" />
-    <None Include="textured_lit.vsh" />
-    <None Include="textured_unlit.fsh" />
-    <None Include="textured_unlit.vsh" />
-    <None Include="tree.vsh" />
-    <None Include="tree_flat.vsh" />
-    <None Include="unlit.fsh" />
-    <None Include="untextured_lit.vsh" />
+    <None Include="..\build\assets\basic.fsh" />
+    <None Include="..\build\assets\basic.vsh" />
+    <None Include="..\build\assets\depth_clear.fsh" />
+    <None Include="..\build\assets\dome.fsh" />
+    <None Include="..\build\assets\leaf.fsh" />
+    <None Include="..\build\assets\leaf.vsh" />
+    <None Include="..\build\assets\lit_flat.fsh" />
+    <None Include="..\build\assets\multitextured_lit.fsh" />
+    <None Include="..\build\assets\particle_emitter.vsh" />
+    <None Include="..\build\assets\particle_snow.vsh" />
+    <None Include="..\build\assets\textured_lit.fsh" />
+    <None Include="..\build\assets\textured_lit.vsh" />
+    <None Include="..\build\assets\textured_unlit.fsh" />
+    <None Include="..\build\assets\textured_unlit.vsh" />
+    <None Include="..\build\assets\tree.vsh" />
+    <None Include="..\build\assets\tree_flat.vsh" />
+    <None Include="..\build\assets\unlit.fsh" />
+    <None Include="..\build\assets\untextured_lit.vsh" />
+    <None Include="..\build\christmas.cfg" />
+    <None Include="..\build\default.cfg" />
+    <None Include="..\build\singleRule.cfg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

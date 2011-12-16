@@ -159,65 +159,72 @@
     <Filter Include="GameObjects">
       <UniqueIdentifier>{139c1954-8fe4-486d-9cf2-0745317b2f3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{2bf7d0ec-790d-4885-bd86-b6e56fe1cd26}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="basic.vsh">
+    <None Include="..\build\christmas.cfg">
+      <Filter>config</Filter>
+    </None>
+    <None Include="..\build\default.cfg">
+      <Filter>config</Filter>
+    </None>
+    <None Include="..\build\singleRule.cfg">
+      <Filter>config</Filter>
+    </None>
+    <None Include="..\build\assets\particle_emitter.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="basic.fsh">
+    <None Include="..\build\assets\leaf.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="tree.vsh">
+    <None Include="..\build\assets\basic.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="textured_unlit.fsh">
+    <None Include="..\build\assets\untextured_lit.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="textured_unlit.vsh">
+    <None Include="..\build\assets\tree_flat.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="textured_lit.fsh">
+    <None Include="..\build\assets\tree.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="textured_lit.vsh">
+    <None Include="..\build\assets\textured_unlit.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="leaf.vsh">
+    <None Include="..\build\assets\textured_lit.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="leaf.fsh">
+    <None Include="..\build\assets\particle_snow.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="tree_flat.vsh">
+    <None Include="..\build\assets\leaf.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="lit_flat.fsh">
+    <None Include="..\build\assets\basic.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="unlit.fsh">
+    <None Include="..\build\assets\dome.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="particle_snow.vsh">
+    <None Include="..\build\assets\depth_clear.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="depth_clear.fsh">
+    <None Include="..\build\assets\unlit.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="particle_emitter.vsh">
+    <None Include="..\build\assets\textured_unlit.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="untextured_lit.vsh">
+    <None Include="..\build\assets\textured_lit.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="dome.fsh">
+    <None Include="..\build\assets\multitextured_lit.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="default.cfg" />
-    <None Include="christmas.cfg" />
-    <None Include="singleRule.cfg">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="multitextured_lit.fsh">
+    <None Include="..\build\assets\lit_flat.fsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

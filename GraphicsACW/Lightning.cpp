@@ -14,12 +14,12 @@ Lightning::Lightning() :
 
 void Lightning::Create(const Renderer& renderer)
 {
-	_vertShader.CreateFromFile(renderer, "textured_unlit.vsh");
-	_fragShader.CreateFromFile(renderer, "textured_unlit.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/textured_unlit.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/textured_unlit.fsh");
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 
-	_model.Read("lightning.obj");
+	_model.Read("assets/lightning.obj");
 
 	unsigned int stride = _model.GetVertexStride();
 	_vertexBuffer.Create(renderer, _model.GetVertexData(), _model.GetNumVertices() * stride);
@@ -31,7 +31,7 @@ void Lightning::Create(const Renderer& renderer)
 		ArrayElement(_vertexBuffer, "in_vertex", 3, AE_FLOAT, stride, _model.GetVertexOffset()),
 	};
 
-	_texture.Create(renderer, "lightning.jpg");
+	_texture.Create(renderer, "assets/lightning.jpg");
 
 	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
 	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");

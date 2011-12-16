@@ -45,7 +45,7 @@ void Application::Create(MyWindow& window)
 	_smokeEmitter.SetPosition(Vector3(-2.69f, 2.1f, -4.4f));
 	_smokeEmitter.SetWindDirection(Vector3(2.0f, 0.0f, 5.0f));
 	_smokeEmitter.SetNumParticles(200);
-	_smokeTexture.Create(_renderer, "smoke_alpha.jpg");
+	_smokeTexture.Create(_renderer, "assets/smoke_alpha.jpg");
 	_smokeEmitter.SetTexture(&_smokeTexture);
 	_smokeEmitter.SetShape(1.4f);
 	_smokeEmitter.SetSpread(1.2f);
@@ -57,7 +57,7 @@ void Application::Create(MyWindow& window)
 	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f, 0.0f));
 	_fireEmitter.SetWindDirection(Vector3(0.0f));
 	_fireEmitter.SetNumParticles(320);
-	_fireTexture.Create(_renderer, "fire.jpg");
+	_fireTexture.Create(_renderer, "assets/fire.jpg");
 	_fireEmitter.SetTexture(&_fireTexture);
 	_fireEmitter.SetShape(1.2f);
 	_fireEmitter.SetSpread(2.0f);

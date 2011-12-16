@@ -9,16 +9,16 @@ Pond::Pond()
 
 void Pond::Create(const Renderer& renderer)
 {
-	_texture.Create(renderer, "pond_diffuse.tga");
+	_texture.Create(renderer, "assets/pond_diffuse.tga");
 
-	_vertShader.CreateFromFile(renderer, "textured_lit.vsh");
-	_fragShader.CreateFromFile(renderer, "textured_lit.fsh");
-	_fragDepthClear.CreateFromFile(renderer, "depth_clear.fsh");
+	_vertShader.CreateFromFile(renderer, "assets/textured_lit.vsh");
+	_fragShader.CreateFromFile(renderer, "assets/textured_lit.fsh");
+	_fragDepthClear.CreateFromFile(renderer, "assets/depth_clear.fsh");
 
 	_shaderProgram.Create(renderer, _vertShader, _fragShader);
 	_shaderDepthClear.Create(renderer, _vertShader, _fragDepthClear);
 
-	Util::CreateObjFileWithBuffers("pond.obj", renderer, _pondModel, _pondBuffer, _pondIndices);
+	Util::CreateObjFileWithBuffers("assets/pond.obj", renderer, _pondModel, _pondBuffer, _pondIndices);
 
 	renderer.GetStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.GetStandardUniforms(_shaderDepthClear , _depthClearUniforms);

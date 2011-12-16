@@ -89,4 +89,6 @@ bool Config::ReadTree(std::istream& stream, Application& application)
 
 	application.SetTreePattern(result);
 	application.SetNumTreeLeaves(numLeaves);
+	
+	return true;
 }
