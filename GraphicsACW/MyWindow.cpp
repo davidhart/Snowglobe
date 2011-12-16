@@ -99,6 +99,10 @@ void MyWindow::OnKeyboard(int key, bool down)
 
 		_prevKeyStateMinus = down;
 	}
+	else if ('R' == key)
+	{
+		_application.ResetAnimationSpeed();
+	}
 
 	if (key == VK_RIGHT)
 		_application.CameraKeyEvent(KEY_RIGHT, down);

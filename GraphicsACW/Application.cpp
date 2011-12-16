@@ -66,7 +66,7 @@ void Application::Create(MyWindow& window)
 	_fireEmitter.SetHeight(4.5f);
 	_particleSystem.AddEmitter(&_fireEmitter);
 	
-	_snowParticles.Create(_renderer, 10000);
+	_snowParticles.Create(_renderer, 5000);
 	_snowDrift.Create(_renderer);
 
 	Matrix4 perspective;
@@ -338,6 +338,12 @@ void Application::DecrAnimationSpeed()
 	_animationSpeed -= ANIMATION_SPEED_INCREMENT;
 	_animationSpeed = Util::Max(_animationSpeed, ANIMATION_SPEED_MIN);
 	std::cout << "Speed: " << _animationSpeed << "x" << std::endl;
+}
+
+void Application::ResetAnimationSpeed()
+{
+	_animationSpeed = 1;
+	std::cout << "Speed: " << _animationSpeed << std::endl;
 }
 
 void Application::SetTreePattern(const std::string& pattern)

@@ -40,6 +40,7 @@ public:
 	void NextTreeMode();
 	void IncrAnimationSpeed();
 	void DecrAnimationSpeed();
+	void ResetAnimationSpeed();
 	void SetTreePattern(const std::string& pattern);
 	void SetNumTreeLeaves(unsigned int numLeaves);
 
