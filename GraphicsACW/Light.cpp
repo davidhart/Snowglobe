@@ -60,3 +60,9 @@ void Light::GetShaderUniforms(const ShaderProgram& shaderProgram, unsigned int l
 	uniforms.Specular =		 shaderProgram.GetUniform((prefix.str() + std::string("specular")).c_str());
 	uniforms.Diffuse =		 shaderProgram.GetUniform((prefix.str() + std::string("diffuse")).c_str());
 }
+
+void Light::ReflectInYAxis()
+{
+	_position.y(-_position.y());
+	_spotDirection.y(-_spotDirection.y());
+}

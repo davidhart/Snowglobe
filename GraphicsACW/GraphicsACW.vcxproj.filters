@@ -217,5 +217,8 @@
     <None Include="singleRule.cfg">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="multitextured_lit.fsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

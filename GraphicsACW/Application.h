@@ -46,6 +46,7 @@ public:
 private:
 
 	void UpdateViewMatrix();
+	void FlipLights();
 
 	Renderer _renderer;
 	Dome _dome;

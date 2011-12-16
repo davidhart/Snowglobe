@@ -24,6 +24,8 @@ private:
 	Config _config;
 	gxbase::App* _gxApp;
 	bool _loaded;
+	bool _prevKeyStatePlus;
+	bool _prevKeyStateMinus;
 
 };
 

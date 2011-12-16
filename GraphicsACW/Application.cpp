@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "MyWindow.h"
 
-const float Application::ANIMATION_SPEED_INCREMENT = 0.25f;
+const float Application::ANIMATION_SPEED_INCREMENT = 0.5f;
 const float Application::ANIMATION_SPEED_MIN = 0.0f;
 const float Application::ANIMATION_SPEED_MAX = 15.0f;
 
@@ -127,6 +127,8 @@ void Application::Draw()
 	_renderer.EnableStencilTest(true);
 	_renderer.StencilTest(STENCIL_EQUAL, 1);
 
+	FlipLights();
+
 	_terrain.DrawReflection(_renderer);
 	_snowDrift.DrawReflection(_renderer);
 	_tree.DrawReflection(_renderer);
@@ -134,6 +136,8 @@ void Application::Draw()
 	_particleSystem.DrawReflected(_renderer);
 	_snowParticles.DrawReflected(_renderer);
 	_lightning.DrawReflection(_renderer);
+
+	FlipLights();
 
 	_renderer.CullFace(C_BACK);
 	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
@@ -147,17 +151,26 @@ void Application::Draw()
 	_dome.DrawFront(_renderer);
 }
 
+void Application::FlipLights()
+{
+	Light* lights = _sunMode ? _directionalLights : _spotLights;
+	for (int i = 0; i < 4; ++i)
+	{
+		lights[i].ReflectInYAxis();
+		_renderer.SetLight(i, lights[i]);
+	}
+}
+
 void Application::Update(float delta)
 {
-
 	if (_cameraKeyDown[KEY_LEFT])
 		_cameraYaw -= delta;
 	if (_cameraKeyDown[KEY_RIGHT])
 		_cameraYaw += delta;
 	if (_cameraKeyDown[KEY_UP])
-		_cameraPitch += delta;
-	if (_cameraKeyDown[KEY_DOWN])
 		_cameraPitch -= delta;
+	if (_cameraKeyDown[KEY_DOWN])
+		_cameraPitch += delta;
 
 	UpdateViewMatrix();
 
@@ -169,7 +182,7 @@ void Application::Update(float delta)
 	_snowDrift.Update(dt);
 	_snowParticles.Update(dt);
 	_particleSystem.Update(dt);
-
+	_house.Update(dt);
 	_lightning.Update(dt);
 
 	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f * _tree.GetFireScale(), 0.0f));
@@ -215,6 +228,7 @@ void Application::Update(float delta)
 		_fireEmitter.BeginEmit();
 		_lightning.Flash();
 		_snowParticles.BeginEmit();
+		_house.SnowBegin();
 	}
 
 	// Transition spring
@@ -227,6 +241,7 @@ void Application::Update(float delta)
 		_fireEmitter.EndEmit();
 		_snowParticles.EndEmit();
 		_tree.Grow();
+		_house.SnowEnd();
 	}
 }
 
@@ -251,9 +266,9 @@ void Application::Dispose()
 void Application::UpdateViewMatrix()
 {
 	Matrix4 lookat;
-	Matrix4::LookAt(lookat, Vector3(9, 2, 0), Vector3(0, 0, 0), Vector3(0, 1, 0));
+	Matrix4::LookAt(lookat, Vector3(0, 2, 9), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	Matrix4 pitch;
-	Matrix4::RotationAxis(pitch, Vector3(0, 0, 1), _cameraPitch);
+	Matrix4::RotationAxis(pitch, Vector3(1, 0, 0), _cameraPitch);
 	Matrix4 yaw;
 	Matrix4::RotationAxis(yaw, Vector3(0, 1, 0), _cameraYaw);
 	Matrix4 translation;

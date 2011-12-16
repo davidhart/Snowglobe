@@ -31,6 +31,8 @@ public:
 	void SetConstantAttenuation(float constant);
 	void SetLinearAttenuation(float linear);
 	void SetQuadraticAttenuation(float quadratic);
+
+	void ReflectInYAxis();
 	
 	static void Off(Light& light);
 	static void Directional(Light& light, const Vector3& direction);

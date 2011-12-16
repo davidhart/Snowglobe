@@ -141,6 +141,7 @@
     <None Include="leaf.fsh" />
     <None Include="leaf.vsh" />
     <None Include="lit_flat.fsh" />
+    <None Include="multitextured_lit.fsh" />
     <None Include="particle_emitter.vsh" />
     <None Include="particle_snow.vsh" />
     <None Include="singleRule.cfg" />

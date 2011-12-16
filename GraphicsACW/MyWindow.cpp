@@ -4,7 +4,9 @@ using namespace gxbase;
 
 MyWindow::MyWindow() :
 	_gxApp(NULL),
-	_loaded(false)
+	_loaded(false),
+	_prevKeyStatePlus(false),
+	_prevKeyStateMinus(false)
 {
 	SetSize(1280, 768);
 	SetStencilBits(8);
@@ -84,9 +86,19 @@ void MyWindow::OnKeyboard(int key, bool down)
 		Close();
 
 	if (VK_ADD == key)
-		_application.IncrAnimationSpeed();
+	{
+		if (down && !_prevKeyStatePlus)
+			_application.IncrAnimationSpeed();
+
+		_prevKeyStatePlus = down;
+	}
 	else if (VK_SUBTRACT == key)
-		_application.DecrAnimationSpeed();
+	{
+		if (down && !_prevKeyStateMinus)
+			_application.DecrAnimationSpeed();
+
+		_prevKeyStateMinus = down;
+	}
 
 	if (key == VK_RIGHT)
 		_application.CameraKeyEvent(KEY_RIGHT, down);
