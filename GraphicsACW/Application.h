@@ -99,4 +99,8 @@ private:
 	static const float ANIMATION_SPEED_INCREMENT;
 	static const float ANIMATION_SPEED_MAX;
 	static const float ANIMATION_SPEED_MIN;
+
+	static const Vector3 COLOR_DAYLIGHT;
+	static const Vector3 COLOR_SUNRISE;
+	static const Vector3 COLOR_SUNSET;
 };

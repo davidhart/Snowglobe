@@ -5,6 +5,10 @@ const float Application::ANIMATION_SPEED_INCREMENT = 0.5f;
 const float Application::ANIMATION_SPEED_MIN = 0.0f;
 const float Application::ANIMATION_SPEED_MAX = 15.0f;
 
+const Vector3 Application::COLOR_SUNSET = Vector3(1.0f, 0.9f, 0.6f);
+const Vector3 Application::COLOR_SUNRISE = Vector3(0.75f, 0.9f, 1.0f);
+const Vector3 Application::COLOR_DAYLIGHT = Vector3(1.0f, 1.0f, 1.0f);
+
 Application::Application() : 
 	_numTreeLeaves(0),
 	_sunDirection(0, -1, 0),
@@ -200,6 +204,14 @@ void Application::Update(float delta)
 	if (_sunMode)
 	{
 		Light::Directional(_directionalLights[0], _sunDirection);
+		float daylight = Util::Max(0.0f, _sunDirection.dot(Vector3(0, -1, 0)));
+		float sunrise = Util::Max(0.0f, _sunDirection.dot(Vector3(1, 0, 0)));
+		float sunset = Util::Max(0.0f, _sunDirection.dot(Vector3(-1, 0, 0)));
+
+		Vector3 color = COLOR_SUNRISE * sunrise + COLOR_DAYLIGHT * daylight + sunset * COLOR_SUNSET;
+
+		_directionalLights[0].SetDiffuseColor(color);
+		_directionalLights[0].SetSpecularColor(color);
 		_renderer.SetLight(0, _directionalLights[0]);
 	}
 
