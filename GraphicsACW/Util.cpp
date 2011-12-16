@@ -19,6 +19,13 @@ bool Util::FloatEquality(float a, float b, float precision)
 	return difference < precision && difference > -precision;
 }
 
+bool Util::ReadToken(std::istream& stream, const char* token)
+{
+	std::string temp;
+	stream >> temp;
+	return token == temp;
+}
+
 void Util::CreateObjFileWithBuffers(const char* filename,
 									const Renderer& renderer,
 									ObjFile& objFile,

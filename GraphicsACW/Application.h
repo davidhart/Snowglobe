@@ -40,6 +40,8 @@ public:
 	void NextTreeMode();
 	void IncrAnimationSpeed();
 	void DecrAnimationSpeed();
+	void SetTreePattern(const std::string& pattern);
+	void SetNumTreeLeaves(unsigned int numLeaves);
 
 private:
 
@@ -67,9 +69,12 @@ private:
 
 	Matrix4 _view;
 
+	std::string _treePattern;
+	unsigned int _numTreeLeaves;
+
 	bool _cameraKeyDown[4];
-	bool _sunMode;
 	Vector3 _sunDirection;
+	bool _sunMode;
 
 	float _cameraPitch;
 	float _cameraYaw;

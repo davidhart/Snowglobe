@@ -13,7 +13,11 @@ void MyWindow::OnCreate()
 {
 	GLWindowEx::OnCreate();
 
-	_config.Read("default.config", _application);
+	if (!_config.Read("default.cfg", _application))
+	{
+		MessageBoxA(GetSafeHwnd(), "Invalid config file (default.cfg)", "Error", MB_OK);
+		Close();
+	}
 	_application.Create(*this);
 }
 

@@ -1,14 +1,14 @@
 #include "Application.h"
 #include "MyWindow.h"
-#include "LSystem.h"
 
 const float Application::ANIMATION_SPEED_INCREMENT = 0.25f;
 const float Application::ANIMATION_SPEED_MIN = 0.0f;
 const float Application::ANIMATION_SPEED_MAX = 15.0f;
 
 Application::Application() : 
-	_sunMode(true),
+	_numTreeLeaves(0),
 	_sunDirection(0, -1, 0),
+	_sunMode(true),
 	_cameraPitch(0),
 	_cameraYaw(0),
 	_season(SEASON_SPRING),
@@ -31,13 +31,13 @@ void Application::Create(MyWindow& window)
 
 	_renderer.Create(&window);
 
+	/*
 	LSystem test;
 	// regular tree
-	/*
+	
 	test.AddRule("L", "B[--^L>>>L>>>L>>>L]");
 	std::string result;
 	test.EvaluateRules("L", result, 3);
-	*/
 
 	// tree with mutations
 	
@@ -49,7 +49,6 @@ void Application::Create(MyWindow& window)
 	test.EvaluateRules("L", result, 6);
 
 	// crimbo tree
-	/*
 	test.AddRule("L", "B[--L^^>>>---L>>>>L>>>>L]");
 	test.AddRule("L", "B[--L^^>>>>---L>>>>L>>>>L]");
 	test.AddRule("L", "B[--L^^>>>>---L>>>L>>>>>L]");
@@ -61,7 +60,7 @@ void Application::Create(MyWindow& window)
 	*/
 
 	_dome.Create(_renderer);
-	_tree.Create(_renderer, result, 1500);
+	_tree.Create(_renderer, _treePattern, _numTreeLeaves);
 	_house.Create(_renderer);
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
@@ -341,4 +340,14 @@ void Application::DecrAnimationSpeed()
 	_animationSpeed -= ANIMATION_SPEED_INCREMENT;
 	_animationSpeed = Util::Max(_animationSpeed, ANIMATION_SPEED_MIN);
 	std::cout << "Speed: " << _animationSpeed << "x" << std::endl;
+}
+
+void Application::SetTreePattern(const std::string& pattern)
+{
+	_treePattern = pattern;
+}
+
+void Application::SetNumTreeLeaves(unsigned int numLeaves)
+{
+	_numTreeLeaves = numLeaves;
 }

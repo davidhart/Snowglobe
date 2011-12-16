@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <iosfwd>
 #include "Maths.h"
 
 class ObjFile;
@@ -14,6 +15,8 @@ namespace Util
 	void ReadTextFileToString(const std::string& filename, std::string& text);
 
 	bool FloatEquality(float a, float b, float precision = EPSILON);
+
+	bool ReadToken(std::istream& stream, const char* token);
 
 	void CreateObjFileWithBuffers(const char* filename, 
 								  const Renderer& renderer,
