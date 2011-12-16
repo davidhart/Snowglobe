@@ -27,37 +27,7 @@ Application::Application() :
 
 void Application::Create(MyWindow& window)
 {
-	UpdateViewMatrix();
-
 	_renderer.Create(&window);
-
-	/*
-	LSystem test;
-	// regular tree
-	
-	test.AddRule("L", "B[--^L>>>L>>>L>>>L]");
-	std::string result;
-	test.EvaluateRules("L", result, 3);
-
-	// tree with mutations
-	
-	test.AddRule("L", "B[---^L>>>L>>>vL>>>^L]");
-	test.AddRule("L", "B[---^L>>>>>>>L]");
-	test.AddRule("L", "B[---^L>>>>L>>>>L]");
-
-	std::string result;
-	test.EvaluateRules("L", result, 6);
-
-	// crimbo tree
-	test.AddRule("L", "B[--L^^>>>---L>>>>L>>>>L]");
-	test.AddRule("L", "B[--L^^>>>>---L>>>>L>>>>L]");
-	test.AddRule("L", "B[--L^^>>>>---L>>>L>>>>>L]");
-	test.AddRule("L", "B[--L^^>>>>>---L>>>L>>>L>>>L]");
-	test.AddRule("L", "B[--L^^>>---L>>>L>>>L>>>L]");
-
-	std::string result;
-	test.EvaluateRules("L", result, 5);
-	*/
 
 	_dome.Create(_renderer);
 	_tree.Create(_renderer, _treePattern, _numTreeLeaves);
@@ -101,6 +71,7 @@ void Application::Create(MyWindow& window)
 
 	_renderer.SetAmbient(Vector3(0.2f));
 
+	UpdateViewMatrix();
 	// Sun lights
 	Light::Directional(_directionalLights[0], _sunDirection);
 	_directionalLights[0].SetDiffuseColor(Vector3(1));
