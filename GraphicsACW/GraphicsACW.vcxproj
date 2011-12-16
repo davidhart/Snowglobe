@@ -143,6 +143,7 @@
     <None Include="lit_flat.fsh" />
     <None Include="particle_emitter.vsh" />
     <None Include="particle_snow.vsh" />
+    <None Include="singleRule.cfg" />
     <None Include="textured_lit.fsh" />
     <None Include="textured_lit.vsh" />
     <None Include="textured_unlit.fsh" />

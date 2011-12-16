@@ -214,5 +214,8 @@
     </None>
     <None Include="default.cfg" />
     <None Include="christmas.cfg" />
+    <None Include="singleRule.cfg">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
