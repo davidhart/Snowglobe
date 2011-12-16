@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Base.h"
 #include "Util.h"
 #include "Renderer.h"

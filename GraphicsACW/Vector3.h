@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #pragma once
 
 #include "Util.h"

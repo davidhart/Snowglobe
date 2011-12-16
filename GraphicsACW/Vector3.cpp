@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Vector3.h"
 
 Vector3::Vector3()

@@ -1,3 +1,33 @@
+// David Hart - 2011
+// 
+// class Tree
+//   The responsibility of tree is parsing the tree pattern string,
+//   drawing and managing the state of the tree. Each character in the
+//   tree pattern string represents a command for the tree's interpretter
+//     Available Commands:
+//     'B'  Add a branch
+//     'L'  Add a branch which leaves may be added to
+//     '['  Push and reset the current rotation / scale state on the stack
+//     ']'  Pop the current rotation / scale state on the stack
+//     '>'  Increase the branch pitch
+//     '<'  Decrease the branch pitch
+//     '^'  Increase the branch yaw
+//     'v'  Descrease the branch yaw
+//     '+'  Increase the branch scale
+//     '-'  Descrease the branch scale
+//   
+//   Tree makes use of a number of shaders to implement the draw modes
+//   each shader uses a 3x4 matrix of per instance data to represent the 
+//   rotation and position of ecah branch. Additionally each branch is packed 
+//   with a float representing the depth of the branch node within the tree. 
+//   This float is to be used with the draw depth to scale branches at specific 
+//   depths to implement the tree growth / death animations.
+//
+//   The tree contains a number of leaves specified at creation. The positon and
+//   orientation is selected randomly along a unit branch and then transformed onto
+//   a randomly selected leaf node branch ('L' branch). The leave vertex shader 
+//   handles animation of the leaves in autumn.
+
 #pragma once
 
 #include "ShaderProgram.h"

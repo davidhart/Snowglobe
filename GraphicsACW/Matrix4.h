@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #pragma once
 
 #include "Vector4.h"

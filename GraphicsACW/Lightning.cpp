@@ -1,6 +1,6 @@
+// David Hart - 2011
+
 #include "Lightning.h"
-
-
 #include "Util.h"
 #include "Renderer.h"
 #include <cmath>

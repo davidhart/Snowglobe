@@ -1,3 +1,25 @@
+// David Hart - 2011
+//
+// class ParticleEmitter
+//   ParticleEmitter represents a self contained fountain of particles effect.
+//  
+//   To draw and update a ParticleEmitter it should be added to a ParticleSystem. ParticleSystem 
+//   will not take care of the destruction of the the ParticleEmitter.
+//
+//   For a ParticleEmitter to draw the texture and number of particles must first be set and then
+//   BeginEmit must be called. EndEmit should be called a brief period before calling RemoveParticle
+//   to allow for it to transition out smoothly
+//
+//
+// class ParticleSystem
+//   ParticleSystem provides a mechanism for the efficient batched drawing of
+//   multiple particle fountain effects. Individual particles are stateless so the properties of each
+//   particle are calculated per frame by a specifically designed vertes shader which requires a quad
+//   to be instanced.
+//
+//   Draw() should be called after drawing the scene and also after drawing reflected scene for the
+//   additive blending to give the desired effect
+
 #pragma once
 
 #include "VertexBuffer.h"

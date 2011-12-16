@@ -1,3 +1,10 @@
+// David Hart - 2011
+// 
+// class Lightning
+//   Lightning requires a single additively blended pass without lighting
+//   Flash() is to be called at the start of winter to flicker the lightning mesh
+//   for a short period of time
+
 #pragma once
 
 #include "ShaderProgram.h"

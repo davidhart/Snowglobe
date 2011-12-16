@@ -1,3 +1,22 @@
+// David Hart - 2011
+//
+// class Pond
+//   The pond class has the responsibilities of drawing the pond surface and of
+//   creating the stencil mask for the reflection.
+//   
+//   DrawStencilMask should be called after drawing the scene and before drawing the
+//   reflection. After calling DrawStencilMask the user should set up and enable stencil
+//   testing with an equal to one test. 
+//   
+//   To preserve the correct draw order without, requiring
+//   copies of the depth buffer, DrawStencilMask utilises a shader specicially designed to clear
+//   the depth buffer in the areas that the stencil test passes. This allows for the reflection
+//   to be drawn with the correct depth order, however the caller should implement Plane Clipping
+//   to prevent any oddities where the reflected object may intersect the reflection plane.
+//
+//   After drawing the reflection Draw() should be called to restore the surface depth buffer values
+//   and to draw the alpha blended surface.
+
 #pragma once
 
 #include "ShaderProgram.h"

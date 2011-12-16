@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Config.h"
 #include "LSystem.h"
 #include "Util.h"

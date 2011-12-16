@@ -1,3 +1,16 @@
+// David Hart - 2011
+// 
+// class SnowParticles
+//   The responsibility of SnowParticles is to the drawing and state of the snow particle
+//   effect. The snow particle effect is not implemented in particle system because the 
+//   particle system shader is not currently flexible enough to implement the correct 
+//   initial particle position calculation which gives the effect the snow is falling from the
+//   upper hemisphere of the globe.
+//   
+//   SnowParticles employs the same rendering techniques as ParticleSystem but utilises a
+//   specifically designed vertex shader to calculate the stateless position of the instanced
+//   billboarded quad particles.
+
 #pragma once
 
 #include "VertexBuffer.h"

@@ -1,3 +1,12 @@
+// David Hart - 2011
+// 
+// class SnowDrift
+//   The elevated snow drift is implemented by lowering and raising a separate terrain
+//   mesh above and below the original terrain mesh.
+//
+//   Raise() and Lower() should be called at the start and end of winter to begin the
+//   transition effect
+
 #pragma once
 
 #include "ShaderProgram.h"

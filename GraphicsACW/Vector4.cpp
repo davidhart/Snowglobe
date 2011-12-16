@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Vector4.h"
 
 Vector4::Vector4()

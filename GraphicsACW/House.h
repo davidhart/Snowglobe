@@ -1,3 +1,10 @@
+// David Hart - 2011
+// 
+// class House
+//   House requires a two textures and a single pass of the multitextured_lit.fsh shader.
+//   SnowBegin() should be called at the start of winter to allow the snow texture to transition in
+//   SnowEnd() should be called at the end of winter for the snow to transition out
+
 #pragma once
 
 #include "ShaderProgram.h"

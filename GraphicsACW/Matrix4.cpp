@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Matrix4.h"
 
 Matrix4::Matrix4()

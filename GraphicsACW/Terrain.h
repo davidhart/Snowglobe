@@ -1,3 +1,9 @@
+// David Hart - 2011
+// 
+// class Terrain
+//   Terrain is a basic renderable object which utilises the textured_lit
+//   shaders.
+
 #pragma once
 
 #include "ShaderProgram.h"
