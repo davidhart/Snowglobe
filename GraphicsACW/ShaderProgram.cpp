@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "ShaderProgram.h"
 #include "Renderer.h"
 #include <string>

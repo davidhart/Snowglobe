@@ -1,3 +1,12 @@
+// David Hart - 2011
+// 
+// class ShaderProgram
+//   ShaderProgram is a wrapper around the OpenGL ShaderProgram object.
+//   ShaderPrograms are linked on creation and thus do not support specification
+//   of attribute locations. Instead the application should query the shader using
+//   GetAttributeIndex.
+// 
+
 #pragma once
 
 #include "Uncopyable.h"

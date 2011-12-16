@@ -1,3 +1,9 @@
+// David Hart - 2011
+// 
+// class Light
+//   Light is an implementation of the properties of a single light
+//   in a similar fashion to that of the OpenGL fixed function pipeline
+
 #pragma once
 
 #include "Vector3.h"

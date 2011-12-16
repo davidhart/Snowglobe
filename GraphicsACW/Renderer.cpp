@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Renderer.h"
 #include "VertexBinding.h"
 #include "ShaderProgram.h"

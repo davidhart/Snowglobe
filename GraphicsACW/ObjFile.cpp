@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "ObjFile.h"
 #include <string>
 #include <sstream>

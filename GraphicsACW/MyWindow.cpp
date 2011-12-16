@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "MyWindow.h"
 
 using namespace gxbase;

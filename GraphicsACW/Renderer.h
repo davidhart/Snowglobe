@@ -1,3 +1,13 @@
+// David Hart - 2011
+// 
+// class Renderer
+//   Renderer is a thin wrapper on the OpenGL state. Renderer
+//   provides access to an OpenGL 3.0 implementation of the  following
+//   deprecated fixed function pipline features:
+//     -Lighting
+//     -Model, View, Projection matrices
+//     -Clip Plane
+
 #pragma once
 
 #include "GXBase.h"

@@ -1,3 +1,10 @@
+// David Hart - 2011
+//
+// class VertexBinding
+//   VertexBinding represents a wrapper around the OpenGL 3.0 Vertex
+//   Array Object which allows efficient re-binding of Vertex Buffers.
+//
+
 #pragma once
 
 #include "Uncopyable.h"
@@ -15,7 +22,6 @@ enum ElementType
 	AE_UBYTE = GL_UNSIGNED_BYTE,
 	AE_UINT = GL_UNSIGNED_INT,
 	AE_USHORT = GL_UNSIGNED_SHORT,
-
 };
 
 struct ArrayElement

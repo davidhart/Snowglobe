@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "LSystem.h"
 #include <cassert>
 #include <exception>

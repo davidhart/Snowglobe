@@ -1,3 +1,9 @@
+// David Hart - 2011
+// 
+// class MyWindow
+//   MyWindow interfaces between the native system window and the application
+//   config and application instance
+
 #pragma once
 
 #include "GXBase.h"

@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Shader.h"
 #include "Renderer.h"
 #include "Util.h"

@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Light.h"
 #include "Util.h"
 #include "ShaderProgram.h"

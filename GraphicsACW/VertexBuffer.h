@@ -1,3 +1,10 @@
+// David Hart - 2011
+//
+// class VertexBuffer
+//   VertexBuffer represents a wrapper around OpenGL VBOs. VertexBuffers may also
+//   contain index data for use as an index buffer with the VertexBinding class.
+// 
+
 #pragma once
 
 #include "Uncopyable.h"

@@ -1,3 +1,12 @@
+// David Hart - 2011
+//
+// class Shader
+//    Shader is a wrapper around the opengl Shader object, Vertex and 
+//    FragmentShader represent GL_VERTEX_SHADER and GL_FRAGMENT_SHADER
+//    objects respectively.
+//
+
+
 #pragma once
 
 #include "Uncopyable.h"

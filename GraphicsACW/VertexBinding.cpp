@@ -1,11 +1,11 @@
+// David Hart - 2011
+
 #include "VertexBinding.h"
 #include "VertexBuffer.h"
 #include "ShaderProgram.h"
 #include "Renderer.h"
 
-#include <exception>
 #include <cassert>
-#include <vector>
 
 ArrayElement::ArrayElement(const VertexBuffer& buffer, 
 				const char* attribute, 

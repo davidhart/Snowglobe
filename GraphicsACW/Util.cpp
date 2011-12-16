@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Util.h"
 #include "ObjFile.h"
 #include "VertexBuffer.h"

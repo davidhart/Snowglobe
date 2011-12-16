@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "VertexBuffer.h"
 #include "Renderer.h"
 

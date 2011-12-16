@@ -1,3 +1,9 @@
+// David Hart - 2011
+// 
+// class Application
+//   Application's responsibility is rendering and updating the objects
+//   within the scene
+
 #pragma once
 
 #include "Renderer.h"

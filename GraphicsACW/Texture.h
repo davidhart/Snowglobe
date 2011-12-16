@@ -1,3 +1,13 @@
+// David Hart - 2011
+// 
+// class Texture
+//   Texture is a wrapper around the OpenGL Texture object, with the added functionality of
+//   loading .tga, .bmp and .jpg files File loading is handled by gxbase::Image. 
+//   
+//   The active texture unit may
+//   be specified by providing a texture index as an argument ot the bind method.
+//
+
 #pragma once
 
 #include "Uncopyable.h"

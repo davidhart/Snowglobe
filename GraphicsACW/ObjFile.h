@@ -1,3 +1,11 @@
+// David Hart - 2011
+//
+// class ObjFile
+//    ObjFile is capable of parsing a .obj format mesh. ObjFile supports
+//    parsing vertex normals and texture coordinates. ObjFile supports the
+//    automatic generation of index data and interlaced vertex data ready for
+//    loading into Vertex Buffers
+
 #pragma once
 
 #include <vector>

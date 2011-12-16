@@ -1,3 +1,5 @@
+// David Hart 2011
+
 #include "GXBase.h"
 #include "MyWindow.h"
 

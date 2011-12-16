@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Texture.h"
 #include "Renderer.h"
 #include <cassert>

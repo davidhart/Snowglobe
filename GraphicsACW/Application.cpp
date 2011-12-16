@@ -1,3 +1,5 @@
+// David Hart - 2011
+
 #include "Application.h"
 #include "MyWindow.h"
 
