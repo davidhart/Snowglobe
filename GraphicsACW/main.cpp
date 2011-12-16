@@ -16,6 +16,7 @@ private:
 
 MyApp::MyApp()
 {
+	w.SetGXApp(this);
 }
 
 static MyApp tut1;

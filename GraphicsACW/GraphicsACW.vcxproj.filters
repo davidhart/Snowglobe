@@ -213,5 +213,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="default.cfg" />
+    <None Include="christmas.cfg" />
   </ItemGroup>
 </Project>

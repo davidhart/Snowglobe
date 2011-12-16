@@ -16,11 +16,14 @@ public:
 	void OnDestroy();
 	void OnResize(int w, int h);
 	void OnKeyboard(int key, bool down);
+	void SetGXApp(gxbase::App* gxApp);
 
 private:
 
 	Application _application;
 	Config _config;
+	gxbase::App* _gxApp;
+	bool _loaded;
 
 };
 

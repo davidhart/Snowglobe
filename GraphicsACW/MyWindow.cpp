@@ -2,7 +2,9 @@
 
 using namespace gxbase;
 
-MyWindow::MyWindow()
+MyWindow::MyWindow() :
+	_gxApp(NULL),
+	_loaded(false)
 {
 	SetSize(1280, 768);
 	SetStencilBits(8);
@@ -11,14 +13,34 @@ MyWindow::MyWindow()
 
 void MyWindow::OnCreate()
 {
-	GLWindowEx::OnCreate();
+	std::string file;
 
-	if (!_config.Read("default.cfg", _application))
+	if (_gxApp->ArgCount() == 1)
 	{
-		MessageBoxA(GetSafeHwnd(), "Invalid config file (default.cfg)", "Error", MB_OK);
+		file = "default.cfg";
+	}
+	else if (_gxApp->ArgCount() == 2)
+	{
+		file = _gxApp->Arg(1);
+	}
+	else
+	{
+		MessageBoxA(GetSafeHwnd(), "Invalid Command Line Arguments usage:\nGraphicsACW.exe\nGraphicsACW.exe \"file\"", "Error", MB_OK);
 		Close();
 	}
-	_application.Create(*this);
+
+	GLWindowEx::OnCreate();
+
+	if (!_config.Read(file.c_str(), _application))
+	{
+		MessageBoxA(GetSafeHwnd(), (std::string("Invalid config file (") + file + std::string(")")).c_str(), "Error", MB_OK);
+		Close();
+	}
+	else
+	{
+		_application.Create(*this);
+		_loaded = true;
+	}
 }
 
 void MyWindow::OnDisplay()
@@ -44,7 +66,8 @@ void MyWindow::OnIdle()
 
 void MyWindow::OnDestroy()
 {
-	_application.Dispose();
+	if (_loaded)
+		_application.Dispose();
 
 	GLWindowEx::OnDestroy();
 }
@@ -85,4 +108,9 @@ void MyWindow::OnResize(int w, int h)
 {
 	GLWindowEx::OnResize(w, h);
 	_application.Resize(w, h);
+}
+
+void MyWindow::SetGXApp(gxbase::App* gxApp)
+{
+	_gxApp = gxApp;
 }

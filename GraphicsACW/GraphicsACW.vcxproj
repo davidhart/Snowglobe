@@ -134,6 +134,7 @@
   <ItemGroup>
     <None Include="basic.fsh" />
     <None Include="basic.vsh" />
+    <None Include="christmas.cfg" />
     <None Include="default.cfg" />
     <None Include="depth_clear.fsh" />
     <None Include="dome.fsh" />
