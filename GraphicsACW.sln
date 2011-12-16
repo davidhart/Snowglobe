@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "snowglobe", "source\Snowglobe.vcxproj", "{0C34FD1E-53F6-4E31-8D3C-E085271CDB03}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsACW", "GraphicsACW\GraphicsACW.vcxproj", "{0C34FD1E-53F6-4E31-8D3C-E085271CDB03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

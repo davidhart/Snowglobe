@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0C34FD1E-53F6-4E31-8D3C-E085271CDB03}</ProjectGuid>
     <RootNamespace>tutorial1</RootNamespace>
-    <ProjectName>snowglobe</ProjectName>
+    <ProjectName>GraphicsACW</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -37,13 +37,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)build\</OutDir>
-    <TargetName>$(ProjectName)d</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)build\</OutDir>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -138,27 +132,27 @@
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\build\basic.fsh" />
-    <None Include="..\build\basic.vsh" />
-    <None Include="..\build\christmas.cfg" />
-    <None Include="..\build\default.cfg" />
-    <None Include="..\build\depth_clear.fsh" />
-    <None Include="..\build\dome.fsh" />
-    <None Include="..\build\leaf.fsh" />
-    <None Include="..\build\leaf.vsh" />
-    <None Include="..\build\lit_flat.fsh" />
-    <None Include="..\build\multitextured_lit.fsh" />
-    <None Include="..\build\particle_emitter.vsh" />
-    <None Include="..\build\particle_snow.vsh" />
-    <None Include="..\build\simple.cfg" />
-    <None Include="..\build\textured_lit.fsh" />
-    <None Include="..\build\textured_lit.vsh" />
-    <None Include="..\build\textured_unlit.fsh" />
-    <None Include="..\build\textured_unlit.vsh" />
-    <None Include="..\build\tree.vsh" />
-    <None Include="..\build\tree_flat.vsh" />
-    <None Include="..\build\unlit.fsh" />
-    <None Include="..\build\untextured_lit.vsh" />
+    <None Include="basic.fsh" />
+    <None Include="basic.vsh" />
+    <None Include="christmas.cfg" />
+    <None Include="default.cfg" />
+    <None Include="depth_clear.fsh" />
+    <None Include="dome.fsh" />
+    <None Include="leaf.fsh" />
+    <None Include="leaf.vsh" />
+    <None Include="lit_flat.fsh" />
+    <None Include="multitextured_lit.fsh" />
+    <None Include="particle_emitter.vsh" />
+    <None Include="particle_snow.vsh" />
+    <None Include="singleRule.cfg" />
+    <None Include="textured_lit.fsh" />
+    <None Include="textured_lit.vsh" />
+    <None Include="textured_unlit.fsh" />
+    <None Include="textured_unlit.vsh" />
+    <None Include="tree.vsh" />
+    <None Include="tree_flat.vsh" />
+    <None Include="unlit.fsh" />
+    <None Include="untextured_lit.vsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
