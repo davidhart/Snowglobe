@@ -71,6 +71,9 @@
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Threading.cpp" />
+    <ClCompile Include="WorkerThread.cpp" />
+    <ClCompile Include="TreeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Uncopyable.h" />
@@ -145,6 +148,9 @@
     <ClInclude Include="LSystem.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Threading.h" />
+    <ClInclude Include="WorkerThread.h" />
+    <ClInclude Include="TreeBuilder.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

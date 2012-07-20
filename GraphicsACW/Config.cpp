@@ -85,12 +85,8 @@ bool Config::ReadTree(std::istream& stream, Application& application)
 
 	if (!Util::ReadToken(stream, "}"))
 		return false;
-	
-	std::string result;
-	lsystem.EvaluateRules(treeSeed, result, iterations);
 
-	application.SetTreePattern(result);
-	application.SetNumTreeLeaves(numLeaves);
+	application.AddTreePattern(treeSeed, lsystem, numLeaves, iterations);
 	
 	return true;
 }

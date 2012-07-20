@@ -69,7 +69,7 @@ void LSystem::EvaluateRules(const std::string& axiom, std::string& result, unsig
 
 void LSystem::CloneRules(const LSystem& lsystem)
 {
-	for (RuleMap::const_iterator i = lsystem._rules.begin(); i != _rules.end(); ++i)
+	for (RuleMap::const_iterator i = lsystem._rules.begin(); i != lsystem._rules.end(); ++i)
 	{
 		SuccessorList& successors = _rules[i->first];
 

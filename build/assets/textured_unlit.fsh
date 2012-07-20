@@ -25,5 +25,5 @@ void main()
 {
 	ClipPlane();
 
-	f_color = texture(diffuseMap, v_tex) * v_alpha;
+	f_color = texture(diffuseMap, v_tex) * vec4(1, 1, 1, v_alpha);
 }

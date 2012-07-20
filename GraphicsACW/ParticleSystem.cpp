@@ -107,7 +107,7 @@ void ParticleSystem::DrawReflected(const Renderer& renderer)
 void ParticleSystem::Draw(const Renderer& renderer, const Matrix4& modelMatrix)
 {
 	renderer.EnableCullFace(false);
-	renderer.BlendMode(BLEND_ADDITIVE);
+	renderer.BlendMode(BLEND_ALPHA);
 	renderer.EnableBlend(true);
 	renderer.EnableDepthWrite(false);
 

@@ -1,6 +1,7 @@
-// David Hart - 2011
+// David Hart - 2012
 
 #include "Tree.h"
+#include "TreeBuilder.h"
 #include "Util.h"
 #include "Renderer.h"
 #include "Maths.h"
@@ -21,28 +22,24 @@ Tree::Tree() :
 	_currentDrawMode(DRAW_TEXTURED_LIT),
 	_currentState(TREE_GROWING_BRANCHES),
 	_time(0),
-	_maxDepth(0)
+	_maxDepth(0),
+	_numBranches(0),
+	_numLeaves(0)
 {
 
 }
 
-void Tree::Create(const Renderer& renderer, const std::string& treestring, unsigned int numLeaves)
+void Tree::CreateAssets(const Renderer& renderer)
 {
-	assert(numLeaves > 0);
-	ParseTree(treestring, numLeaves);
-
-	if (_branches.size() != 0)
-		CreateBranches(renderer);
-
-	if (_leaves.size() != 0)
-		CreateLeaves(renderer);
+	CreateBranchAssets(renderer);
+	CreateLeafAssets(renderer);
 
 	_textureOff.Create(renderer, "assets/white.tga");
 
 	FetchNonStandardUniforms();
 }
 
-void Tree::CreateBranches(const Renderer& renderer)
+void Tree::CreateBranchAssets(const Renderer& renderer)
 {
 	Util::CreateObjFileWithBuffers("assets/cylinder.obj", renderer, _branchModel, _branchBuffer, _branchIndices);
 	assert(_branchModel.HasTextureCoordinates());
@@ -72,26 +69,10 @@ void Tree::CreateBranches(const Renderer& renderer)
 	_branchUnlitProgram.Use();
 	_branchUnlitProgram.SetUniform(diffuseMap, 0);
 
-	CreateBranchInstanceBuffer(renderer);
-
-	unsigned int stride = _branchModel.GetVertexStride();
-	ArrayElement vertexLayout[] =
-	{
-		ArrayElement(_branchBuffer, "in_tex", 2, AE_FLOAT, stride, _branchModel.GetTexCoordOffset(), 0),
-		ArrayElement(_branchBuffer, "in_normal", 3, AE_FLOAT, stride, _branchModel.GetNormalOffset(), 0),
-		ArrayElement(_branchBuffer, "in_vertex", 3, AE_FLOAT, stride, _branchModel.GetVertexOffset(), 0),
-	
-		ArrayElement(_branchInstanceBuffer, "in_modelRow0", 4, AE_FLOAT, 13 * sizeof(float), 0, 1),
-		ArrayElement(_branchInstanceBuffer, "in_modelRow1", 4, AE_FLOAT, 13 * sizeof(float), 4 * sizeof(float), 1),
-		ArrayElement(_branchInstanceBuffer, "in_modelRow2", 4, AE_FLOAT, 13 * sizeof(float), 8 * sizeof(float), 1),
-		ArrayElement(_branchInstanceBuffer, "in_branchDepth", 1, AE_FLOAT, 13 * sizeof(float), 12 * sizeof(float), 1),
-	};
-
-	_branchBinding.Create(renderer, _branchTexturedLitProgram, vertexLayout, 7, _branchIndices, AE_UINT);
 	_barkTexture.Create(renderer, "assets/tree_bark.jpg");
 }
 
-void Tree::CreateLeaves(const Renderer& renderer)
+void Tree::CreateLeafAssets(const Renderer& renderer)
 {
 	Util::CreateObjFileWithBuffers("assets/leaf.obj", renderer, _leafModel, _leafBuffer, _leafIndices);
 	assert(_leafModel.HasTextureCoordinates());
@@ -114,75 +95,49 @@ void Tree::CreateLeaves(const Renderer& renderer)
 	_leafProgram.SetUniform(diffuseMap, 0);
 	_leafProgram.SetUniform(gradientMap, 1);
 
-	CreateLeafInstanceBuffer(renderer);
-
-	unsigned int stride = _branchModel.GetVertexStride();
-	ArrayElement vertexLayout[] =
-	{
-		ArrayElement(_leafBuffer, "in_tex", 2, AE_FLOAT, stride, _leafModel.GetTexCoordOffset(), 0),
-		ArrayElement(_leafBuffer, "in_normal", 3, AE_FLOAT, stride, _leafModel.GetNormalOffset(), 0),
-		ArrayElement(_leafBuffer, "in_vertex", 3, AE_FLOAT, stride, _leafModel.GetVertexOffset(), 0),
-	
-		ArrayElement(_leafInstanceBuffer, "in_modelRow0", 4, AE_FLOAT, 12 * sizeof(float), 0, 1),
-		ArrayElement(_leafInstanceBuffer, "in_modelRow1", 4, AE_FLOAT, 12 * sizeof(float), 4 * sizeof(float), 1),
-		ArrayElement(_leafInstanceBuffer, "in_modelRow2", 4, AE_FLOAT, 12 * sizeof(float), 8 * sizeof(float), 1),
-	};
-
-	_leafBinding.Create(renderer, _leafProgram, vertexLayout, 6, _leafIndices, AE_UINT);
 	_leafTexture.Create(renderer, "assets/leaf.tga", T_CLAMP_EDGE);
 	_leafGradient.Create(renderer, "assets/leaf_gradient.tga");
 }
 
 void Tree::FetchNonStandardUniforms()
 {
-	if (_branches.size() != 0)
-		_uniformDrawDepth = _currentBranchProgram->GetUniform("drawDepth");
+	_uniformDrawDepth = _currentBranchProgram->GetUniform("drawDepth");
 
-	if (_leaves.size() != 0)
-	{
-		_uniformColorLookup = _currentLeafProgram->GetUniform("colorLookup");
-		_uniformLeafScale = _currentLeafProgram->GetUniform("leafScale");
-		_uniformFallTime = _currentLeafProgram->GetUniform("fallTime");
-		_uniformFallSpeed = _currentLeafProgram->GetUniform("fallSpeed");
-	}
+	_uniformColorLookup = _currentLeafProgram->GetUniform("colorLookup");
+	_uniformLeafScale = _currentLeafProgram->GetUniform("leafScale");
+	_uniformFallTime = _currentLeafProgram->GetUniform("fallTime");
+	_uniformFallSpeed = _currentLeafProgram->GetUniform("fallSpeed");
 }
 
 void Tree::Dispose()
 {
 	_textureOff.Dispose();
 
-	if (_branches.size() != 0)
-	{
-		_branchBinding.Dispose();
-		_branchBuffer.Dispose();
-		_branchIndices.Dispose();
-		_branchInstanceBuffer.Dispose();
-		_branchTexturedLitProgram.Dispose();
-		_branchVert.Dispose();
-		_branchTexturedLitFrag.Dispose();
-		_branchFlatProgram.Dispose();
-		_branchFlatShadedFrag.Dispose();
-		_branchVertFlat.Dispose();
-		_branchUnlitProgram.Dispose();
-		_branchUnlitFrag.Dispose();
-	
-		_barkTexture.Dispose();
-	}
+	_branchBinding.Dispose();
+	_branchBuffer.Dispose();
+	_branchIndices.Dispose();
+	_branchInstanceBuffer.Dispose();
+	_branchTexturedLitProgram.Dispose();
+	_branchVert.Dispose();
+	_branchTexturedLitFrag.Dispose();
+	_branchFlatProgram.Dispose();
+	_branchFlatShadedFrag.Dispose();
+	_branchVertFlat.Dispose();
+	_branchUnlitProgram.Dispose();
+	_branchUnlitFrag.Dispose();
+	_barkTexture.Dispose();
 
-	if (_leaves.size() != 0)
-	{
-		_leafBinding.Dispose();
-		_leafBuffer.Dispose();
-		_leafIndices.Dispose();
-		_leafInstanceBuffer.Dispose();
-		_leafProgram.Dispose();
-		_leafProgramUnlit.Dispose();
-		_leafFragShader.Dispose();
-		_leafFragUnlit.Dispose();
-		_leafVertShader.Dispose();
-		_leafTexture.Dispose();
-		_leafGradient.Dispose();
-	}
+	_leafBinding.Dispose();
+	_leafBuffer.Dispose();
+	_leafIndices.Dispose();
+	_leafInstanceBuffer.Dispose();
+	_leafProgram.Dispose();
+	_leafProgramUnlit.Dispose();
+	_leafFragShader.Dispose();
+	_leafFragUnlit.Dispose();
+	_leafVertShader.Dispose();
+	_leafTexture.Dispose();
+	_leafGradient.Dispose();
 }
 
 void Tree::Grow()
@@ -295,9 +250,6 @@ void Tree::DrawReflection(const Renderer& renderer)
 
 void Tree::DrawBranches(const Renderer& renderer, const Matrix4& model)
 {
-	if (_branches.size() == 0)
-		return;
-
 	if (_currentDrawMode == DRAW_LIT_SMOOTH || _currentDrawMode == DRAW_WIREFRAME)
 	{
 		_textureOff.Bind();
@@ -316,14 +268,11 @@ void Tree::DrawBranches(const Renderer& renderer, const Matrix4& model)
 
 	_currentBranchProgram->SetUniform(_uniformDrawDepth, drawDepth);
 
-	renderer.DrawInstances(_branchBinding, PT_TRIANGLES, 0, _branchModel.GetNumIndices(), _branches.size());
+	renderer.DrawInstances(_branchBinding, PT_TRIANGLES, 0, _branchModel.GetNumIndices(), _numBranches);
 }
 
 void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 {
-	if (_leaves.size() == 0)
-		return;
-
 	if (_currentState != TREE_GROWING_BRANCHES && _currentState != TREE_LOSING_BRANCHES)
 	{
 		_currentLeafProgram->Use();
@@ -350,7 +299,7 @@ void Tree::DrawLeaves(const Renderer& renderer, const Matrix4& model)
 		_currentLeafProgram->SetUniform(_uniformFallTime, GetLeafFallTime());
 
 		renderer.EnableCullFace(false);
-		renderer.DrawInstances(_leafBinding, PT_TRIANGLES, 0, _leafModel.GetNumIndices(), _leaves.size());
+		renderer.DrawInstances(_leafBinding, PT_TRIANGLES, 0, _leafModel.GetNumIndices(), _numLeaves);
 		renderer.EnableCullFace(true);
 	}
 }
@@ -459,264 +408,57 @@ float Tree::GetLeafFallTime() const
 		return 0;
 }
 
-void Tree::ParseTree(const std::string& treestring, unsigned int numLeaves)
+void Tree::CopyTreeBuffers(const Renderer& renderer, const TreeBuilder& treebuilder)
 {
-	_maxDepth = 1;
+	_maxDepth = treebuilder._maxDepth;
 
-	unsigned int branchCount = 0;
-	unsigned int leafyBranchCount = 0;
-	for (unsigned int i = 0; i < treestring.size(); ++i)
+	CreateBranchInstanceBuffer(renderer, treebuilder);
+	CreateLeafInstanceBuffer(renderer, treebuilder);
+}
+
+void Tree::CreateBranchInstanceBuffer(const Renderer& renderer, const TreeBuilder& treebuilder)
+{
+	_numBranches = treebuilder._branches.size();
+
+	_branchInstanceBuffer.Create(renderer, 
+								 &treebuilder._packedBranchInstances[0], 
+								 sizeof(float) * treebuilder._packedBranchInstances.size());
+
+	unsigned int stride = _branchModel.GetVertexStride();
+	ArrayElement vertexLayout[] =
 	{
-		if (treestring[i] == 'B')
-		{
-			++branchCount;
-		}
-		else if (treestring[i] == 'L')
-		{
-			++branchCount;
-			++leafyBranchCount;
-		}
-	}
-
-	_branches.resize(branchCount);
-	_leafyBranchesIndices.reserve(leafyBranchCount);
-
-	Matrix4 base;
-	//Matrix4::Identity(identity);
-	Matrix4::Scale(base, Vector3(1.3f, 1, 1.3f));
-
-	int parentBranch = 0;
-	int currentBranch = 0;
-
-	std::stack<float> yawstack;
-	std::stack<float> pitchstack;
-	std::stack<float> scalestack;
-
-	float yawAngle = 0;
-	float pitchAngle = 0;
-	float uniformScale = 1.0f;
-
-	const float rotationIncrement = PI / 6;
-
-	for (unsigned int i = 0; i < treestring.size(); ++i)
-	{
-		if (treestring[i] == 'B' || treestring[i] == 'L')
-		{
-			Matrix4 translation;
-			Matrix4::Translation(translation, Vector3(0, 1, 0));
-
-			Matrix4 scale;
-			Matrix4::Scale(scale, uniformScale);
-
-			Matrix4 pitch;
-			Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), pitchAngle);
-
-			Matrix4 yaw;
-			Matrix4::RotationAxis(yaw, Vector3(1, 0, 0), yawAngle);
-
-			if (currentBranch == 0)
-			{
-				_branches[currentBranch] = Branch(base * pitch * yaw * scale);
-			}
-			else
-			{
-				_branches[currentBranch]
-					= Branch(parentBranch, _branches[parentBranch], translation * pitch * yaw * scale);
-			}
-
-			unsigned int depth = _branches[currentBranch].Depth();
-			if (depth + 1 > _maxDepth)
-				_maxDepth = depth + 1;
-
-			if (treestring[i] == 'L')
-			{
-				_leafyBranchesIndices.push_back(currentBranch);
-			}
-			
-			++currentBranch;
-		}
-		else if (treestring[i] == '[')
-		{
-			pitchstack.push(pitchAngle);
-			yawstack.push(yawAngle);
-			scalestack.push(uniformScale);
-
-			yawAngle = 0;
-			pitchAngle = 0;
-			uniformScale = 1.0f;
-
-			parentBranch = currentBranch - 1;
-		}
-		else if (treestring[i] == ']')
-		{
-			parentBranch = _branches[parentBranch].Parent();
-			
-			pitchAngle = pitchstack.top();
-			pitchstack.pop();
-
-			yawAngle = yawstack.top();
-			yawstack.pop();
-
-			uniformScale = scalestack.top();
-			scalestack.pop();
-		}
-		else if (treestring[i] == '>')
-		{
-			pitchAngle += rotationIncrement;
-		}
-		else if (treestring[i] == '<')
-		{
-			pitchAngle -= rotationIncrement;
-		}
-		else if (treestring[i] == '^')
-		{
-			yawAngle += rotationIncrement;
-		}
-		else if (treestring[i] == 'v')
-		{
-			yawAngle -= rotationIncrement;
-		}
-		else if (treestring[i] == '+')
-		{
-			uniformScale += 0.1f;
-		}
-		else if (treestring[i] == '-')
-		{
-			uniformScale -= 0.1f;
-		}
-	}
+		ArrayElement(_branchBuffer, "in_tex", 2, AE_FLOAT, stride, _branchModel.GetTexCoordOffset(), 0),
+		ArrayElement(_branchBuffer, "in_normal", 3, AE_FLOAT, stride, _branchModel.GetNormalOffset(), 0),
+		ArrayElement(_branchBuffer, "in_vertex", 3, AE_FLOAT, stride, _branchModel.GetVertexOffset(), 0),
 	
-	_leaves.reserve(numLeaves);
+		ArrayElement(_branchInstanceBuffer, "in_modelRow0", 4, AE_FLOAT, 13 * sizeof(float), 0, 1),
+		ArrayElement(_branchInstanceBuffer, "in_modelRow1", 4, AE_FLOAT, 13 * sizeof(float), 4 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, "in_modelRow2", 4, AE_FLOAT, 13 * sizeof(float), 8 * sizeof(float), 1),
+		ArrayElement(_branchInstanceBuffer, "in_branchDepth", 1, AE_FLOAT, 13 * sizeof(float), 12 * sizeof(float), 1),
+	};
 
-	if (_leafyBranchesIndices.size() != 0)
+	_branchBinding.Create(renderer, _branchTexturedLitProgram, vertexLayout, 7, _branchIndices, AE_UINT);
+}
+
+void Tree::CreateLeafInstanceBuffer(const Renderer& renderer, const TreeBuilder& treebuilder)
+{
+	_numLeaves = treebuilder._leaves.size();
+
+	_leafInstanceBuffer.Create(renderer, 
+							   &treebuilder._packedLeafInstances[0], 
+							   sizeof(float) * treebuilder._packedLeafInstances.size());
+
+	unsigned int stride = _branchModel.GetVertexStride();
+	ArrayElement vertexLayout[] =
 	{
-		_leaves.clear();
-		_leaves.reserve(numLeaves);
+		ArrayElement(_leafBuffer, "in_tex", 2, AE_FLOAT, stride, _leafModel.GetTexCoordOffset(), 0),
+		ArrayElement(_leafBuffer, "in_normal", 3, AE_FLOAT, stride, _leafModel.GetNormalOffset(), 0),
+		ArrayElement(_leafBuffer, "in_vertex", 3, AE_FLOAT, stride, _leafModel.GetVertexOffset(), 0),
+	
+		ArrayElement(_leafInstanceBuffer, "in_modelRow0", 4, AE_FLOAT, 12 * sizeof(float), 0, 1),
+		ArrayElement(_leafInstanceBuffer, "in_modelRow1", 4, AE_FLOAT, 12 * sizeof(float), 4 * sizeof(float), 1),
+		ArrayElement(_leafInstanceBuffer, "in_modelRow2", 4, AE_FLOAT, 12 * sizeof(float), 8 * sizeof(float), 1),
+	};
 
-		for (unsigned int i = 0; i < numLeaves; ++i)
-		{
-			// pick a random parent branch from the set of branches above the leafy branch depth
-			int parentBranch = rand() % _leafyBranchesIndices.size();
-
-			_leaves.push_back(Leaf(_branches[_leafyBranchesIndices[parentBranch]]));
-		}
-	}
-}
-
-void Tree::CreateBranchInstanceBuffer(const Renderer& renderer)
-{
-	std::vector<float> packedBranchInstances(_branches.size() * 13);
-
-	for (unsigned int i = 0; i < _branches.size(); ++i)
-	{
-		_branches[i].PackBranch(&packedBranchInstances[i*13]);
-	}
-
-	_branchInstanceBuffer.Create(renderer, &packedBranchInstances[0], sizeof(float) * packedBranchInstances.size());
-}
-
-void Tree::CreateLeafInstanceBuffer(const Renderer& renderer)
-{
-	std::vector<float> packedLeafInstances(_leaves.size() * 12);
-
-	for (unsigned int i = 0; i < _leaves.size(); ++i)
-	{
-		_leaves[i].PackLeaf(&packedLeafInstances[i*12]);
-	}
-
-	_leafInstanceBuffer.Create(renderer, &packedLeafInstances[0], sizeof(float) * packedLeafInstances.size());
-}
-
-Tree::Branch::Branch() :
-	_parent(-1),
-	_depth(0)
-{
-}
-
-Tree::Branch::Branch(const Matrix4& trunkMatrix) :
-	_matrix(trunkMatrix),	
-	_parent(-1),
-	_depth(0)
-{
-
-}
-
-Tree::Branch::Branch(int parentID, const Branch& parent, const Matrix4& matrix) :
-	_matrix(parent._matrix * matrix),
-	_parent(parentID),
-	_depth(parent._depth + 1)
-{
-}
-
-void Tree::Branch::PackBranch(float* out) const
-{
-	for (unsigned int row = 0; row < 3; row++)
-	{
-		for (unsigned int col = 0; col < 4; col++)
-		{
-			out[row * 4 + col] = _matrix.cell(col, row);
-		}
-	}
-	out[12] = (float)_depth;
-}
-
-int Tree::Branch::Parent() const
-{
-	return _parent;
-}
-
-unsigned int Tree::Branch::Depth() const
-{
-	return _depth;
-}
-
-void Tree::Branch::MultiplyMatrix(Vector4& inout) const
-{
-	inout = _matrix * inout;
-}
-
-Tree::Leaf::Leaf()
-{
-	Matrix4::Identity(_matrix);
-}
-
-Tree::Leaf::Leaf(const Branch& parent)
-{
-	float yPos = rand() / (float)RAND_MAX;
-	float orientation = rand() / (float)RAND_MAX;
-	float yawNoise = 0.4f * rand() / (float)RAND_MAX;
-
-	Matrix4::Identity(_matrix);
-
-	Matrix4 scale; 
-	Matrix4::Scale(scale, 0.3f);
-
-	Matrix4 pitch;
-	Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), orientation * PI * 2);
-
-	Vector4 pos (0.07f, yPos, 0.0f, 1);
-
-	pitch.Transform(pos);
-
-	parent.MultiplyMatrix(pos);
-
-	Matrix4 yaw;
-	Matrix4::RotationAxis(yaw, Vector3(0, 0, 1), 1.0f + yawNoise);
-
-	Matrix4::Translation(_matrix, Vector3(pos.x(), pos.y(), pos.z()));
-
-	_matrix *= pitch;
-	_matrix *= yaw;
-	_matrix *= scale;
-}
-
-void Tree::Leaf::PackLeaf(float* out) const
-{
-	for (unsigned int row = 0; row < 3; row++)
-	{
-		for (unsigned int col = 0; col < 4; col++)
-		{
-			out[row * 4 + col] = _matrix.cell(col, row);
-		}
-	}
+	_leafBinding.Create(renderer, _leafProgram, vertexLayout, 6, _leafIndices, AE_UINT);
 }

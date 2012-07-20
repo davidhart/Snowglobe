@@ -49,18 +49,21 @@ void MyWindow::OnCreate()
 
 void MyWindow::OnDisplay()
 {
-	static float startTime = (float)App::GetTime();
-	static float prevTime = (float)App::GetTime();
-	float time = (float)App::GetTime();
-	float elapsed = time - startTime;
-	float delta = time - prevTime;
+	if (_loaded)
+	{
+		static float startTime = (float)App::GetTime();
+		static float prevTime = (float)App::GetTime();
+		float time = (float)App::GetTime();
+		float elapsed = time - startTime;
+		float delta = time - prevTime;
 
-	_application.Update(delta);
-	_application.Draw();
-	
-	SwapBuffers();
+		_application.Update(delta);
+		_application.Draw();
 
-	prevTime = time;
+		SwapBuffers();
+
+		prevTime = time;
+	}
 }
 
 void MyWindow::OnIdle()

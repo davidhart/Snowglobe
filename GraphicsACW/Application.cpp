@@ -3,6 +3,8 @@
 #include "Application.h"
 #include "MyWindow.h"
 
+#include <ctime>
+
 const float Application::ANIMATION_SPEED_INCREMENT = 0.5f;
 const float Application::ANIMATION_SPEED_MIN = 0.0f;
 const float Application::ANIMATION_SPEED_MAX = 15.0f;
@@ -10,6 +12,36 @@ const float Application::ANIMATION_SPEED_MAX = 15.0f;
 const Vector3 Application::COLOR_SUNSET = Vector3(1.0f, 0.9f, 0.6f);
 const Vector3 Application::COLOR_SUNRISE = Vector3(0.75f, 0.9f, 1.0f);
 const Vector3 Application::COLOR_DAYLIGHT = Vector3(1.0f, 1.0f, 1.0f);
+
+class TreeTask : public ITask
+{
+public:
+
+	TreeTask(Application& app, TreeBuilder& treebuilder) : 
+		_app(app),
+		_treebuilder(treebuilder)
+	{
+	}
+
+	void DoTask()
+	{
+		std::cout << "Do Tree Task" << std::endl;
+		_treebuilder.CreateTree();
+	}
+
+	void TaskComplete()
+	{
+		std::cout << "Tree Task Complete" << std::endl;
+
+		_app.TreeTaskComplete();
+	}
+
+private:
+
+	Application& _app;
+	TreeBuilder& _treebuilder;
+
+};
 
 Application::Application() : 
 	_numTreeLeaves(0),
@@ -23,7 +55,8 @@ Application::Application() :
 	_lengthSpring(25.0f),
 	_lengthSummer(20.0f),
 	_lengthAutumn(25.0f),
-	_lengthWinter(25.0f)
+	_lengthWinter(25.0f),
+	_treeReady(false)
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -36,7 +69,11 @@ void Application::Create(MyWindow& window)
 	_renderer.Create(&window);
 
 	_dome.Create(_renderer);
-	_tree.Create(_renderer, _treePattern, _numTreeLeaves);
+	_tree.CreateAssets(_renderer);
+
+	_treeBuilder.CreateTree();
+
+	_tree.CopyTreeBuffers(_renderer, _treeBuilder);
 	_house.Create(_renderer);
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
@@ -46,8 +83,8 @@ void Application::Create(MyWindow& window)
 
 	_smokeEmitter.SetPosition(Vector3(-2.69f, 2.1f, -4.4f));
 	_smokeEmitter.SetWindDirection(Vector3(2.0f, 0.0f, 5.0f));
-	_smokeEmitter.SetNumParticles(200);
-	_smokeTexture.Create(_renderer, "assets/smoke_alpha.jpg");
+	_smokeEmitter.SetNumParticles(70);
+	_smokeTexture.Create(_renderer, "assets/smoke_alpha.tga");
 	_smokeEmitter.SetTexture(&_smokeTexture);
 	_smokeEmitter.SetShape(1.4f);
 	_smokeEmitter.SetSpread(1.2f);
@@ -58,8 +95,8 @@ void Application::Create(MyWindow& window)
 
 	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f, 0.0f));
 	_fireEmitter.SetWindDirection(Vector3(0.0f));
-	_fireEmitter.SetNumParticles(320);
-	_fireTexture.Create(_renderer, "assets/fire.jpg");
+	_fireEmitter.SetNumParticles(60);
+	_fireTexture.Create(_renderer, "assets/fire.tga");
 	_fireEmitter.SetTexture(&_fireTexture);
 	_fireEmitter.SetShape(1.2f);
 	_fireEmitter.SetSpread(2.0f);
@@ -75,7 +112,7 @@ void Application::Create(MyWindow& window)
 	Matrix4::PerspectiveFov(perspective, 85, (float)window.Width() / window.Height(), 0.1f, 1000);
 	_renderer.ProjectionMatrix(perspective);
 
-	_renderer.SetAmbient(Vector3(0.2f));
+	_renderer.SetAmbient(Vector3(0.3f));
 
 	UpdateViewMatrix();
 	// Sun lights
@@ -111,6 +148,8 @@ void Application::Create(MyWindow& window)
 
 	for (int i = 0; i < 4; ++i)
 		_renderer.SetLight(i, _directionalLights[i]);
+
+	_workerThread.QueueTask(new TreeTask(*this, _treeBuilder));
 }
 
 void Application::Draw()
@@ -157,6 +196,12 @@ void Application::Draw()
 	_dome.DrawFront(_renderer);
 }
 
+void Application::TreeTaskComplete()
+{
+	_tree.CopyTreeBuffers(_renderer, _treeBuilder);
+	_treeReady = true;
+}
+
 void Application::FlipLights()
 {
 	Light* lights = _sunMode ? _directionalLights : _spotLights;
@@ -169,6 +214,8 @@ void Application::FlipLights()
 
 void Application::Update(float delta)
 {
+	_workerThread.Syncrhonise();
+
 	if (_cameraKeyDown[KEY_LEFT])
 		_cameraYaw -= delta;
 	if (_cameraKeyDown[KEY_RIGHT])
@@ -254,6 +301,14 @@ void Application::Update(float delta)
 		_smokeEmitter.EndEmit();
 		_fireEmitter.EndEmit();
 		_snowParticles.EndEmit();
+
+		if (_treeReady)
+		{
+			_tree.CopyTreeBuffers(_renderer, _treeBuilder);
+			_treeReady = false;
+			_workerThread.QueueTask(new TreeTask(*this, _treeBuilder));
+		}
+
 		_tree.Grow();
 		_house.SnowEnd();
 	}
@@ -261,6 +316,8 @@ void Application::Update(float delta)
 
 void Application::Dispose()
 {
+	_workerThread.Shutdown();
+
 	_base.Dispose();
 	_dome.Dispose();
 	_tree.Dispose();
@@ -348,9 +405,9 @@ void Application::ResetAnimationSpeed()
 	std::cout << "Speed: " << _animationSpeed << std::endl;
 }
 
-void Application::SetTreePattern(const std::string& pattern)
+void Application::AddTreePattern(const std::string& seed, const LSystem& lsystem, unsigned int numLeaves, unsigned int iterations)
 {
-	_treePattern = pattern;
+	_treeBuilder.AddPattern(seed, lsystem, numLeaves, iterations);
 }
 
 void Application::SetNumTreeLeaves(unsigned int numLeaves)

@@ -9,6 +9,7 @@
 #include "Renderer.h"
 #include "Dome.h"
 #include "Tree.h"
+#include "TreeBuilder.h"
 #include "House.h"
 #include "Base.h"
 #include "Terrain.h"
@@ -18,6 +19,8 @@
 #include "SnowDrift.h"
 #include "Texture.h"
 #include "Lightning.h"
+
+#include "WorkerThread.h"
 
 class MyWindow;
 
@@ -47,8 +50,10 @@ public:
 	void IncrAnimationSpeed();
 	void DecrAnimationSpeed();
 	void ResetAnimationSpeed();
-	void SetTreePattern(const std::string& pattern);
+	void AddTreePattern(const std::string& seed, const LSystem& lsystem, unsigned int numLeaves, unsigned int iterations);
 	void SetNumTreeLeaves(unsigned int numLeaves);
+
+	void TreeTaskComplete();
 
 private:
 
@@ -68,6 +73,11 @@ private:
 	ParticleEmitter _smokeEmitter;
 	Texture _smokeTexture;
 	Texture _fireTexture;
+
+	TreeBuilder _treeBuilder;
+	bool _treeReady;
+
+	WorkerThread _workerThread;
 
 	SnowParticles _snowParticles;
 	SnowDrift _snowDrift;

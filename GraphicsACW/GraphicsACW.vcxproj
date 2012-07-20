@@ -99,6 +99,9 @@
     <ClCompile Include="SnowParticles.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Threading.cpp" />
+    <ClCompile Include="TreeBuilder.cpp" />
+    <ClCompile Include="WorkerThread.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Uncopyable.cpp" />
     <ClCompile Include="Util.cpp" />
@@ -129,6 +132,9 @@
     <ClInclude Include="SnowParticles.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Threading.h" />
+    <ClInclude Include="TreeBuilder.h" />
+    <ClInclude Include="WorkerThread.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Uncopyable.h" />
     <ClInclude Include="Util.h" />
