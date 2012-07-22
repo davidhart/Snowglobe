@@ -38,6 +38,8 @@ public:
 	void z(float z);
 	void w(float w);
 
+	Vector3 xyz();
+
 	float element(unsigned int i) const;
 	void element(unsigned int i, float value);
 	float operator[](unsigned int i) const;
@@ -173,6 +175,11 @@ inline void Vector4::z(float z)
 inline void Vector4::w(float w)
 {
 	_v[3] = w;
+}
+
+inline Vector3 Vector4::xyz()
+{
+	return Vector3(_v[0], _v[1], _v[2]);
 }
 
 inline Vector4 operator+(const Vector4& lhs, const Vector4& rhs)

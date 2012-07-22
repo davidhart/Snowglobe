@@ -1,3 +1,5 @@
+// David Hart - 2012
+
 #include "WorkerThread.h"
 
 WorkerThread::WorkerThread() :
@@ -12,7 +14,7 @@ WorkerThread::~WorkerThread()
 
 	while (!_tasksWaiting.empty())
 	{
-		delete _tasksWaiting.front();
+		_tasksWaiting.front()->Release();
 		_tasksWaiting.pop();
 	}
 }

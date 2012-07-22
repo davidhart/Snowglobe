@@ -204,6 +204,11 @@ void Renderer::StencilTest(eStencilFunc func, int ref) const
 	glStencilFunc(func, ref, 0xFFFFFFFF);
 }
 
+void Renderer::SetClearColor(const Vector4& color) const
+{
+	glClearColor(color[0], color[1], color[2], color[3]);
+}
+
 void Renderer::Clear() const
 {
 	// TODO: parameterise

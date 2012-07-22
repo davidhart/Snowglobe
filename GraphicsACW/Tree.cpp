@@ -410,7 +410,7 @@ float Tree::GetLeafFallTime() const
 
 void Tree::CopyTreeBuffers(const Renderer& renderer, const TreeBuilder& treebuilder)
 {
-	_maxDepth = treebuilder._maxDepth;
+	_maxDepth = treebuilder.GetMaxDepth();
 
 	CreateBranchInstanceBuffer(renderer, treebuilder);
 	CreateLeafInstanceBuffer(renderer, treebuilder);
@@ -418,11 +418,11 @@ void Tree::CopyTreeBuffers(const Renderer& renderer, const TreeBuilder& treebuil
 
 void Tree::CreateBranchInstanceBuffer(const Renderer& renderer, const TreeBuilder& treebuilder)
 {
-	_numBranches = treebuilder._branches.size();
+	_numBranches = treebuilder.GetNumBranches();
 
 	_branchInstanceBuffer.Create(renderer, 
-								 &treebuilder._packedBranchInstances[0], 
-								 sizeof(float) * treebuilder._packedBranchInstances.size());
+								 treebuilder.GetPackedBranchBuffer(), 
+								 treebuilder.GetPackedBranchBufferSize());
 
 	unsigned int stride = _branchModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
@@ -442,11 +442,11 @@ void Tree::CreateBranchInstanceBuffer(const Renderer& renderer, const TreeBuilde
 
 void Tree::CreateLeafInstanceBuffer(const Renderer& renderer, const TreeBuilder& treebuilder)
 {
-	_numLeaves = treebuilder._leaves.size();
+	_numLeaves = treebuilder.GetNumLeaves();
 
 	_leafInstanceBuffer.Create(renderer, 
-							   &treebuilder._packedLeafInstances[0], 
-							   sizeof(float) * treebuilder._packedLeafInstances.size());
+							   treebuilder.GetPackedLeafBuffer(), 
+							   treebuilder.GetPackedLeafBufferSize());
 
 	unsigned int stride = _branchModel.GetVertexStride();
 	ArrayElement vertexLayout[] =

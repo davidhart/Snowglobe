@@ -55,6 +55,8 @@ public:
 
 	void TreeTaskComplete();
 
+	void SetView(unsigned int view);
+
 private:
 
 	void UpdateViewMatrix();
@@ -113,11 +115,21 @@ private:
 	float _lengthAutumn;
 	float _lengthWinter;
 
+	Vector3 _viewDirections[4];
+	Vector3 _viewTargets[4];
+	unsigned int _currentView;
+
 	static const float ANIMATION_SPEED_INCREMENT;
 	static const float ANIMATION_SPEED_MAX;
 	static const float ANIMATION_SPEED_MIN;
+	static const float DAYCYCLE_SPEED;
 
-	static const Vector3 COLOR_DAYLIGHT;
-	static const Vector3 COLOR_SUNRISE;
 	static const Vector3 COLOR_SUNSET;
+	static const Vector3 COLOR_SUNRISE;
+	static const Vector3 COLOR_DAYLIGHT;
+
+	static const Vector3 BG_COLOR_SUNSET;
+	static const Vector3 BG_COLOR_SUNRISE;
+	static const Vector3 BG_COLOR_DAYLIGHT;
+	static const Vector3 BG_COLOR_NIGHTLIGHT;
 };

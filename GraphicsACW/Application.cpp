@@ -8,10 +8,16 @@
 const float Application::ANIMATION_SPEED_INCREMENT = 0.5f;
 const float Application::ANIMATION_SPEED_MIN = 0.0f;
 const float Application::ANIMATION_SPEED_MAX = 15.0f;
+const float Application::DAYCYCLE_SPEED = 0.5f;
 
 const Vector3 Application::COLOR_SUNSET = Vector3(1.0f, 0.9f, 0.6f);
 const Vector3 Application::COLOR_SUNRISE = Vector3(0.75f, 0.9f, 1.0f);
 const Vector3 Application::COLOR_DAYLIGHT = Vector3(1.0f, 1.0f, 1.0f);
+
+const Vector3 Application::BG_COLOR_SUNSET = Vector3(0.9f, 0.6f, 0.0f);
+const Vector3 Application::BG_COLOR_SUNRISE = Vector3(0.5f, 0.7f, 0.75f);
+const Vector3 Application::BG_COLOR_DAYLIGHT = Vector3(0.254f, 0.741f, 1.0f);
+const Vector3 Application::BG_COLOR_NIGHTLIGHT = Vector3(0.0f, 0.13f, 0.4f);
 
 class TreeTask : public ITask
 {
@@ -36,6 +42,11 @@ public:
 		_app.TreeTaskComplete();
 	}
 
+	void Release()
+	{
+		delete this;
+	}
+
 private:
 
 	Application& _app;
@@ -56,7 +67,8 @@ Application::Application() :
 	_lengthSummer(20.0f),
 	_lengthAutumn(25.0f),
 	_lengthWinter(25.0f),
-	_treeReady(false)
+	_treeReady(false),
+	_currentView(0)
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -113,6 +125,14 @@ void Application::Create(MyWindow& window)
 	_renderer.ProjectionMatrix(perspective);
 
 	_renderer.SetAmbient(Vector3(0.3f));
+
+	_viewTargets[0] = Vector3(0, 2, 0);
+	_viewTargets[1] = Vector3(2, 2.5f, 0);
+	_viewTargets[2] = Vector3(-1.6f, 0.9f, 0);
+
+	_viewDirections[0] = Vector3(0, 4, 9) - _viewTargets[0];
+	_viewDirections[1] = Vector3(2, 2.5f, 3.5f) - _viewTargets[1];
+	_viewDirections[2] = Vector3(0, 0, 0.02f);
 
 	UpdateViewMatrix();
 	// Sun lights
@@ -244,7 +264,7 @@ void Application::Update(float delta)
 	_fireEmitter.SetSpread(2.0f * _tree.GetFireScale());
 
 	Matrix4 sunRotation;
-	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), dt);
+	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), dt * DAYCYCLE_SPEED);
 
 	Vector4 sunTemp (_sunDirection, 0);
 	sunRotation.Transform(sunTemp);
@@ -256,12 +276,30 @@ void Application::Update(float delta)
 		float daylight = Util::Max(0.0f, _sunDirection.dot(Vector3(0, -1, 0)));
 		float sunrise = Util::Max(0.0f, _sunDirection.dot(Vector3(1, 0, 0)));
 		float sunset = Util::Max(0.0f, _sunDirection.dot(Vector3(-1, 0, 0)));
+		float night = Util::Max(0.0f, _sunDirection.dot(Vector3(0, 1, 0)));
 
+		// Calculate sun directional light color
 		Vector3 color = COLOR_SUNRISE * sunrise + COLOR_DAYLIGHT * daylight + sunset * COLOR_SUNSET;
 
 		_directionalLights[0].SetDiffuseColor(color);
 		_directionalLights[0].SetSpecularColor(color);
 		_renderer.SetLight(0, _directionalLights[0]);
+
+
+		// Make sunrise and sunset transitions narrower
+		sunset = pow(sunset, 6);
+		sunrise = pow(sunrise, 6);
+		
+		// Renormalise blend weights and calcualte final clear color
+		float normFactor = daylight + sunrise + sunset + night;
+
+		color = BG_COLOR_SUNRISE * sunrise / normFactor
+						+ BG_COLOR_DAYLIGHT * daylight / normFactor
+						+ BG_COLOR_SUNSET * sunset / normFactor
+						+ BG_COLOR_NIGHTLIGHT * night / normFactor;
+
+		_renderer.SetClearColor(Vector4(color, 1));
+		_renderer.SetAmbient(color);
 	}
 
 	// Transition summer
@@ -335,17 +373,21 @@ void Application::Dispose()
 }
 
 void Application::UpdateViewMatrix()
-{
-	Matrix4 lookat;
-	Matrix4::LookAt(lookat, Vector3(0, 2, 9), Vector3(0, 0, 0), Vector3(0, 1, 0));
+{	
 	Matrix4 pitch;
 	Matrix4::RotationAxis(pitch, Vector3(1, 0, 0), _cameraPitch);
 	Matrix4 yaw;
 	Matrix4::RotationAxis(yaw, Vector3(0, 1, 0), _cameraYaw);
-	Matrix4 translation;
-	Matrix4::Translation(translation, Vector3(0, -2.0f, 0));
 
-	_view = lookat * pitch * yaw * translation;
+	Matrix4 rot = yaw * pitch;
+
+	Matrix4 lookat;
+	Matrix4::LookAt(lookat, 
+					(rot * Vector4(_viewDirections[_currentView], 0)).xyz() + _viewTargets[_currentView], 
+					_viewTargets[_currentView],
+					(rot * Vector4(0, 1, 0, 0)).xyz());
+		
+	_view = lookat;
 }
 
 void Application::Resize(int width, int height)
@@ -413,4 +455,9 @@ void Application::AddTreePattern(const std::string& seed, const LSystem& lsystem
 void Application::SetNumTreeLeaves(unsigned int numLeaves)
 {
 	_numTreeLeaves = numLeaves;
+}
+
+void Application::SetView(unsigned int view)
+{
+	_currentView = view;
 }

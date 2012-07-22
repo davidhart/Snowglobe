@@ -108,6 +108,22 @@ void MyWindow::OnKeyboard(int key, bool down)
 	{
 		_application.ResetAnimationSpeed();
 	}
+	else if ('1' == key)
+	{
+		_application.SetView(0);
+	}
+	else if ('2' == key)
+	{
+		_application.SetView(1);
+	}
+	else if ('3' == key)
+	{
+		_application.SetView(2);
+	}
+	else if ('4' == key)
+	{
+		_application.SetView(3);
+	}
 
 	if (key == VK_RIGHT)
 		_application.CameraKeyEvent(KEY_RIGHT, down);

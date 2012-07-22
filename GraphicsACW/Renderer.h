@@ -111,6 +111,7 @@ public:
 	void StencilOp(eStencilOp stencilFail, eStencilOp stencilPassDepthFail, eStencilOp stencilDepthPass) const;
 	void StencilTest(eStencilFunc func, int ref = 0) const;
 
+	void SetClearColor(const Vector4& color) const;
 	void Clear() const;
 
 	glex* GetEx() const;

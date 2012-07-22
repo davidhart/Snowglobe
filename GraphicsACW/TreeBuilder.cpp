@@ -1,9 +1,102 @@
 // David Hart - 2012
-
 #include "TreeBuilder.h"
 
 #include <stack>
 #include <cassert>
+
+Branch::Branch() :
+	_parent(-1),
+	_depth(0)
+{
+}
+
+Branch::Branch(const Matrix4& trunkMatrix) :
+	_matrix(trunkMatrix),	
+	_parent(-1),
+	_depth(0)
+{
+
+}
+
+Branch::Branch(int parentID, const Branch& parent, const Matrix4& matrix) :
+	_matrix(parent._matrix * matrix),
+	_parent(parentID),
+	_depth(parent._depth + 1)
+{
+}
+
+void Branch::PackBranch(float* out) const
+{
+	for (unsigned int row = 0; row < 3; row++)
+	{
+		for (unsigned int col = 0; col < 4; col++)
+		{
+			out[row * 4 + col] = _matrix.cell(col, row);
+		}
+	}
+	out[12] = (float)_depth;
+}
+
+int Branch::Parent() const
+{
+	return _parent;
+}
+
+unsigned int Branch::Depth() const
+{
+	return _depth;
+}
+
+void Branch::MultiplyMatrix(Vector4& inout) const
+{
+	inout = _matrix * inout;
+}
+
+Leaf::Leaf()
+{
+	Matrix4::Identity(_matrix);
+}
+
+Leaf::Leaf(const Branch& parent)
+{
+	float yPos = rand() / (float)RAND_MAX;
+	float orientation = rand() / (float)RAND_MAX;
+	float yawNoise = 0.4f * rand() / (float)RAND_MAX;
+
+	Matrix4::Identity(_matrix);
+
+	Matrix4 scale; 
+	Matrix4::Scale(scale, 0.3f);
+
+	Matrix4 pitch;
+	Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), orientation * PI * 2);
+
+	Vector4 pos (0.07f, yPos, 0.0f, 1);
+
+	pitch.Transform(pos);
+
+	parent.MultiplyMatrix(pos);
+
+	Matrix4 yaw;
+	Matrix4::RotationAxis(yaw, Vector3(0, 0, 1), 1.0f + yawNoise);
+
+	Matrix4::Translation(_matrix, Vector3(pos.x(), pos.y(), pos.z()));
+
+	_matrix *= pitch;
+	_matrix *= yaw;
+	_matrix *= scale;
+}
+
+void Leaf::PackLeaf(float* out) const
+{
+	for (unsigned int row = 0; row < 3; row++)
+	{
+		for (unsigned int col = 0; col < 4; col++)
+		{
+			out[row * 4 + col] = _matrix.cell(col, row);
+		}
+	}
+}
 
 TreeBuilder::TreeBuilder() :
 	_maxDepth(0)
@@ -21,13 +114,16 @@ TreeBuilder::~TreeBuilder()
 
 void TreeBuilder::CreateTree()
 {
+	// Select a random tree pattern
 	TreePattern& pattern = *_patterns[rand() % _patterns.size()];
 
+	// Evaluate l-system for pattern
 	std::string treestring;
-
 	pattern._lsystem.EvaluateRules(pattern._seed, treestring, pattern._iterations);
 
+	// Translate tree string into tree structure
 	ParseTree(treestring, pattern._numLeaves);
+
 	PackLeafBuffer();
 	PackBranchBuffer();
 }
@@ -41,6 +137,41 @@ void TreeBuilder::AddPattern(const std::string& seed, const LSystem& lsystem, un
 	pattern->_iterations = iterations;
 
 	_patterns.push_back(pattern);
+}
+
+const float* TreeBuilder::GetPackedLeafBuffer() const
+{
+	return &(_packedLeafInstances[0]);
+}
+
+unsigned int TreeBuilder::GetPackedLeafBufferSize() const
+{
+	return _packedLeafInstances.size() * sizeof(float);
+}
+
+const float* TreeBuilder::GetPackedBranchBuffer() const
+{
+	return &(_packedBranchInstances[0]);
+}
+
+unsigned int TreeBuilder::GetPackedBranchBufferSize() const
+{
+	return _packedBranchInstances.size() * sizeof(float);
+}
+
+unsigned int TreeBuilder::GetNumLeaves() const
+{
+	return _leaves.size();
+}
+
+unsigned int TreeBuilder::GetNumBranches() const
+{
+	return _branches.size();
+}
+
+unsigned int TreeBuilder::GetMaxDepth() const
+{
+	return _maxDepth;
 }
 
 void TreeBuilder::ParseTree(const std::string& treestring, unsigned int numLeaves)
@@ -204,100 +335,5 @@ void TreeBuilder::PackLeafBuffer()
 	for (unsigned int i = 0; i < _leaves.size(); ++i)
 	{
 		_leaves[i].PackLeaf(&_packedLeafInstances[i*12]);
-	}
-}
-
-
-TreeBuilder::Branch::Branch() :
-	_parent(-1),
-	_depth(0)
-{
-}
-
-TreeBuilder::Branch::Branch(const Matrix4& trunkMatrix) :
-	_matrix(trunkMatrix),	
-	_parent(-1),
-	_depth(0)
-{
-
-}
-
-TreeBuilder::Branch::Branch(int parentID, const Branch& parent, const Matrix4& matrix) :
-	_matrix(parent._matrix * matrix),
-	_parent(parentID),
-	_depth(parent._depth + 1)
-{
-}
-
-void TreeBuilder::Branch::PackBranch(float* out) const
-{
-	for (unsigned int row = 0; row < 3; row++)
-	{
-		for (unsigned int col = 0; col < 4; col++)
-		{
-			out[row * 4 + col] = _matrix.cell(col, row);
-		}
-	}
-	out[12] = (float)_depth;
-}
-
-int TreeBuilder::Branch::Parent() const
-{
-	return _parent;
-}
-
-unsigned int TreeBuilder::Branch::Depth() const
-{
-	return _depth;
-}
-
-void TreeBuilder::Branch::MultiplyMatrix(Vector4& inout) const
-{
-	inout = _matrix * inout;
-}
-
-TreeBuilder::Leaf::Leaf()
-{
-	Matrix4::Identity(_matrix);
-}
-
-TreeBuilder::Leaf::Leaf(const Branch& parent)
-{
-	float yPos = rand() / (float)RAND_MAX;
-	float orientation = rand() / (float)RAND_MAX;
-	float yawNoise = 0.4f * rand() / (float)RAND_MAX;
-
-	Matrix4::Identity(_matrix);
-
-	Matrix4 scale; 
-	Matrix4::Scale(scale, 0.3f);
-
-	Matrix4 pitch;
-	Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), orientation * PI * 2);
-
-	Vector4 pos (0.07f, yPos, 0.0f, 1);
-
-	pitch.Transform(pos);
-
-	parent.MultiplyMatrix(pos);
-
-	Matrix4 yaw;
-	Matrix4::RotationAxis(yaw, Vector3(0, 0, 1), 1.0f + yawNoise);
-
-	Matrix4::Translation(_matrix, Vector3(pos.x(), pos.y(), pos.z()));
-
-	_matrix *= pitch;
-	_matrix *= yaw;
-	_matrix *= scale;
-}
-
-void TreeBuilder::Leaf::PackLeaf(float* out) const
-{
-	for (unsigned int row = 0; row < 3; row++)
-	{
-		for (unsigned int col = 0; col < 4; col++)
-		{
-			out[row * 4 + col] = _matrix.cell(col, row);
-		}
 	}
 }

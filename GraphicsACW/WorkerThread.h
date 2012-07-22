@@ -1,3 +1,5 @@
+// David Hart - 2012
+
 #pragma once
 
 #include "Threading.h"
@@ -10,7 +12,7 @@ public:
 
 	virtual void DoTask() = 0;
 	virtual void TaskComplete() { }
-	virtual ~ITask() { } 
+	virtual void Release() { } 
 
 };
 
