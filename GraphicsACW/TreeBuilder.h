@@ -102,6 +102,7 @@ public:
 	//   4x3 floats - tansformation matrix
 	//   1 float    - branch depth in tree structure
 	const float* GetPackedBranchBuffer() const;
+	// Return the size of the packed branch buffer in bytes
 	unsigned int GetPackedBranchBufferSize() const;
 	// Return the number of branch instances packed into the branch buffer
 	unsigned int GetNumBranches() const;
@@ -130,6 +131,8 @@ private:
 
 	std::vector<float> _packedLeafInstances;
 	std::vector<float> _packedBranchInstances;
-
 	std::vector<TreePattern*> _patterns;
+
+
+	unsigned int _treesBuilt;
 };

@@ -46,7 +46,9 @@ void main()
 								in_modelRow0.z, in_modelRow1.z, in_modelRow2.z, 0,
 								in_modelRow0.w, in_modelRow1.w, in_modelRow2.w, 1);
 
+	// Calculate time since the leaf fell from the initial position
 	float t = max(-abs(cos(gl_InstanceID * 3213.354)) * 16 + fallTime, 0);
+
 	vec2 xyRot = vec2(gl_InstanceID + t * 0.1,
 							t * 0.2 + float(gl_InstanceID));
 
@@ -54,12 +56,16 @@ void main()
 	mat3 rotationX = mat3(1, 0, 0, 0, cos(xyRot.x), sin(xyRot.x), 0, -sin(xyRot.x), cos(xyRot.x));
 	
 	vec3 offset = rotationY * vec3(min(0.35*t * cos(gl_InstanceID * 1646.46), 4), 
-								-t * fallSpeed * (abs(cos(gl_InstanceID * 2007.466874)) * 0.5 + 0.5), 0);
+								-t * fallSpeed * (abs(cos(gl_InstanceID * 2007.466874)) * 0.5 + 0.5),
+								0);
 
 	vec4 p = model * modelinstance * vec4(0, 0, 0, 1);
-	float shrink =  pow(clamp(abs(p.y) - 1.0 + offset.y, 0, 1), 4);
+
+	float clamped_time = min(t, 1);
+	float shrink = mix(1, pow(clamp(p.y - 1.0 + offset.y, 0, 1), 4), clamped_time);
 
 	vec3 pos = in_vertex * leafScale * shrink;
+
 	vec4 wsPos = modelinstance * vec4(rotationX * pos,1.0);
 	wsPos.xyz += offset;
 	wsPos = model * wsPos;

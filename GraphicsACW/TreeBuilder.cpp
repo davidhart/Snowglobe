@@ -27,6 +27,7 @@ Branch::Branch(int parentID, const Branch& parent, const Matrix4& matrix) :
 
 void Branch::PackBranch(float* out) const
 {
+	// Pack 3x4 matrix
 	for (unsigned int row = 0; row < 3; row++)
 	{
 		for (unsigned int col = 0; col < 4; col++)
@@ -34,6 +35,7 @@ void Branch::PackBranch(float* out) const
 			out[row * 4 + col] = _matrix.cell(col, row);
 		}
 	}
+	// Pack branch depth
 	out[12] = (float)_depth;
 }
 
@@ -57,38 +59,47 @@ Leaf::Leaf()
 	Matrix4::Identity(_matrix);
 }
 
+// Construct a leaf at a random location with a random orientation along
+// the provided parent branch
 Leaf::Leaf(const Branch& parent)
 {
+	// Calculate a random position along the branch between 0 and 1
 	float yPos = rand() / (float)RAND_MAX;
-	float orientation = rand() / (float)RAND_MAX;
-	float yawNoise = 0.4f * rand() / (float)RAND_MAX;
+
+	// Calculate a random rotation around the branch between 0 and 2Pi
+	float orientation = PI * 2 * rand() / (float)RAND_MAX;
+
+	// Calculate a random amount to tilt the leaf away from the branch between 0 and 1
+	float yawNoise = rand() / (float)RAND_MAX;
 
 	Matrix4::Identity(_matrix);
 
-	Matrix4 scale; 
-	Matrix4::Scale(scale, 0.3f);
-
 	Matrix4 pitch;
-	Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), orientation * PI * 2);
+	Matrix4::RotationAxis(pitch, Vector3(0, 1, 0), orientation);
 
+	// Offset the leaf along the branch
 	Vector4 pos (0.07f, yPos, 0.0f, 1);
-
 	pitch.Transform(pos);
-
 	parent.MultiplyMatrix(pos);
-
-	Matrix4 yaw;
-	Matrix4::RotationAxis(yaw, Vector3(0, 0, 1), 1.0f + yawNoise);
-
 	Matrix4::Translation(_matrix, Vector3(pos.x(), pos.y(), pos.z()));
 
-	_matrix *= pitch;
+	// Rotate leaf around branch
+	_matrix *= pitch; 
+
+	 // Rotate leaf away from branch
+	Matrix4 yaw;
+	Matrix4::RotationAxis(yaw, Vector3(0, 0, 1), 1.0f + 0.4f * yawNoise);
 	_matrix *= yaw;
+
+	 // Scale leaf
+	Matrix4 scale; 
+	Matrix4::Scale(scale, 0.3f);
 	_matrix *= scale;
 }
 
 void Leaf::PackLeaf(float* out) const
 {
+	// Pack 3x4 matrix
 	for (unsigned int row = 0; row < 3; row++)
 	{
 		for (unsigned int col = 0; col < 4; col++)
@@ -99,7 +110,8 @@ void Leaf::PackLeaf(float* out) const
 }
 
 TreeBuilder::TreeBuilder() :
-	_maxDepth(0)
+	_maxDepth(0),
+	_treesBuilt(0)
 {
 }
 
@@ -114,8 +126,13 @@ TreeBuilder::~TreeBuilder()
 
 void TreeBuilder::CreateTree()
 {
-	// Select a random tree pattern
-	TreePattern& pattern = *_patterns[rand() % _patterns.size()];
+	// Cycle through tree patterns
+	TreePattern& pattern = *_patterns[_treesBuilt];
+
+	if (++_treesBuilt >= _patterns.size())
+	{
+		_treesBuilt = 0;
+	}
 
 	// Evaluate l-system for pattern
 	std::string treestring;
@@ -180,6 +197,9 @@ void TreeBuilder::ParseTree(const std::string& treestring, unsigned int numLeave
 
 	unsigned int branchCount = 0;
 	unsigned int leafyBranchCount = 0;
+
+	// Pre process the string, calculate total number of branches/leafy branches to
+	// avoid repeat dynamic memory allocation
 	for (unsigned int i = 0; i < treestring.size(); ++i)
 	{
 		if (treestring[i] == 'B')
@@ -197,9 +217,6 @@ void TreeBuilder::ParseTree(const std::string& treestring, unsigned int numLeave
 	_leafyBranchesIndices.clear();
 	_leafyBranchesIndices.reserve(leafyBranchCount);
 
-	Matrix4 base;
-	Matrix4::Scale(base, Vector3(1.3f, 1, 1.3f));
-
 	int parentBranch = 0;
 	int currentBranch = 0;
 
@@ -210,11 +227,14 @@ void TreeBuilder::ParseTree(const std::string& treestring, unsigned int numLeave
 	float yawAngle = 0;
 	float pitchAngle = 0;
 	float uniformScale = 1.0f;
+	Matrix4 base;
+	Matrix4::Scale(base, Vector3(1.3f, 1, 1.3f));
 
 	const float rotationIncrement = PI / 6;
 
 	for (unsigned int i = 0; i < treestring.size(); ++i)
 	{
+		// Emit a branch at the current location
 		if (treestring[i] == 'B' || treestring[i] == 'L')
 		{
 			Matrix4 translation;
@@ -228,21 +248,25 @@ void TreeBuilder::ParseTree(const std::string& treestring, unsigned int numLeave
 
 			Matrix4 yaw;
 			Matrix4::RotationAxis(yaw, Vector3(1, 0, 0), yawAngle);
-
+			
+			// If this is the first branch emit the default branch
 			if (currentBranch == 0)
 			{
 				_branches[currentBranch] = Branch(base * pitch * yaw * scale);
 			}
+			// Attach branches to their parents
 			else
 			{
 				_branches[currentBranch]
 					= Branch(parentBranch, _branches[parentBranch], translation * pitch * yaw * scale);
 			}
 
+			// Record the maximum branch depth
 			unsigned int depth = _branches[currentBranch].Depth();
 			if (depth + 1 > _maxDepth)
 				_maxDepth = depth + 1;
 
+			// Add the new branch to the list of branches that will receive leaves
 			if (treestring[i] == 'L')
 			{
 				_leafyBranchesIndices.push_back(currentBranch);
@@ -250,6 +274,7 @@ void TreeBuilder::ParseTree(const std::string& treestring, unsigned int numLeave
 			
 			++currentBranch;
 		}
+		// Push current state onto stack
 		else if (treestring[i] == '[')
 		{
 			pitchstack.push(pitchAngle);
@@ -262,6 +287,7 @@ void TreeBuilder::ParseTree(const std::string& treestring, unsigned int numLeave
 
 			parentBranch = currentBranch - 1;
 		}
+		// Pop current state from stack
 		else if (treestring[i] == ']')
 		{
 			parentBranch = _branches[parentBranch].Parent();
@@ -275,34 +301,40 @@ void TreeBuilder::ParseTree(const std::string& treestring, unsigned int numLeave
 			uniformScale = scalestack.top();
 			scalestack.pop();
 		}
+		// Incrememnt pitch
 		else if (treestring[i] == '>')
 		{
 			pitchAngle += rotationIncrement;
 		}
+		// Decrement pitch
 		else if (treestring[i] == '<')
 		{
 			pitchAngle -= rotationIncrement;
 		}
+		// Increment yaw
 		else if (treestring[i] == '^')
 		{
 			yawAngle += rotationIncrement;
 		}
+		// Decrement yaw
 		else if (treestring[i] == 'v')
 		{
 			yawAngle -= rotationIncrement;
 		}
+		// Increment Scale
 		else if (treestring[i] == '+')
 		{
 			uniformScale += 0.1f;
 		}
+		// DecrementScale
 		else if (treestring[i] == '-')
 		{
 			uniformScale -= 0.1f;
 		}
 	}
 	
+	// Generate and attach leaves to branches
 	_leaves.reserve(numLeaves);
-
 	if (_leafyBranchesIndices.size() != 0)
 	{
 		_leaves.clear();

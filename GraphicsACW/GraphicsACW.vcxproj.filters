@@ -73,7 +73,12 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Threading.cpp" />
     <ClCompile Include="WorkerThread.cpp" />
-    <ClCompile Include="TreeBuilder.cpp" />
+    <ClCompile Include="TreeBuilder.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugFont.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Uncopyable.h" />
@@ -150,7 +155,12 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Threading.h" />
     <ClInclude Include="WorkerThread.h" />
-    <ClInclude Include="TreeBuilder.h" />
+    <ClInclude Include="TreeBuilder.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugFont.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "MyWindow.h"
 
-#include <ctime>
+#include <sstream>
 
 const float Application::ANIMATION_SPEED_INCREMENT = 0.5f;
 const float Application::ANIMATION_SPEED_MIN = 0.0f;
@@ -19,6 +19,7 @@ const Vector3 Application::BG_COLOR_SUNRISE = Vector3(0.5f, 0.7f, 0.75f);
 const Vector3 Application::BG_COLOR_DAYLIGHT = Vector3(0.254f, 0.741f, 1.0f);
 const Vector3 Application::BG_COLOR_NIGHTLIGHT = Vector3(0.0f, 0.13f, 0.4f);
 
+// Task to generate new trees on a separate thread
 class TreeTask : public ITask
 {
 public:
@@ -31,14 +32,12 @@ public:
 
 	void DoTask()
 	{
-		std::cout << "Do Tree Task" << std::endl;
 		_treebuilder.CreateTree();
 	}
 
 	void TaskComplete()
 	{
-		std::cout << "Tree Task Complete" << std::endl;
-
+		// Report back to the application when the tree is complete
 		_app.TreeTaskComplete();
 	}
 
@@ -79,13 +78,19 @@ Application::Application() :
 void Application::Create(MyWindow& window)
 {
 	_renderer.Create(&window);
+	_debugFont.Create(_renderer, window);
 
 	_dome.Create(_renderer);
+
 	_tree.CreateAssets(_renderer);
 
+	// Create and copy initial tree design
 	_treeBuilder.CreateTree();
-
 	_tree.CopyTreeBuffers(_renderer, _treeBuilder);
+
+	// Queue a second tree to replace the current one next spring
+	_workerThread.QueueTask(new TreeTask(*this, _treeBuilder));
+
 	_house.Create(_renderer);
 	_base.Create(_renderer);
 	_terrain.Create(_renderer);
@@ -93,6 +98,7 @@ void Application::Create(MyWindow& window)
 	_lightning.Create(_renderer);
 	_particleSystem.Create(_renderer);
 
+	// Configure particle emitter for chimney
 	_smokeEmitter.SetPosition(Vector3(-2.69f, 2.1f, -4.4f));
 	_smokeEmitter.SetWindDirection(Vector3(2.0f, 0.0f, 5.0f));
 	_smokeEmitter.SetNumParticles(70);
@@ -105,6 +111,7 @@ void Application::Create(MyWindow& window)
 	_smokeEmitter.SetHeight(3.5f);
 	_particleSystem.AddEmitter(&_smokeEmitter);
 
+	// Configure particle emitter for burning bush effect
 	_fireEmitter.SetPosition(Vector3(2.0f, 1.0f, 0.0f));
 	_fireEmitter.SetWindDirection(Vector3(0.0f));
 	_fireEmitter.SetNumParticles(60);
@@ -118,34 +125,51 @@ void Application::Create(MyWindow& window)
 	_particleSystem.AddEmitter(&_fireEmitter);
 	
 	_snowParticles.Create(_renderer, 5000);
+	
 	_snowDrift.Create(_renderer);
 
+	// Initialise perspective matrix
 	Matrix4 perspective;
 	Matrix4::PerspectiveFov(perspective, 85, (float)window.Width() / window.Height(), 0.1f, 1000);
 	_renderer.ProjectionMatrix(perspective);
 
-	_renderer.SetAmbient(Vector3(0.3f));
-
+	// Initialise viewpoints
+	// View 0: Default view of entire snowglobe
 	_viewTargets[0] = Vector3(0, 2, 0);
-	_viewTargets[1] = Vector3(2, 2.5f, 0);
-	_viewTargets[2] = Vector3(-1.6f, 0.9f, 0);
-
 	_viewDirections[0] = Vector3(0, 4, 9) - _viewTargets[0];
-	_viewDirections[1] = Vector3(2, 2.5f, 3.5f) - _viewTargets[1];
-	_viewDirections[2] = Vector3(0, 0, 0.02f);
 
+	// View 1: Zoomed in view of tree
+	_viewTargets[1] = Vector3(2, 2.5f, 0);
+	_viewDirections[1] = Vector3(2, 2.5f, 3.5f) - _viewTargets[1];
+
+	// View 2: First person view by the house
+	_viewTargets[2] = Vector3(-1.6f, 0.9f, 0);
+	_viewDirections[2] = Vector3(-0.02f, 0, -0.01f);
+
+	// View 4: Zoomed in view of house
+	_viewTargets[3] = Vector3(-0.6f, 2.5f, -3.5f);
+	_viewDirections[3] = Vector3(-0.6f, 2.5f, 1.5f) - _viewTargets[3];
+
+	// Initialise default view matrix
 	UpdateViewMatrix();
-	// Sun lights
+
+	// Configure lights for sunlight mode
+	// Light 0: directional sunlight
 	Light::Directional(_directionalLights[0], _sunDirection);
 	_directionalLights[0].SetDiffuseColor(Vector3(1));
 	_directionalLights[0].SetSpecularColor(Vector3(1));
 	_directionalLights[0].SetSpecularPower(200);
 	
+	// Light 1-3: disabled
 	Light::Off(_directionalLights[1]);
 	Light::Off(_directionalLights[2]);
 	Light::Off(_directionalLights[3]);
 
-	// Spotlights
+	// By default use the sunlight mode
+	for (int i = 0; i < 4; ++i)
+		_renderer.SetLight(i, _directionalLights[i]);
+
+	// Configure lights for 4 spotlight mode
 	Light::Spot(_spotLights[0], Vector3(-3.8f, 11.5f, 0), Vector3(0.7f, -1, 0), 11, 13.5f, 1);
 	_spotLights[0].SetDiffuseColor(Vector3(1));
 	_spotLights[0].SetSpecularColor(Vector3(1));
@@ -165,11 +189,6 @@ void Application::Create(MyWindow& window)
 	_spotLights[3].SetDiffuseColor(Vector3(0.75f, 0.75f, 1.0f));
 	_spotLights[3].SetSpecularColor(Vector3(0.75f, 0.75f, 1.0f));
 	_spotLights[3].SetSpecularPower(200);
-
-	for (int i = 0; i < 4; ++i)
-		_renderer.SetLight(i, _directionalLights[i]);
-
-	_workerThread.QueueTask(new TreeTask(*this, _treeBuilder));
 }
 
 void Application::Draw()
@@ -178,42 +197,49 @@ void Application::Draw()
 
 	_renderer.ViewMatrix(_view);
 
+	// Draw opaque objects
 	_tree.Draw(_renderer);
 	_house.Draw(_renderer);
 	_terrain.Draw(_renderer);
 	_snowDrift.Draw(_renderer);
 	_base.Draw(_renderer);
-	_dome.DrawBack(_renderer);
 
+	// Draw terrain stencil
 	_pond.DrawStencilMask(_renderer);
 
+	// Invert scene for reflection
 	_renderer.ClipPlane(Vector4(0, -1, 0, 0));
 	_renderer.CullFace(C_FRONT);
 	_renderer.EnableStencilTest(true);
 	_renderer.StencilTest(STENCIL_EQUAL, 1);
-
 	FlipLights();
 
+	// Draw reflected opaque objects
 	_terrain.DrawReflection(_renderer);
 	_snowDrift.DrawReflection(_renderer);
 	_tree.DrawReflection(_renderer);
 	_house.DrawReflection(_renderer);
+
+	// Draw reflected transparent objects
 	_particleSystem.DrawReflected(_renderer);
 	_snowParticles.DrawReflected(_renderer);
 	_lightning.DrawReflection(_renderer);
 
+	// Flip scene back the right way up
 	FlipLights();
-
 	_renderer.CullFace(C_BACK);
 	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
 	_renderer.EnableStencilTest(false);
 	
+	// Draw transparent objects
+	_dome.DrawBack(_renderer);
 	_pond.Draw(_renderer);
-
 	_snowParticles.Draw(_renderer);
 	_particleSystem.Draw(_renderer);
 	_lightning.Draw(_renderer);
 	_dome.DrawFront(_renderer);
+
+	PrintHud();
 }
 
 void Application::TreeTaskComplete()
@@ -234,21 +260,23 @@ void Application::FlipLights()
 
 void Application::Update(float delta)
 {
+	// Synchronise any completed background tasks
 	_workerThread.Syncrhonise();
 
+	// Update camera orientation
 	if (_cameraKeyDown[KEY_LEFT])
-		_cameraYaw -= delta;
-	if (_cameraKeyDown[KEY_RIGHT])
 		_cameraYaw += delta;
+	if (_cameraKeyDown[KEY_RIGHT])
+		_cameraYaw -= delta;
 	if (_cameraKeyDown[KEY_UP])
-		_cameraPitch -= delta;
-	if (_cameraKeyDown[KEY_DOWN])
 		_cameraPitch += delta;
+	if (_cameraKeyDown[KEY_DOWN])
+		_cameraPitch -= delta;
 
 	UpdateViewMatrix();
 
+	// Animate components
 	float dt = delta * _animationSpeed;
-
 	_elapsed += dt;
 
 	_tree.Update(dt);
@@ -263,22 +291,23 @@ void Application::Update(float delta)
 	_fireEmitter.SetParticleSize(1.0f * _tree.GetFireScale());
 	_fireEmitter.SetSpread(2.0f * _tree.GetFireScale());
 
-	Matrix4 sunRotation;
-	Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), dt * DAYCYCLE_SPEED);
-
-	Vector4 sunTemp (_sunDirection, 0);
-	sunRotation.Transform(sunTemp);
-	_sunDirection = Vector3(sunTemp.x(), sunTemp.y(), sunTemp.z());
-
 	if (_sunMode)
 	{
+		// Update sun orientation
+		Matrix4 sunRotation;
+		Matrix4::RotationAxis(sunRotation, Vector3(0, 0, 1), dt * DAYCYCLE_SPEED);
+
+		Vector4 sunTemp (_sunDirection, 0);
+		sunRotation.Transform(sunTemp);
+		_sunDirection = Vector3(sunTemp.x(), sunTemp.y(), sunTemp.z()).normalize();
 		Light::Directional(_directionalLights[0], _sunDirection);
+
+		// Calculate sun directional light color
 		float daylight = Util::Max(0.0f, _sunDirection.dot(Vector3(0, -1, 0)));
 		float sunrise = Util::Max(0.0f, _sunDirection.dot(Vector3(1, 0, 0)));
 		float sunset = Util::Max(0.0f, _sunDirection.dot(Vector3(-1, 0, 0)));
 		float night = Util::Max(0.0f, _sunDirection.dot(Vector3(0, 1, 0)));
 
-		// Calculate sun directional light color
 		Vector3 color = COLOR_SUNRISE * sunrise + COLOR_DAYLIGHT * daylight + sunset * COLOR_SUNSET;
 
 		_directionalLights[0].SetDiffuseColor(color);
@@ -286,13 +315,14 @@ void Application::Update(float delta)
 		_renderer.SetLight(0, _directionalLights[0]);
 
 
-		// Make sunrise and sunset transitions narrower
+		// Make sunrise and sunset transitions narrower for background colour transitions
 		sunset = pow(sunset, 6);
 		sunrise = pow(sunrise, 6);
 		
 		// Renormalise blend weights and calcualte final clear color
 		float normFactor = daylight + sunrise + sunset + night;
 
+		// Calculate background colour
 		color = BG_COLOR_SUNRISE * sunrise / normFactor
 						+ BG_COLOR_DAYLIGHT * daylight / normFactor
 						+ BG_COLOR_SUNSET * sunset / normFactor
@@ -369,11 +399,13 @@ void Application::Dispose()
 	_snowParticles.Dispose();
 	_snowDrift.Dispose();
 
+	_debugFont.Dispose();
 	_renderer.Dispose();
 }
 
 void Application::UpdateViewMatrix()
-{	
+{
+	// Orbit view around current view target
 	Matrix4 pitch;
 	Matrix4::RotationAxis(pitch, Vector3(1, 0, 0), _cameraPitch);
 	Matrix4 yaw;
@@ -419,6 +451,10 @@ void Application::ToggleSunMode()
 		{
 			_renderer.SetLight(i, _spotLights[i]);
 		}
+
+		// Reset ambient and background colour
+		_renderer.SetAmbient(Vector3(0.4f));
+		_renderer.SetClearColor(Vector4(0.329f, 0.407f, 0.482f, 1.0f));
 	}
 }
 
@@ -429,7 +465,6 @@ void Application::NextTreeMode()
 
 void Application::IncrAnimationSpeed()
 {
-	std::cout << "Speed: " << _animationSpeed << "x" << std::endl;
 	_animationSpeed += ANIMATION_SPEED_INCREMENT;
 	_animationSpeed = Util::Min(_animationSpeed, ANIMATION_SPEED_MAX);
 }
@@ -438,13 +473,11 @@ void Application::DecrAnimationSpeed()
 {
 	_animationSpeed -= ANIMATION_SPEED_INCREMENT;
 	_animationSpeed = Util::Max(_animationSpeed, ANIMATION_SPEED_MIN);
-	std::cout << "Speed: " << _animationSpeed << "x" << std::endl;
 }
 
 void Application::ResetAnimationSpeed()
 {
 	_animationSpeed = 1;
-	std::cout << "Speed: " << _animationSpeed << std::endl;
 }
 
 void Application::AddTreePattern(const std::string& seed, const LSystem& lsystem, unsigned int numLeaves, unsigned int iterations)
@@ -460,4 +493,27 @@ void Application::SetNumTreeLeaves(unsigned int numLeaves)
 void Application::SetView(unsigned int view)
 {
 	_currentView = view;
+	_cameraPitch = 0;
+	_cameraYaw = 0;
+}
+
+void Application::PrintHud()
+{
+	_debugFont.Print("David Hart - OpenGL Graphics Demo 2012", 0, 13);
+	
+	std::stringstream ss;
+	
+	ss << "Playback Speed: ";
+	if (_animationSpeed > 0) ss << _animationSpeed << "x";
+	else ss << "PAUSED";
+
+	_debugFont.Print(ss.str(), 0, 13*3);
+
+	_debugFont.Print("Controls:", 0, 13*4);
+	_debugFont.Print("  1,2,3,4       Change view", 0, 13*5);
+	_debugFont.Print("  Cursor Keys   Rotate view", 0, 13*6);
+	_debugFont.Print("  S             Toggle sun/spotlight", 0, 13*7);
+	_debugFont.Print("  M             Cycle tree render modes", 0, 13*8);
+	_debugFont.Print("  +,-,R         Increase, Decrease, Reset animation speed", 0, 13*9);
+	_debugFont.Print("  F9            Toggle vullscreen", 0, 13*10);
 }

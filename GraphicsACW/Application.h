@@ -20,6 +20,7 @@
 #include "Texture.h"
 #include "Lightning.h"
 
+#include "DebugFont.h"
 #include "WorkerThread.h"
 
 class MyWindow;
@@ -59,6 +60,7 @@ public:
 
 private:
 
+	void PrintHud();
 	void UpdateViewMatrix();
 	void FlipLights();
 
@@ -79,6 +81,7 @@ private:
 	TreeBuilder _treeBuilder;
 	bool _treeReady;
 
+	DebugFont _debugFont;
 	WorkerThread _workerThread;
 
 	SnowParticles _snowParticles;
