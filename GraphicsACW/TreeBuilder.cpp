@@ -117,7 +117,7 @@ TreeBuilder::TreeBuilder() :
 
 TreeBuilder::~TreeBuilder()
 {
-	for (int i = 0; i < _patterns.size(); ++i)
+	for (unsigned i = 0; i < _patterns.size(); ++i)
 	{
 		delete _patterns[i];
 	}

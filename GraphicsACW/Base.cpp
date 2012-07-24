@@ -40,6 +40,9 @@ void Base::Create(const Renderer& renderer)
 	_shaderProgram.SetUniform(diffuseMap, 0);
 	_shaderProgram.SetUniform(_standardUniforms.Model, identity);
 
+	Uniform specularMat = _shaderProgram.GetUniform("matSpecular");
+	_shaderProgram.SetUniform(specularMat, Vector3(1));
+
 	_vertBinding.Create(renderer, _shaderProgram, vertexLayout, 2, _baseIndices, AE_UINT);
 }
 

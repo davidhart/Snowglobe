@@ -61,9 +61,11 @@ void Tree::CreateBranchAssets(const Renderer& renderer)
 	renderer.GetStandardUniforms(_branchUnlitProgram, _branchUnlitUniforms);
 
 	Uniform diffuseMap = _branchTexturedLitProgram.GetUniform("diffuseMap");
+	Uniform matSpecular = _branchTexturedLitProgram.GetUniform("matSpecular");
 
 	_branchTexturedLitProgram.Use();
 	_branchTexturedLitProgram.SetUniform(diffuseMap, 0);
+	_branchTexturedLitProgram.SetUniform(matSpecular, Vector3(0.1f));
 
 	diffuseMap = _branchUnlitProgram.GetUniform("diffuseMap");
 	_branchUnlitProgram.Use();

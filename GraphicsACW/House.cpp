@@ -44,6 +44,9 @@ void House::Create(const Renderer& renderer)
 	_shaderProgram.SetUniform(diffuseMap, 0);
 	_shaderProgram.SetUniform(diffuseMap2, 1);
 
+	Uniform matSpecular = _shaderProgram.GetUniform("matSpecular");
+	_shaderProgram.SetUniform(matSpecular, Vector3(0.2f));
+
 	_vertBinding.Create(renderer, _shaderProgram, vertexLayout, 3, _houseIndices, AE_UINT);
 }
 

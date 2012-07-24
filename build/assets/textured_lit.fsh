@@ -1,6 +1,8 @@
 #version 130
 
 uniform sampler2D diffuseMap;
+uniform vec3 matSpecular;
+
 in vec2 v_tex;
 out vec4 f_color;
 
@@ -107,5 +109,5 @@ void main(void)
 	vec3 diffuse, specular;
 	GetDiffuseSpecular(diffuse, specular);
 
-	f_color = vec4(min(ambient + diffuse, vec3(1)) * base.rgb + specular, base.a);
+	f_color = vec4(min(ambient + diffuse, vec3(1)) * base.rgb + specular * matSpecular, base.a);
 }

@@ -33,6 +33,9 @@ void Pond::Create(const Renderer& renderer)
 	_shaderProgram.SetUniform(_standardUniforms.Model, identity);
 	_shaderProgram.SetUniform(diffuseMap, 0);
 
+	Uniform matSpecular = _shaderProgram.GetUniform("matSpecular");
+	_shaderProgram.SetUniform(matSpecular, Vector3(1));
+
 	_shaderDepthClear.Use();
 	_shaderProgram.SetUniform(_depthClearUniforms.Model, identity);
 	

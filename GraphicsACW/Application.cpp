@@ -144,7 +144,7 @@ void Application::Create(MyWindow& window)
 
 	// View 2: First person view by the house
 	_viewTargets[2] = Vector3(-1.6f, 0.9f, 0);
-	_viewDirections[2] = Vector3(-0.02f, 0, -0.01f);
+	_viewDirections[2] = Vector3(0.00f, 0, -0.01f);
 
 	// View 4: Zoomed in view of house
 	_viewTargets[3] = Vector3(-0.6f, 2.5f, -3.5f);

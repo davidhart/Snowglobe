@@ -26,6 +26,9 @@ void Terrain::Create(const Renderer& renderer)
 	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
 	_shaderProgram.SetUniform(diffuseMap, 0);
 
+	Uniform matSpecular = _shaderProgram.GetUniform("matSpecular");
+	_shaderProgram.SetUniform(matSpecular, Vector3(0.1f));
+
 	unsigned int stride = _terrainModel.GetVertexStride();
 	ArrayElement vertexLayout[] =
 	{
