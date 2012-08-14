@@ -19,6 +19,9 @@ const Vector3 Application::BG_COLOR_SUNRISE = Vector3(0.5f, 0.7f, 0.75f);
 const Vector3 Application::BG_COLOR_DAYLIGHT = Vector3(0.254f, 0.741f, 1.0f);
 const Vector3 Application::BG_COLOR_NIGHTLIGHT = Vector3(0.0f, 0.13f, 0.4f);
 
+const unsigned SHADOWMAP_WIDTH = 1024;
+const unsigned SHADOWMAP_HEIGHT = 1024;
+
 // Task to generate new trees on a separate thread
 class TreeTask : public ITask
 {
@@ -67,7 +70,9 @@ Application::Application() :
 	_lengthAutumn(25.0f),
 	_lengthWinter(25.0f),
 	_treeReady(false),
-	_currentView(0)
+	_currentView(0),
+	_width(0),
+	_height(0)
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -77,8 +82,13 @@ Application::Application() :
 
 void Application::Create(MyWindow& window)
 {
+	_width = window.Width();
+	_height = window.Height();
+
 	_renderer.Create(&window);
 	_debugFont.Create(_renderer, window);
+	_debugSprite.Create(_renderer);
+	_debugSprite.WindowSize(window.Width(), window.Height());
 
 	_dome.Create(_renderer);
 
@@ -128,10 +138,12 @@ void Application::Create(MyWindow& window)
 	
 	_snowDrift.Create(_renderer);
 
+	CreateRenderTexture();
+
 	// Initialise perspective matrix
-	Matrix4 perspective;
-	Matrix4::PerspectiveFov(perspective, 85, (float)window.Width() / window.Height(), 0.1f, 1000);
-	_renderer.ProjectionMatrix(perspective);
+	Matrix4::PerspectiveFov(_projection, 85, (float)window.Width() / window.Height(), 0.1f, 1000);
+
+	SetShadowMatricesSun();
 
 	// Initialise viewpoints
 	// View 0: Default view of entire snowglobe
@@ -189,18 +201,49 @@ void Application::Create(MyWindow& window)
 	_spotLights[3].SetDiffuseColor(Vector3(0.75f, 0.75f, 1.0f));
 	_spotLights[3].SetSpecularColor(Vector3(0.75f, 0.75f, 1.0f));
 	_spotLights[3].SetSpecularPower(200);
+
+	_resized = false;
 }
 
 void Application::Draw()
 {
+	if (_resized)
+	{
+		_resized = false;
+		CreateRenderTexture();
+	}
+
+	// Gather Shadow
+	_testBuffer.Bind();
 	_renderer.Clear();
 
+	_renderer.ViewMatrix(_shadowView);
+	_renderer.ProjectionMatrix(_shadowProjection);
+
+	glViewport(0, 0, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
+
+	_renderer.CullFace(C_FRONT);
+
+	_tree.Draw(_renderer);
+	_house.Draw(_renderer);
+	_terrain.Draw(_renderer, _testTexture);
+	_snowDrift.Draw(_renderer);
+	_base.Draw(_renderer);
+
+	_testBuffer.Unbind();
+
+
+	glViewport(0, 0, _width, _height);
+
+	_renderer.Clear();
 	_renderer.ViewMatrix(_view);
+	_renderer.ProjectionMatrix(_projection);
+	_renderer.CullFace(C_BACK);
 
 	// Draw opaque objects
 	_tree.Draw(_renderer);
 	_house.Draw(_renderer);
-	_terrain.Draw(_renderer);
+	_terrain.Draw(_renderer, _testTexture2);
 	_snowDrift.Draw(_renderer);
 	_base.Draw(_renderer);
 
@@ -230,7 +273,7 @@ void Application::Draw()
 	_renderer.CullFace(C_BACK);
 	_renderer.ClipPlane(Vector4(0, 0, 0, 0));
 	_renderer.EnableStencilTest(false);
-	
+
 	// Draw transparent objects
 	_dome.DrawBack(_renderer);
 	_pond.Draw(_renderer);
@@ -238,8 +281,18 @@ void Application::Draw()
 	_particleSystem.Draw(_renderer);
 	_lightning.Draw(_renderer);
 	_dome.DrawFront(_renderer);
+	
+	/*
+	_renderer.EnableBlend(false);
+	_renderer.EnableCullFace(false);
+	_debugSprite.Draw(_renderer, 0, 0, 256.0f, 256.0f * (float)SHADOWMAP_HEIGHT / SHADOWMAP_WIDTH, _testTexture);
+	_debugSprite.Draw(_renderer, 256, 0, 256.0f, 256.0f * (float)SHADOWMAP_HEIGHT / SHADOWMAP_WIDTH, _testTexture2);
+	_renderer.EnableCullFace(true);
+	*/
 
+	/*
 	PrintHud();
+	*/
 }
 
 void Application::TreeTaskComplete()
@@ -329,7 +382,9 @@ void Application::Update(float delta)
 						+ BG_COLOR_NIGHTLIGHT * night / normFactor;
 
 		_renderer.SetClearColor(Vector4(color, 1));
-		_renderer.SetAmbient(color);
+		_renderer.SetAmbient(color * 0.8f);
+
+		SetShadowMatricesSun();
 	}
 
 	// Transition summer
@@ -401,6 +456,12 @@ void Application::Dispose()
 
 	_debugFont.Dispose();
 	_renderer.Dispose();
+
+	_testBuffer.Dispose();
+	_testTexture.Dispose();
+	_testTexture2.Dispose();
+
+	_debugSprite.Dispose();
 }
 
 void Application::UpdateViewMatrix()
@@ -424,9 +485,13 @@ void Application::UpdateViewMatrix()
 
 void Application::Resize(int width, int height)
 {
-	Matrix4 perspective;
-	Matrix4::PerspectiveFov(perspective, 75, (float)width / height, 0.1f, 100);
-	_renderer.ProjectionMatrix(perspective);
+	_width = width;
+	_height = height;
+
+	_resized = true;
+
+	Matrix4::PerspectiveFov(_projection, 75, (float)width / height, 0.1f, 100);
+	_renderer.ProjectionMatrix(_projection);
 }
 
 void Application::CameraKeyEvent(eCameraKey key, bool down)
@@ -455,6 +520,8 @@ void Application::ToggleSunMode()
 		// Reset ambient and background colour
 		_renderer.SetAmbient(Vector3(0.4f));
 		_renderer.SetClearColor(Vector4(0.329f, 0.407f, 0.482f, 1.0f));
+
+		SetShadowMatricesSpot();
 	}
 }
 
@@ -516,4 +583,79 @@ void Application::PrintHud()
 	_debugFont.Print("  M             Cycle tree render modes", 0, 13*8);
 	_debugFont.Print("  +,-,R         Increase, Decrease, Reset animation speed", 0, 13*9);
 	_debugFont.Print("  F9            Toggle vullscreen", 0, 13*10);
+}
+
+void Application::CreateRenderTexture()
+{
+	_testTexture.Create(_renderer, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, T_RGBA);
+	_testTexture2.Create(_renderer, SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, T_DEPTH/*, T_CLAMP_EDGE, T_NEAREST*/);
+
+	const FramebufferElement framebuffer[] =
+	{ 
+		{ FB_COLOR, 0, &_testTexture },
+		{ FB_DEPTH, 0, &_testTexture2 }, 
+	};
+
+	_testBuffer.Create(_renderer, framebuffer, 2);
+}
+
+void Application::SetShadowMatricesSpot()
+{
+		// Initialise shadow matrices
+	Matrix4::Identity(_shadowView);
+	
+	_shadowView = Matrix4::Matrix4(Vector4(-1, 0, 0, 0), 
+									Vector4(0, 0, -1, 0), 
+									Vector4(0, -1, 0, 0), 
+									Vector4(0, 0, 60, 1));
+
+	Matrix4::ProjectionOrtho(_shadowProjection, 10, -10, 10, -10, 0.01f, 120.0f);
+	//_shadowProjection = _projection;
+
+
+	Matrix4 shadowMatrix = Matrix4(Vector4(0.5f, 0, 0, 0),
+									Vector4(0, 0.5f, 0, 0),
+									Vector4(0, 0, 0.5f, 0),
+									Vector4(0.5f, 0.5f, 0.5f, 1));
+
+	shadowMatrix *= _shadowProjection;
+	shadowMatrix *= _shadowView;
+
+	_renderer.SetShadowMatrix(shadowMatrix);
+}
+
+void Application::SetShadowMatricesSun()
+{
+	// Update shadow matrices
+	Matrix4::Identity(_shadowView);
+
+	Matrix4::LookAt(_shadowView, -_sunDirection * 60, Vector3(0), Vector3(0, 0, 1));
+
+	
+	Vector3 eye = -_sunDirection*60;
+	Vector3 up = Vector3(0, 0, 1);
+
+	Vector3 zaxis(_sunDirection);
+	Vector3 xaxis(zaxis.cross(up));
+	Vector3 yaxis(zaxis.cross(xaxis));
+
+
+	_shadowView = Matrix4(Vector4(xaxis.x(), yaxis.x(), zaxis.x(), 0),
+						  Vector4(xaxis.y(), yaxis.y(), zaxis.y(), 0),
+						  Vector4(xaxis.z(), yaxis.z(), zaxis.z(), 0),
+						  Vector4(-xaxis.dot(eye), -yaxis.dot(eye), -zaxis.dot(eye), 1));
+						  
+	Matrix4::ProjectionOrtho(_shadowProjection, 10, -10, 10, -10, 0.01f, 120.0f);
+	//_shadowProjection = _projection;
+
+
+	Matrix4 shadowMatrix = Matrix4(Vector4(0.5f, 0, 0, 0),
+		Vector4(0, 0.5f, 0, 0),
+		Vector4(0, 0, 0.5f, 0),
+		Vector4(0.5f, 0.5f, 0.5f, 1));
+
+	shadowMatrix *= _shadowProjection;
+	shadowMatrix *= _shadowView;
+
+	_renderer.SetShadowMatrix(shadowMatrix);
 }

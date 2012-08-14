@@ -79,6 +79,12 @@
     <ClCompile Include="DebugFont.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Framebuffer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugSprite.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Uncopyable.h" />
@@ -161,6 +167,12 @@
     <ClInclude Include="DebugFont.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Framebuffer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugSprite.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -241,6 +253,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\build\assets\lit_flat.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\build\assets\textured_sprite.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\build\assets\textured_sprite.fsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

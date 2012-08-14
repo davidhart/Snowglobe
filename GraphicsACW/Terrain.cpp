@@ -26,6 +26,9 @@ void Terrain::Create(const Renderer& renderer)
 	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
 	_shaderProgram.SetUniform(diffuseMap, 0);
 
+	Uniform shadowMap = _shaderProgram.GetUniform("shadowMap");
+	_shaderProgram.SetUniform(shadowMap, 1);
+
 	Uniform matSpecular = _shaderProgram.GetUniform("matSpecular");
 	_shaderProgram.SetUniform(matSpecular, Vector3(0.1f));
 
@@ -53,7 +56,7 @@ void Terrain::Dispose()
 	_texture.Dispose();
 }
 
-void Terrain::Draw(const Renderer& renderer)
+void Terrain::Draw(const Renderer& renderer, Texture& shadowMap)
 {
 	_shaderProgram.Use();
 
@@ -63,6 +66,7 @@ void Terrain::Draw(const Renderer& renderer)
 	_shaderProgram.SetUniform(_standardUniforms.Model, identity);
 
 	_texture.Bind();
+	shadowMap.Bind(1, true);
 
 	renderer.UpdateStandardUniforms(_shaderProgram, _standardUniforms);
 	renderer.Draw(_vertBinding, PT_TRIANGLES, 0, _terrainModel.GetNumIndices());

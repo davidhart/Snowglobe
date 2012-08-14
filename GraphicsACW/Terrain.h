@@ -23,7 +23,7 @@ public:
 	void Create(const Renderer& renderer);
 	void Dispose();
 
-	void Draw(const Renderer& renderer);
+	void Draw(const Renderer& renderer, Texture& shadowMap);
 	void DrawReflection(const Renderer& renderer);
 
 private:

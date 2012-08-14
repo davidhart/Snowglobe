@@ -19,7 +19,9 @@
 #include "SnowDrift.h"
 #include "Texture.h"
 #include "Lightning.h"
+#include "Framebuffer.h"
 
+#include "DebugSprite.h"
 #include "DebugFont.h"
 #include "WorkerThread.h"
 
@@ -64,6 +66,11 @@ private:
 	void UpdateViewMatrix();
 	void FlipLights();
 
+	void CreateRenderTexture();
+
+	void SetShadowMatricesSpot();
+	void SetShadowMatricesSun();
+
 	Renderer _renderer;
 	Dome _dome;
 	Tree _tree;
@@ -78,9 +85,16 @@ private:
 	Texture _smokeTexture;
 	Texture _fireTexture;
 
+	Framebuffer _testBuffer;
+	Texture _testTexture;
+	Texture _testTexture2;
+
 	TreeBuilder _treeBuilder;
 	bool _treeReady;
+	bool _resized;
 
+
+	DebugSprite _debugSprite;
 	DebugFont _debugFont;
 	WorkerThread _workerThread;
 
@@ -91,6 +105,10 @@ private:
 	Light _directionalLights[4];
 
 	Matrix4 _view;
+	Matrix4 _projection;
+
+	Matrix4 _shadowView;
+	Matrix4 _shadowProjection;
 
 	std::string _treePattern;
 	unsigned int _numTreeLeaves;
@@ -121,6 +139,9 @@ private:
 	Vector3 _viewDirections[4];
 	Vector3 _viewTargets[4];
 	unsigned int _currentView;
+
+	int _width;
+	int _height;
 
 	static const float ANIMATION_SPEED_INCREMENT;
 	static const float ANIMATION_SPEED_MAX;

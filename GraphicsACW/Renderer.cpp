@@ -107,6 +107,8 @@ void Renderer::UpdateStandardUniforms(const ShaderProgram& shaderprogram, const 
 	shaderprogram.SetUniform(uniforms.ClipPlane, _clipPlane);
 	shaderprogram.SetUniform(uniforms.Ambient, _ambient);
 
+	shaderprogram.SetUniform(uniforms.shadowMatrix, _shadowMatrix);
+
 	for (unsigned int i = 0; i < Light::MAX_LIGHTS; ++i)
 	{
 		_lights[i].UpdateShaderUniforms(shaderprogram, uniforms.Lights[i]);
@@ -121,6 +123,8 @@ void Renderer::GetStandardUniforms(const ShaderProgram& shaderProgram, StandardU
 	uniforms.ClipPlane = shaderProgram.GetUniform("clipPlane");
 
 	uniforms.Ambient = shaderProgram.GetUniform("ambient");
+
+	uniforms.shadowMatrix = shaderProgram.GetUniform("shadowMatrix");
 
 	for (unsigned int i = 0; i < Light::MAX_LIGHTS; ++i)
 	{
@@ -213,4 +217,9 @@ void Renderer::Clear() const
 {
 	// TODO: parameterise
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void Renderer::SetShadowMatrix(const Matrix4& shadowMatrix)
+{
+	_shadowMatrix = shadowMatrix;
 }

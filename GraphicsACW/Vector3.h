@@ -113,7 +113,9 @@ inline float Vector3::dot(const Vector3& rhs) const
 
 inline Vector3 Vector3::cross(const Vector3& rhs) const
 {
-	return Vector3(y() * rhs.z() - z() * rhs.y(), z() * rhs.x() - x() * rhs.z(), x() * rhs.y() - y() * rhs.x());
+	return Vector3(y() * rhs.z() - z() * rhs.y(), 
+					z() * rhs.x() - x() * rhs.z(), 
+					x() * rhs.y() - y() * rhs.x());
 }
 
 inline Vector3 Vector3::unit() const

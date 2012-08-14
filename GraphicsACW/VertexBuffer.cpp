@@ -24,7 +24,6 @@ void VertexBuffer::Create(const Renderer& renderer, const void* data, unsigned i
 		Dispose();
 
 	assert(_vbHandle == 0);
-	assert(data != NULL);
 
 	_glex = renderer.GetEx();
 

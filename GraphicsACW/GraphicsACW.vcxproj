@@ -82,7 +82,9 @@
     <ClCompile Include="Base.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DebugFont.cpp" />
+    <ClCompile Include="DebugSprite.cpp" />
     <ClCompile Include="Dome.cpp" />
+    <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="House.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Lightning.cpp" />
@@ -116,7 +118,9 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DebugFont.h" />
+    <ClInclude Include="DebugSprite.h" />
     <ClInclude Include="Dome.h" />
+    <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="House.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Lightning.h" />
@@ -158,6 +162,8 @@
     <None Include="..\build\assets\particle_snow.vsh" />
     <None Include="..\build\assets\textured_lit.fsh" />
     <None Include="..\build\assets\textured_lit.vsh" />
+    <None Include="..\build\assets\textured_sprite.fsh" />
+    <None Include="..\build\assets\textured_sprite.vsh" />
     <None Include="..\build\assets\textured_unlit.fsh" />
     <None Include="..\build\assets\textured_unlit.vsh" />
     <None Include="..\build\assets\tree.vsh" />

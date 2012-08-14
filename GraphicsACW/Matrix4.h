@@ -34,6 +34,7 @@ public:
 	static void Scale(Matrix4& out, float scale);
 	static void Scale(Matrix4& out, const Vector3& scale);
 	static void RotationAxis(Matrix4& out, const Vector3& axis, float angle);
+	static void ProjectionOrtho(Matrix4& out, float left, float right, float top, float bottom, float nearclip, float farclip);
 	
 private:
 
@@ -191,6 +192,22 @@ inline void Matrix4::RotationAxis(Matrix4& out, const Vector3& axis, float angle
 		axisZSquared + (1 - axisZSquared) * cosTheta,
 		0),
 		Vector4(0, 0, 0, 1));
+}
+
+inline void Matrix4::ProjectionOrtho(Matrix4& out, float left, float right, float top, 
+									float bottom, float nearclip, float farclip)
+{
+
+	Vector4 translation(-(right + left) / (right - left),
+						-(top + bottom) / (top - bottom),
+						-(farclip + nearclip) / (farclip - nearclip),
+						1);
+
+
+	out = Matrix4(Vector4(2 / (right - left), 0, 0, 0),
+				  Vector4(0, 2 / (top - bottom), 0, 0),
+				  Vector4(0, 0, 2 / (farclip - nearclip), 0),
+				  translation);
 }
 
 inline Matrix4 Matrix4::operator* (const Matrix4& rhs) const

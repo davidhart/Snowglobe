@@ -73,6 +73,9 @@ public:
 		Uniform ClipPlane;
 
 		Uniform Ambient;
+
+		Uniform shadowMatrix;
+
 		Light::LightUniformBlock Lights[Light::MAX_LIGHTS];
 	};
 
@@ -111,6 +114,8 @@ public:
 	void StencilOp(eStencilOp stencilFail, eStencilOp stencilPassDepthFail, eStencilOp stencilDepthPass) const;
 	void StencilTest(eStencilFunc func, int ref = 0) const;
 
+	void SetShadowMatrix(const Matrix4& shadowMatrix);
+
 	void SetClearColor(const Vector4& color) const;
 	void Clear() const;
 
@@ -122,6 +127,7 @@ private:
 	Vector3 _ambient;
 	Matrix4 _view;
 	Matrix4 _projection;
+	Matrix4 _shadowMatrix;
 	Vector4 _clipPlane;
 	glex* _glex;
 
