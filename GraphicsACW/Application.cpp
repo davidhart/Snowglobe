@@ -226,7 +226,7 @@ void Application::Draw()
 
 	_tree.Draw(_renderer);
 	_house.Draw(_renderer);
-	_terrain.Draw(_renderer, _testTexture);
+	_terrain.Draw(_renderer);
 	_snowDrift.Draw(_renderer);
 	_base.Draw(_renderer);
 
@@ -234,16 +234,18 @@ void Application::Draw()
 
 
 	glViewport(0, 0, _width, _height);
-
 	_renderer.Clear();
 	_renderer.ViewMatrix(_view);
 	_renderer.ProjectionMatrix(_projection);
 	_renderer.CullFace(C_BACK);
 
 	// Draw opaque objects
+
+	_testTexture2.Bind(3);
+
 	_tree.Draw(_renderer);
 	_house.Draw(_renderer);
-	_terrain.Draw(_renderer, _testTexture2);
+	_terrain.Draw(_renderer);
 	_snowDrift.Draw(_renderer);
 	_base.Draw(_renderer);
 
@@ -309,6 +311,18 @@ void Application::FlipLights()
 		lights[i].ReflectInYAxis();
 		_renderer.SetLight(i, lights[i]);
 	}
+
+	Matrix4 flip;
+	Matrix4::Scale(flip, Vector3(1, -1, 1));
+
+	Matrix4 m;
+
+	_renderer.GetShadowMatrix(m);
+
+	m *= flip;
+
+	_renderer.SetShadowMatrix(m);
+
 }
 
 void Application::Update(float delta)

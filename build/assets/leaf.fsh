@@ -2,6 +2,7 @@
 
 uniform sampler2D diffuseMap;
 uniform sampler2D gradientMap;
+uniform sampler2D shadowMap;
 uniform float colorLookup;
 
 in vec2 v_tex;
@@ -43,6 +44,8 @@ uniform Light lights[NUM_LIGHTS];
 in vec3 v_wsPos;
 in vec3 v_viewDir;
 in vec3 v_normal;
+
+in vec4 v_shadow;
 
 vec3 GetNormal()
 {
@@ -103,6 +106,46 @@ void GetDiffuseSpecular(out vec3 diffuse, out vec3 specular)
 // Non Bumpmapped lighting end
 ///////////////////////////////////////////////////////////////
 
+float shadowLookup(vec4 coord)
+{
+	float shadow = 1;
+
+	float distanceFromLight = texture(shadowMap,coord.st).z;
+
+	if (v_shadow.w > 0.0)
+	{
+		if (distanceFromLight < coord.z)
+		{
+			shadow = 0;
+		}
+	}
+
+	return shadow;
+}
+
+float shadowCoverage(vec4 shadow)
+{
+
+	vec4 shadowCoordinateWdivide = shadow / shadow.w ;
+		
+	// Used to lower moire pattern and self-shadowing
+	shadowCoordinateWdivide.z += 0.00005;
+
+	float coverage = 0;
+	
+	vec2 shadowmapInvRes = vec2(1.0/1024, 1.0/1024);
+
+	for (int x = 0; x < 4; x++)
+	{
+		for(int y = 0; y < 4; y++)
+		{
+			coverage += shadowLookup(shadowCoordinateWdivide+vec4((x-2.5)*shadowmapInvRes.x, (y-2.5)*shadowmapInvRes.y, 0, 0));
+		}
+	}
+
+	return coverage / 16.0;
+}
+
 void main(void)
 {
 	ClipPlane();
@@ -110,11 +153,10 @@ void main(void)
 	vec4 base = texture(diffuseMap, v_tex);
 	vec4 colorLookup = texture(gradientMap, vec2(colorLookup, 0.5), 0);
 
-	if (base.a < 0.5)
-		discard;
-
 	vec3 diffuse, specular;
 	GetDiffuseSpecular(diffuse, specular);
 
-	f_color = vec4(min(ambient + diffuse, vec3(1)) * base.rgb * colorLookup.rgb + specular, base.a);
+	float shadow = shadowCoverage(v_shadow);
+
+	f_color = vec4(min(ambient + diffuse * shadow, vec3(1)) * base.rgb * colorLookup.rgb + specular, base.a);
 }

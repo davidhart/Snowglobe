@@ -40,6 +40,9 @@ void SnowDrift::Create(const Renderer& renderer)
 	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
 	_shaderProgram.SetUniform(diffuseMap, 0);
 
+	Uniform shadowMap = _shaderProgram.GetUniform("shadowMap");
+	_shaderProgram.SetUniform(shadowMap, 3);
+
 	Uniform matSpecular = _shaderProgram.GetUniform("matSpecular");
 	_shaderProgram.SetUniform(matSpecular, Vector3(1));
 

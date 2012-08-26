@@ -61,10 +61,12 @@ void Tree::CreateBranchAssets(const Renderer& renderer)
 	renderer.GetStandardUniforms(_branchUnlitProgram, _branchUnlitUniforms);
 
 	Uniform diffuseMap = _branchTexturedLitProgram.GetUniform("diffuseMap");
+	Uniform shadowMap = _branchTexturedLitProgram.GetUniform("shadowMap");
 	Uniform matSpecular = _branchTexturedLitProgram.GetUniform("matSpecular");
 
 	_branchTexturedLitProgram.Use();
 	_branchTexturedLitProgram.SetUniform(diffuseMap, 0);
+	_branchTexturedLitProgram.SetUniform(shadowMap, 3);
 	_branchTexturedLitProgram.SetUniform(matSpecular, Vector3(0.1f));
 
 	diffuseMap = _branchUnlitProgram.GetUniform("diffuseMap");
@@ -92,10 +94,12 @@ void Tree::CreateLeafAssets(const Renderer& renderer)
 
 	Uniform diffuseMap = _leafProgram.GetUniform("diffuseMap");
 	Uniform gradientMap = _leafProgram.GetUniform("gradientMap");
+	Uniform shadowMap = _leafProgram.GetUniform("shadowMap");
 
 	_leafProgram.Use();
 	_leafProgram.SetUniform(diffuseMap, 0);
 	_leafProgram.SetUniform(gradientMap, 1);
+	_leafProgram.SetUniform(shadowMap, 3);
 
 	_leafTexture.Create(renderer, "assets/leaf.tga", T_CLAMP_EDGE);
 	_leafGradient.Create(renderer, "assets/leaf_gradient.tga");

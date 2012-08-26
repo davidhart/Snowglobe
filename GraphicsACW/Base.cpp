@@ -38,6 +38,9 @@ void Base::Create(const Renderer& renderer)
 	_shaderProgram.Use();
 	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
 	_shaderProgram.SetUniform(diffuseMap, 0);
+
+	Uniform shadowMap = _shaderProgram.GetUniform("shadowMap");
+	_shaderProgram.SetUniform(shadowMap, 3);
 	_shaderProgram.SetUniform(_standardUniforms.Model, identity);
 
 	Uniform specularMat = _shaderProgram.GetUniform("matSpecular");

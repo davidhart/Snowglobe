@@ -223,3 +223,8 @@ void Renderer::SetShadowMatrix(const Matrix4& shadowMatrix)
 {
 	_shadowMatrix = shadowMatrix;
 }
+
+void Renderer::GetShadowMatrix(Matrix4& shadowMatrix)
+{
+	shadowMatrix = _shadowMatrix;
+}

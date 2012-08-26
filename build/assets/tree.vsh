@@ -4,6 +4,9 @@
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+
+uniform mat4 shadowMatrix;
+
 uniform float drawDepth;
 
 layout(location = 0) in vec3 in_vertex;
@@ -19,6 +22,8 @@ out vec3 v_normal;
 out vec2 v_tex;
 out vec3 v_wsPos;
 out vec3 v_viewDir;
+
+out vec4 v_shadow;
 
 ///////////////////////////////////////////////////////////////
 // Clip plane begin
@@ -55,6 +60,8 @@ void main()
 
 	gl_Position = projection * view * wsPos;
 	v_wsPos = wsPos.xyz;
+
+	v_shadow = shadowMatrix * wsPos;
 
 	v_viewDir.xyz = (transpose(view) * vec4(0, 0, -1, 0)).xyz;
 

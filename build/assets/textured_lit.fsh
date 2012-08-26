@@ -121,6 +121,29 @@ float shadowLookup(vec4 coord)
 	return shadow;
 }
 
+float shadowCoverage(vec4 shadow)
+{
+
+	vec4 shadowCoordinateWdivide = shadow / shadow.w ;
+		
+	// Used to lower moire pattern and self-shadowing
+	shadowCoordinateWdivide.z += 0.0005;
+
+	float coverage = 0;
+	
+	vec2 shadowmapInvRes = vec2(1.0/1024, 1.0/1024);
+
+	for (int x = 0; x < 4; x++)
+	{
+		for(int y = 0; y < 4; y++)
+		{
+			coverage += shadowLookup(shadowCoordinateWdivide+vec4((x-2.5)*shadowmapInvRes.x, (y-2.5)*shadowmapInvRes.y, 0, 0));
+		}
+	}
+
+	return coverage / 16.0;
+}
+
 void main(void)
 {
 	ClipPlane();
@@ -130,38 +153,7 @@ void main(void)
 	vec3 diffuse, specular;
 	GetDiffuseSpecular(diffuse, specular);
 
-
-	vec4 shadowCoordinateWdivide = v_shadow / v_shadow.w ;
-		
-	// Used to lower moire pattern and self-shadowing
-	shadowCoordinateWdivide.z += 0.0005;
-
-	/*
-	float shadow = 0;
-		
-	float distanceFromLight = texture(shadowMap,shadowCoordinateWdivide.st).z;
-		
-	if (v_shadow.w > 0.0)
-	{
-		if (distanceFromLight < shadowCoordinateWdivide.z)
-		{
-			diffuse = vec3(0);
-		}
-	}*/
-
-	float shadow = 0;
-	
-	vec2 shadowmapInvRes = vec2(1.0/1024, 1.0/1024);
-
-	for (int x = 0; x < 4; x++)
-	{
-		for(int y = 0; y < 4; y++)
-		{
-			shadow += shadowLookup(shadowCoordinateWdivide+vec4((x-2.5)*shadowmapInvRes.x, (y-2.5)*shadowmapInvRes.y, 0, 0));
-		}
-	}
-
-	shadow /= 16.0;
+	float shadow = shadowCoverage(v_shadow);
 
 	f_color = vec4(min(ambient + diffuse * shadow, vec3(1)) * base.rgb + specular * matSpecular, base.a);
 }

@@ -39,10 +39,12 @@ void House::Create(const Renderer& renderer)
 	_uniformTextureBlend = _shaderProgram.GetUniform("textureBlend");
 	Uniform diffuseMap = _shaderProgram.GetUniform("diffuseMap");
 	Uniform diffuseMap2 = _shaderProgram.GetUniform("diffuseMap2");
+	Uniform shadowMap = _shaderProgram.GetUniform("shadowMap");
 
 	_shaderProgram.Use();
 	_shaderProgram.SetUniform(diffuseMap, 0);
 	_shaderProgram.SetUniform(diffuseMap2, 1);
+	_shaderProgram.SetUniform(shadowMap, 3);
 
 	Uniform matSpecular = _shaderProgram.GetUniform("matSpecular");
 	_shaderProgram.SetUniform(matSpecular, Vector3(0.2f));

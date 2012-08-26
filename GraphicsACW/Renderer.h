@@ -115,6 +115,7 @@ public:
 	void StencilTest(eStencilFunc func, int ref = 0) const;
 
 	void SetShadowMatrix(const Matrix4& shadowMatrix);
+	void GetShadowMatrix(Matrix4& shadowMatrix);
 
 	void SetClearColor(const Vector4& color) const;
 	void Clear() const;
